@@ -90,8 +90,7 @@
 					$insert_id = $this->db->insert_id();
 					$filename ='big_banner_'.$ary['bb_id'] ;
 					$config['file_name'] = md5($filename);
-					$config['upload_path'] = FCPATH.'../'.$_SERVER['FRONT_DIR'].'/images/big_banner/';
-					echo FCPATH.'../'.$_SERVER['FRONT_DIR'].'/images/big_banner/';
+					$config['upload_path'] = FCPATH.'../images/big_banner/';
 					$config['allowed_types'] = 'gif|jpg|png|jpeg';
 					$config['max_size']	= '2048';
 					$config['max_width']  = '3000';
@@ -106,6 +105,28 @@
 							'status'	=>'002'
 						);
 						$MyException = new MyException();
+						$MyException->setParams($array);
+						throw $MyException;
+					}
+					
+					
+					$image= $this->CI->upload->data();
+					$sql = "UPDATE big_banner SET bb_image =? WHERE bb_id =?";
+					$bind = array(
+						$image['file_name'],
+						$ary['bb_id']
+					);
+					$query = $this->db->query($sql, $bind);
+					$error = $this->db->error();
+					if($error['message'] !="")
+					{
+						$MyException = new MyException();
+						$array = array(
+							'message' 	=>$error['message'] ,
+							'type' 		=>'db' ,
+							'status'	=>'001'
+						);
+						
 						$MyException->setParams($array);
 						throw $MyException;
 					}
@@ -124,14 +145,13 @@
 					$MyException->setParams($array);
 					throw $MyException;
 				}
+				return 	$affected_rows ;
 			}	
 			catch(MyException $e)
 			{
 				throw $MyException;
 				return 0;
 			}
-			
-			return 	$affected_rows ;
 		}
 		
 		public function getRow($bb_id)
@@ -200,7 +220,7 @@
 				}
 			}
 			
-			if(is_array($ary['order']) && count($ary['order']) >1)
+			if(is_array($ary['order']) && count($ary['order']) >0)
 			{
 				$order =" ORDER BY ";
 				foreach($ary['order'] AS $key =>$value)
@@ -284,7 +304,7 @@
 				$insert_id = $this->db->insert_id();
 				$filename ='big_banner_'.$insert_id ;
 				$config['file_name'] = md5($filename);
-				$config['upload_path'] = FCPATH.'../'.$_SERVER['FRONT_DIR'].'/images/big_banner/';
+				$config['upload_path'] = FCPATH.'../images/big_banner/';
 				$config['allowed_types'] = 'gif|jpg|png|jpeg';
 				$config['max_size']	= '5120';
 				$config['max_width']  = '3000';

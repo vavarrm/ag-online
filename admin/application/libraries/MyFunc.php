@@ -48,7 +48,7 @@ class MyFunc
 		echo "<script>";
 		if($msg !="")
 		{
-			echo sprintf("alert('%s');", $msg );
+			echo sprintf('alert("%s");', strip_tags($msg) );
 		}
 		
 		echo sprintf(" location.href = '%s'" , $url);

@@ -139,7 +139,7 @@ class Api extends CI_Controller {
 			$output['status'] = $parames['status']; 
 			$this->myLog->error_log($parames);
 		}
-		// $this->myfunc->gotoUrl('/admin/renterTemplates#!/website/bigBannerList',$output['message'] );
+		$this->myfunc->gotoUrl('/admin/Admin/renterTemplates#!/website/bigBannerList',$output['message'] );
 	}
 	
 	public function editBigBalance()
@@ -190,7 +190,7 @@ class Api extends CI_Controller {
 			$output['status'] = $parames['status']; 
 			$this->myLog->error_log($parames);
 		}
-		$this->myfunc->gotoUrl('/admin/renterTemplates#!/website/bigBannerList/',$output['message'] );
+		$this->myfunc->gotoUrl('/admin/Admin/renterTemplates#!/website/bigBannerList/',$output['message'] );
 	}
 	
 	
@@ -243,7 +243,8 @@ class Api extends CI_Controller {
 			$output['status'] = $parames['status']; 
 			$this->myLog->error_log($parames);
 		}
-		$this->myfunc->gotoUrl('/admin/renterTemplates#!/website/editFooter/',$output['message'] );
+
+		$this->myfunc->gotoUrl('/admin/Admin/renterTemplates#!/website/editFooter/',$output['message'] );
 	}
 	
 	public function editFooterInit()
@@ -559,7 +560,7 @@ class Api extends CI_Controller {
 			$output['status'] = $parames['status']; 
 			$this->myLog->error_log($parames);
 		}
-		$this->myfunc->gotoUrl('/admin/renterTemplates#!/user/announcemetList/',$output['message'] );
+		$this->myfunc->gotoUrl('/admin/Admin/renterTemplates#!/user/announcemetList/',$output['message'] );
 	}
 	
 	public function getAnnouncemet()
@@ -683,7 +684,7 @@ class Api extends CI_Controller {
 			$output['status'] = $parames['status']; 
 			$this->myLog->error_log($parames);
 		}
-		$this->myfunc->gotoUrl('/admin/renterTemplates#!/user/announcemetList/',$output['message'] );
+		$this->myfunc->gotoUrl('/admin/Admin/renterTemplates#!/user/announcemetList/',$output['message'] );
 	}
 	
 	public function getAnnouncemetList()

@@ -16,7 +16,7 @@
 			try
 			{
 				$sql ="	UPDATE  announcemet 	
-						SET an_title = ? , an_content=? , 	an_update_datetime = NOW()  
+						SET an_title = ? , an_content=?  
 						WHERE an_id =?";
 				$bind = array(
 					$ary['an_title'],
@@ -46,7 +46,7 @@
 					$insert_id = $this->db->insert_id();
 					$filename ='announcemet_'.$ary['an_id'] ;
 					$config['file_name'] = md5($filename);
-					$config['upload_path'] = FCPATH.'../'.$_SERVER['FRONT_DIR'].'/images/announcemet/';
+					$config['upload_path'] = FCPATH.'../images/announcemet/';
 					$config['allowed_types'] = 'gif|jpg|png|jpeg';
 					$config['max_size']	= '2048';
 					$config['max_width']  = '300';
@@ -56,7 +56,7 @@
 					if(!$this->CI->upload->do_upload('image'))
 					{
 						$array = array(
-							'message' 	=>$this->upload->display_errors('',''),
+							'message' 	=>$this->upload->display_errors(),
 							'type' 		=>'api' ,
 							'status'	=>'002'
 						);
@@ -64,7 +64,32 @@
 						$MyException->setParams($array);
 						throw $MyException;
 					}
+				
+					
+					
+					$image= $this->CI->upload->data();
+					$sql = "UPDATE announcemet SET an_image =? WHERE an_id =?";
+					$bind = array(
+						$image['file_name'],
+						$ary['an_id']
+					);
+					$query = $this->db->query($sql, $bind);
+					$error = $this->db->error();
+					if($error['message'] !="")
+					{
+						$MyException = new MyException();
+						$array = array(
+							'message' 	=>$error['message'] ,
+							'type' 		=>'db' ,
+							'status'	=>'001'
+						);
+						
+						$MyException->setParams($array);
+						throw $MyException;
+					}
+					
 					$affected_rows+=1;
+					
 				}
 				
 				if($affected_rows ==0)
@@ -208,7 +233,7 @@
 				$insert_id = $this->db->insert_id();
 				$filename ='announcemet_'.$insert_id ;
 				$config['file_name'] = md5($filename);
-				$config['upload_path'] = FCPATH.'../'.$_SERVER['FRONT_DIR'].'/images/announcemet/';
+				$config['upload_path'] = FCPATH.'../images/announcemet/';
 				$config['allowed_types'] = 'gif|jpg|png|jpeg';
 				$config['max_size']	= '2048';
 				$config['max_width']  = '300';

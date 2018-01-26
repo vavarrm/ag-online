@@ -105,7 +105,8 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		list:{},
 		order:{},
 		p:1,
-		row:{}
+		row:{},
+		search:{}
 	}
 	
 	$scope.editFooterInit = function()
@@ -371,6 +372,28 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		
 	}
 	
+	$scope.clickpage = function(p, fun)
+	{
+		if(p>$scope.pageinfo.pages || p<1)
+		{
+			return ;
+		}
+		$scope.data.p = p;
+		$scope.search();
+	}
+	
+	$scope.reset= function()
+	{
+		$scope.data.p =1;
+		$.each($scope.data.order,function(i,e){
+			$scope.data.order[i] ="";
+		})
+		$.each($scope.data.search,function(i,e){
+			$scope.data.search[i] ="";
+		})
+		$scope.search();	
+	}
+	
 		
 	$scope.search = function()
 	{
@@ -443,6 +466,8 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 				 dialog(obj);
 			}
 		)
+		
+		
 	}
 }
 agApp.controller('websiteCtrl',  ['$scope', '$http' ,'apiService', '$cookies', '$routeParams', '$rootScope', websiteCtrl]);

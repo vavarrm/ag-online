@@ -120,7 +120,7 @@
 				}
 			}
 			
-			if(is_array($ary['order']))
+			if(is_array($ary['order']) && !empty($ary['order']))
 			{
 				$order =" ORDER BY ";
 				foreach($ary['order'] AS $key =>$value)

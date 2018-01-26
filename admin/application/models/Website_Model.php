@@ -72,10 +72,56 @@
 			$this->db->trans_start();
 			try
 			{
-					$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='wechat_account'";
+				$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='wechat_account'";
+				
+				$bind = array(
+					$ary['wechat_account']
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
 					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$affected_rows += $this->db->affected_rows();
+				
+				if ($_FILES["wechat_qr_image"]["error"] == 0)
+				{
+					$filename ='wechat_qr_image' ;
+					$config['file_name'] = md5($filename);
+					$config['upload_path'] = FCPATH.'../images/webconfig/';
+					$config['allowed_types'] = 'gif|jpg|png|jpeg';
+					$config['max_size']	= '2048';
+					$config['max_width']  = '200';
+					$config['max_height']  = '200';
+					$config['overwrite']  = true;
+					$this->CI->load->library('upload',$config);
+					if(!$this->CI->upload->do_upload('wechat_qr_image'))
+					{
+						$array = array(
+							'message' 	=>'上传失败',
+							'type' 		=>'api' ,
+							'status'	=>'002'
+						);
+						$MyException = new MyException();
+						$MyException->setParams($array);
+						throw $MyException;
+					}
+					$image= $this->CI->upload->data();
+				
+					$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='wechat_qr_image'";
+			
 					$bind = array(
-						$ary['wechat_account']
+						$image['file_name']
 					);
 					$query = $this->db->query($sql, $bind);
 					$error = $this->db->error();
@@ -91,62 +137,62 @@
 						$MyException->setParams($array);
 						throw $MyException;
 					}
-					
-					$affected_rows += $this->db->affected_rows();
-					
-					if ($_FILES["wechat_qr_image"]["error"] == 0)
-					{
-						$insert_id = $this->db->insert_id();
-						$filename ='wechat_qr_image' ;
-						$config['file_name'] = md5($filename);
-						$config['upload_path'] = FCPATH.'../'.$_SERVER['FRONT_DIR'].'/images/webconfig/';
-						$config['allowed_types'] = 'gif|jpg|png|jpeg';
-						$config['max_size']	= '2048';
-						$config['max_width']  = '256';
-						$config['max_height']  = '256';
-						$config['overwrite']  = true;
-						$this->CI->load->library('upload',$config);
-						if(!$this->CI->upload->do_upload('wechat_qr_image'))
-						{
-							$array = array(
-								'message' 	=>$this->upload->display_errors('',''),
-								'type' 		=>'api' ,
-								'status'	=>'002'
-							);
-							$MyException = new MyException();
-							$MyException->setParams($array);
-							throw $MyException;
-						}
-						$image= $this->CI->upload->data();
-					
-						$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='wechat_qr_image'";
+					$affected_rows += 1;
+				}
+			
 				
-						$bind = array(
-							$image['file_name']
-						);
-						$query = $this->db->query($sql, $bind);
-						$error = $this->db->error();
-						if($error['message'] !="")
-						{
-							$MyException = new MyException();
-							$array = array(
-								'message' 	=>$error['message'] ,
-								'type' 		=>'db' ,
-								'status'	=>'001'
-							);
-							
-							$MyException->setParams($array);
-							throw $MyException;
-						}
-						$affected_rows += 1;
-					}
+				$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='qq_account'";
+				$bind = array(
+					$ary['qq_account']
+				);
 				
-					
-					$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='qq_account'";
-					$bind = array(
-						$ary['qq_account']
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
 					);
 					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$affected_rows += $this->db->affected_rows();
+				
+				if ($_FILES["qq_qr_image"]["error"] == 0)
+				{
+					$filename ='qq_qr_image' ;
+					$config['file_name'] = md5($filename);
+					$config['upload_path'] = FCPATH.'../images/webconfig/';
+					$config['allowed_types'] = 'gif|jpg|png|jpeg';
+					$config['max_size']	= '2048';
+					$config['max_width']  = '200';
+					$config['max_height']  = '200';
+					$config['overwrite']  = true;
+					$this->CI->load->library('upload',$config);
+					if(!$this->CI->upload->do_upload('qq_qr_image'))
+					{
+						$array = array(
+							'message' 	=>'上传失败',
+							'type' 		=>'api' ,
+							'status'	=>'002'
+						);
+						$MyException = new MyException();
+						$MyException->setParams($array);
+						throw $MyException;
+					}
+
+					$image= $this->CI->upload->data();
+				
+					$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='qq_qr_image'";
+			
+					$bind = array(
+						$image['file_name']
+					);
 					$query = $this->db->query($sql, $bind);
 					$error = $this->db->error();
 					if($error['message'] !="")
@@ -161,65 +207,16 @@
 						$MyException->setParams($array);
 						throw $MyException;
 					}
-					
-					$affected_rows += $this->db->affected_rows();
-					
-					if ($_FILES["qq_qr_image"]["error"] == 0)
-					{
-						$insert_id = $this->db->insert_id();
-						$filename ='qq_qr_image' ;
-						$config['file_name'] = md5($filename);
-						$config['upload_path'] = FCPATH.'../'.$_SERVER['FRONT_DIR'].'/images/webconfig/';
-						$config['allowed_types'] = 'gif|jpg|png|jpeg';
-						$config['max_size']	= '2048';
-						$config['max_width']  = '256';
-						$config['max_height']  = '256';
-						$config['overwrite']  = true;
-						$this->CI->load->library('upload',$config);
-						if(!$this->CI->upload->do_upload('qq_qr_image'))
-						{
-							$array = array(
-								'message' 	=>$this->upload->display_errors('',''),
-								'type' 		=>'api' ,
-								'status'	=>'002'
-							);
-							$MyException = new MyException();
-							$MyException->setParams($array);
-							throw $MyException;
-						}
-	
-						$image= $this->CI->upload->data();
-					
-						$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='qq_qr_image'";
-				
-						$bind = array(
-							$image['file_name']
-						);
-						$query = $this->db->query($sql, $bind);
-						$error = $this->db->error();
-						if($error['message'] !="")
-						{
-							$MyException = new MyException();
-							$array = array(
-								'message' 	=>$error['message'] ,
-								'type' 		=>'db' ,
-								'status'	=>'001'
-							);
-							
-							$MyException->setParams($array);
-							throw $MyException;
-						}
-						$affected_rows += 1;
-					}
+					$affected_rows += 1;
+				}
+				$this->db->trans_complete();
+				return $affected_rows ;
 			}
 			catch(MyException $e)
 			{
-				 $this->db->trans_rollback();
+				$this->db->trans_rollback();
 				throw $MyException;
-				return false;
 			}
-			$this->db->trans_complete();
-			return $affected_rows ;
 		}
 	}
 ?>
