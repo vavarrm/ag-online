@@ -2,10 +2,11 @@
 	class Announcemet_Model extends CI_Model 
 	{
 		public $CI ;
+		public $announcemet_image_path ;
 		function __construct()
 		{
-			
 			parent::__construct();
+			$this->announcemet_image_path =  FCPATH.'../images/announcemet/';
 			$this->CI =&get_instance();
 			$this->load->database();
 		}
@@ -46,7 +47,7 @@
 					$insert_id = $this->db->insert_id();
 					$filename ='announcemet_'.$ary['an_id'] ;
 					$config['file_name'] = md5($filename);
-					$config['upload_path'] = FCPATH.'../images/announcemet/';
+					$config['upload_path'] = $this->announcemet_image_path;
 					$config['allowed_types'] = 'gif|jpg|png|jpeg';
 					$config['max_size']	= '2048';
 					$config['max_width']  = '300';
@@ -147,49 +148,96 @@
 		
 		public function del($an_id = array())
 		{
-			if(count($an_id) == 0)
+			try
 			{
-				$MyException = new MyException();
-				$array = array(
-					'message' 	=>'无傳入參數' ,
-					'type' 		=>'db' ,
-					'status'	=>'999'
-				);
+				if(count($an_id) == 0)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'无傳入參數' ,
+						'type' 		=>'db' ,
+						'status'	=>'999'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
 				
-				$MyException->setParams($array);
+				
+				foreach($an_id as $value)
+				{
+					$sql = "SELECT  an_image FROM announcemet WHERE an_id = ?";
+					$bind = array(
+						$value
+					);
+					$query = $this->db->query($sql, $bind);
+					$error = $this->db->error();
+					if($error['message'] !="")
+					{
+						$MyException = new MyException();
+						$array = array(
+							'message' 	=>$error['message'] ,
+							'type' 		=>'db' ,
+							'status'	=>'001'
+						);
+						
+						$MyException->setParams($array);
+						throw $MyException;
+					}
+					$row = $query->row_array();
+					if(file_exists($this->announcemet_image_path.$row['an_image']) && $row['an_image']!="")
+					{
+						if(!unlink($this->announcemet_image_path.$row['an_image']))
+						{
+							$MyException = new MyException();
+							$array = array(
+								'message' 	=>'删除档案失败' ,
+								'type' 		=>'system' ,
+								'status'	=>'003'
+							);
+							
+							$MyException->setParams($array);
+							throw $MyException;
+						}
+					}
+				}
+				
+				$an_id_str = join("','", $an_id);
+				$sql="DELETE FROM announcemet WHERE an_id IN('".$an_id_str."')";
+				$query = $this->db->query($sql);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$affected_rows = $this->db->affected_rows();
+				if($affected_rows   == 0)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'无资料更新' ,
+						'type' 		=>'db' ,
+						'status'	=>'999'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				return $affected_rows ;
+			}
+			catch(MyException $e)
+			{
 				throw $MyException;
 			}
-			$an_id_str = join("','", $an_id);
-			$sql="DELETE FROM announcemet WHERE an_id IN('".$an_id_str."')";
-			$query = $this->db->query($sql);
-			$error = $this->db->error();
-			if($error['message'] !="")
-			{
-				$MyException = new MyException();
-				$array = array(
-					'message' 	=>$error['message'] ,
-					'type' 		=>'db' ,
-					'status'	=>'001'
-				);
-				
-				$MyException->setParams($array);
-				throw $MyException;
-			}
-			
-			if($this->db->affected_rows()   == 0)
-			{
-				$MyException = new MyException();
-				$array = array(
-					'message' 	=>'无资料更新' ,
-					'type' 		=>'db' ,
-					'status'	=>'999'
-				);
-				
-				$MyException->setParams($array);
-				throw $MyException;
-			}
-			
-			return true;
 		}
 		
 		public function add($ary = array())
@@ -233,7 +281,7 @@
 				$insert_id = $this->db->insert_id();
 				$filename ='announcemet_'.$insert_id ;
 				$config['file_name'] = md5($filename);
-				$config['upload_path'] = FCPATH.'../images/announcemet/';
+				$config['upload_path'] = $this->announcemet_image_path;
 				$config['allowed_types'] = 'gif|jpg|png|jpeg';
 				$config['max_size']	= '2048';
 				$config['max_width']  = '300';
@@ -298,12 +346,11 @@
 					throw $MyException;
 				}
 				// exit;
-				
+				return $this->db->affected_rows();
 			}catch(MyException $e)
 			{
 				throw $MyException;
 			}
-			return $this->db->affected_rows();
 		}
 		
 		public function getList($ary = array())

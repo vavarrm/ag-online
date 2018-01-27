@@ -8,6 +8,80 @@
 			$this->load->database();
 		}
 		
+		public function del($ary=array())
+		{
+			try
+			{
+				$this->db->trans_begin();
+				if(empty($ary))
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'參數有誤' ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$sql="DELETE FROM  `admin` WHERE ad_id in('".join("','",$ary)."')";
+				$query = $this->db->query($sql);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$affected_rows= $this->db->affected_rows();
+				if($affected_rows ==0)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'删除失败1' ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$sql = "DELETE FROM admin_menu_control WHERE amc_ad_id =?";
+				$query = $this->db->query($sql);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				
+				
+				// $this->db->trans_complete();
+				return $affected_rows;
+			}catch(MyException $e)
+			{
+				$this->db->trans_rollback();
+				throw $MyException;
+			}
+		}
+		
 		public function getMenuList($ary=array())
 		{
 			try
@@ -42,15 +116,15 @@
 					throw $MyException;
 				}
 				
-				$ary = array();
+				$output = array();
 				if(!empty($rows))
 				{
 					foreach($rows as $row)
 					{
-						$this->getChild($row['am_id'], $ary);
+						$this->getChild($row['am_id'], $output);
 					}
 				}
-				return $ary;
+				return $output;
 			}catch(MyException $e)
 			{
 				throw $MyException;
@@ -84,17 +158,17 @@
 				{
 					foreach($rows as $row)
 					{
-						$ary = array_merge($ary,$row);
+						// var_dump($row);
+						$ary[] = $row;
 						$this->getChild($row['am_id'], $ary);
 					}
 				}
-				
+				return 	$rows  ;
 			}catch(MyException $e)
 			{
 				throw $MyException;
 			}
-			// return 	$rows  ;
-			
+		
 		}
 		
 		public function adminList($ary = array())
@@ -212,38 +286,79 @@
 		
 		public function insert($ary)
 		{
-			$sql ="INSERT INTO admin (ad_account,ad_passwd,ad_role,	ad_add_datetime)
-					VALUES(?,md5(?),?,NOW())";
-			$bind = array(
-				$ary['ad_account'],
-				$ary['ad_passwd'],
-				$ary['ad_role'],
-			);
-			// $query = $this->db->query($sql, $bind);
-			// $error = $this->db->error();
-			// if($error['message'] !="")
-			// {
-				// $MyException = new MyException();
-				// $array = array(
-					// 'message' 	=>$error['message'] ,
-					// 'type' 		=>'db' ,
-					// 'status'	=>'001'
-				// );
-				
-				// $MyException->setParams($array);
-				// throw $MyException;
-			// }
-			
-			if($ary['ad_role'] !="1")
-			{
-				$default = array(
-					'2' =>array(1,11,30),
-					'3' =>array(1,30),
+			try{
+				$this->db->trans_begin();
+				$this->db->query('START TRANSACTION');
+				$sql =" INSERT INTO admin (ad_account,ad_passwd,ad_role,	ad_add_datetime)
+						VALUES(?,md5(?),?,NOW())";
+				$bind = array(
+					// $ary['ad_account'],
+					rand(0,9999999999),
+					$ary['ad_passwd'],
+					$ary['ad_role'],
 				);
-				// $this->
+				$query = $this->db->query($sql, $bind);
+				$this->db->trans_rollback();
+				echo $this->db->last_query();
+				exit;
+				$ad_id = $this->db->insert_id();
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+
+				$ad_id = $this->db->insert_id();
+				if($ary['ad_role'] !="1")
+				{
+					$default = array(
+						'2' =>array(1,11,30),
+						'3' =>array(1,30),
+					);
+					$list= $this->getMenuList($default[$ary['ad_role']]);
+					
+					foreach($list as $value)
+					{
+						$sql ="	INSERT 1admin_menu_control (amc_ad_id , amc_am_id, 	amc_add_datetime)
+								VALUE(?,?,NOW())";
+						$bind = array(
+							$ad_id,
+							$value['am_id']
+						);
+						$query = $this->db->query($sql, $bind);
+						$error = $this->db->error();
+						if($error['message'] !="")
+						{
+							$MyException = new MyException();
+							$array = array(
+								'message' 	=>$error['message'] ,
+								'type' 		=>'db' ,
+								'status'	=>'001'
+							);
+							
+							$MyException->setParams($array);
+							throw $MyException;
+							break;
+						}
+					}
+				}
+				$this->db->query('ROLLBACK');
+				// $this->db->trans_commit();
+				return 	$row['total'] ;
+			}catch(MyException $e)
+			{
+
+				$this->db->trans_rollback();
+				throw $MyException;
 			}
-			
-			return 	$row['total'] ;
 		}
 		
 		public function getNodesRow($am_id)

@@ -21,6 +21,9 @@
 				<table class="table table-bordered">
 					<thead>
 						<tr>
+							<th width="2%" style="text-align:center" >
+								<input type="checkbox" ng-model="data.checkedAll" ng-init="data.checkedAll =0">
+							</th>
 							<th width="40%" style="text-align:center">帐号</th>
 							<th width="40%" style="text-align:center">角色</th>
 							<th width="20%" style="text-align:center"></th>
@@ -28,6 +31,9 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat="row in data.list">
+							<td valign="middle">
+								<input type="checkbox" ng-checked="data.checkedAll"  class="checkbox"   value="{{row.ad_id}}" >
+							</td>
 							<td valign="middle" ng-bind="row.ad_account"></td>
 							<td valign="middle" ng-bind="row.ar_name"></td>
 							<td valign="middle" >
