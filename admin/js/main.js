@@ -649,7 +649,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 								click: function() 
 								{
 									$( this ).dialog( "close" );
-									location.href="/admin/Admin/renterTemplates#!/user/announcemetList/";
+									location.href="/admin/renterTemplates#!/user/announcemetList/";
 								}
 							}
 						]
@@ -874,7 +874,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 								click: function() 
 								{
 									$( this ).dialog( "close" );
-									location.href="/admin/Admin/renterTemplates#!/user/announcemetList/";
+									location.href="/admin/renterTemplates#!/user/announcemetList/";
 								}
 							}
 						]
@@ -981,7 +981,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 								{
 									$( this ).dialog( "close" );
 									$('input[name=am_id]', parent.document).val('19');
-									location.href="/admin/Admin/renterTemplates#!/account/rechargeAuditList/";
+									location.href="/admin/renterTemplates#!/account/rechargeAuditList/";
 								}
 							}
 						]
@@ -1247,7 +1247,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 									{
 										$( this ).dialog( "close" );
 									$('input[name=am_id]', parent.document).val('2');
-										location.href="/admin/Admin/renterTemplates#!/user/list/";
+										location.href="/admin/renterTemplates#!/user/list/";
 									}
 								}
 							]
@@ -1696,6 +1696,121 @@ agApp.controller('accountCtrl',  ['$scope', '$http' ,'apiService', '$cookies', '
 
 var adminCtrl = function($scope, $http, apiService, $cookies, $routeParams, $rootScope)
 {
+	
+	$scope.actionClick = function($event,func)
+	{
+		if( func !=null)
+		{
+			$event.preventDefault();
+			if(typeof $scope[func] =='function')
+			{
+				$scope[func]();
+			}
+		}
+		
+	}
+	
+	$scope.delAdmin = function()
+	{
+		if($('.checkbox:checked').length =='0')
+		{
+			var obj =
+				{
+					'message' :'请选则要删除项',
+					buttons: 
+					[
+						{
+							text: "close",
+							click: function() 
+							{
+								$( this ).dialog( "close" );
+							}
+						}
+					]
+				};
+			dialog(obj);
+			return false;
+		}
+		
+		var obj =
+		{
+			'message' :'确认删除',
+			buttons: 
+			[
+				{
+					text: "是",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+						var ad_id = new Array();
+						$.each($('.checkbox:checked'), function(i, e){
+							ad_id.push($(e).val())
+						})
+						var obj={
+							ad_id :ad_id
+						}
+						var promise = apiService.adminApi('/delAdmin', obj);
+						promise.then
+						(
+							function(r) 
+							{
+								if(r.data.status =="100")
+								{
+									var obj =
+									{
+										'message' :'刪除成功',
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+													$scope.search();
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}else{
+									var obj =
+									{
+										'message' :r.data.message,
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}
+							},
+							function() {
+								var obj ={
+									'message' :'系統錯誤'
+								};
+								 dialog(obj);
+							}
+						)
+					}
+				},
+				{
+					text: "否",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+					}
+				}
+			]
+		};
+		dialog(obj);
+	}
+	
 	$scope.data = {
 		p :1
 	};
@@ -1820,7 +1935,7 @@ var adminCtrl = function($scope, $http, apiService, $cookies, $routeParams, $roo
 								click: function() 
 								{
 									$( this ).dialog( "close" );
-									// location.href='/admin/Admin/renterTemplates#!/system/adminList/';
+									location.href='/admin/Admin/renterTemplates#!/system/adminList/';
 								}
 							}
 						]
@@ -1936,121 +2051,6 @@ var adminCtrl = function($scope, $http, apiService, $cookies, $routeParams, $roo
 			}
 		)
 	}
-	
-	$scope.delAdmin = function()
-	{
-		if($('.checkbox:checked').length =='0')
-		{
-			var obj =
-				{
-					'message' :'请选则要删除项',
-					buttons: 
-					[
-						{
-							text: "close",
-							click: function() 
-							{
-								$( this ).dialog( "close" );
-							}
-						}
-					]
-				};
-			dialog(obj);
-			return false;
-		}
-		var obj =
-			{
-				'message' :'确认删除',
-				buttons: 
-				[
-					{
-						text: "是",
-						click: function() 
-						{
-							$( this ).dialog( "close" );
-							var ad_id = new Array();
-							$.each($('.checkbox:checked'), function(i, e){
-								ad_id.push($(e).val())
-							})
-							var obj={
-								ad_id :ad_id
-							}
-							var promise = apiService.adminApi('/delAdmin', obj);
-							promise.then
-							(
-								function(r) 
-								{
-									if(r.data.status =="100")
-									{
-										var obj =
-										{
-											'message' :'删除成功',
-											buttons: 
-											[
-												{
-													text: "close",
-													click: function() 
-													{
-														$( this ).dialog( "close" );
-														$scope.search();
-													}
-												}
-											]
-										};
-										dialog(obj);
-									}else
-									{
-										var obj =
-										{
-											'message' :r.data.message,
-											buttons: 
-											[
-												{
-													text: "close",
-													click: function() 
-													{
-														$( this ).dialog( "close" );
-														location.href="/Login";
-													}
-												}
-											]
-										};
-										dialog(obj);
-									}
-								},
-								function() {
-									var obj ={
-										'message' :'系統錯誤'
-									};
-									dialog(obj);
-								}
-							)
-						}
-					},
-					{
-						text: "否",
-						click: function() 
-						{
-							$( this ).dialog( "close" );
-						}
-					}
-				]
-			};
-		dialog(obj);
-	}
-	
-	$scope.actionClick = function($event,func)
-	{
-		if( func !=null)
-		{
-			$event.preventDefault();
-			if(typeof $scope[func] =='function')
-			{
-				$scope[func]();
-			}
-		}
-		
-	}
 }
 agApp.controller('adminCtrl',  ['$scope', '$http' ,'apiService', '$cookies', '$routeParams', '$rootScope', adminCtrl]);
 
@@ -2127,7 +2127,7 @@ var bodyCtrl = function($scope, apiService, $cookies, $rootScope, $routeParams){
 								click: function() 
 								{
 									$( this ).dialog( "close" );
-									location.href="/Login";
+									location.href="/admin/Login";
 								}
 							}
 						]

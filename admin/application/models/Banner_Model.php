@@ -2,108 +2,59 @@
 	class Banner_Model extends CI_Model 
 	{
 		public $CI ;
-		public $big_image_path ;
 		function __construct()
 		{
 			
 			parent::__construct();
-			$this->big_image_path =FCPATH.'../images/big_banner/';
 			$this->CI =&get_instance();
 			$this->load->database();
 		}
 		
 		public function del($ary = array())
 		{
-			try
+			if(count($ary ) == 0)
 			{
-				if(count($ary ) == 0)
-				{
-					$MyException = new MyException();
-					$array = array(
-						'message' 	=>'无傳入參數' ,
-						'type' 		=>'db' ,
-						'status'	=>'999'
-					);
-					
-					$MyException->setParams($array);
-					throw $MyException;
-				}
+				$MyException = new MyException();
+				$array = array(
+					'message' 	=>'无傳入參數' ,
+					'type' 		=>'db' ,
+					'status'	=>'999'
+				);
 				
-				foreach($ary as $value)
-				{
-					$sql = "SELECT  bb_image FROM big_banner WHERE bb_id = ?";
-					$bind = array(
-						$value
-					);
-					$query = $this->db->query($sql, $bind);
-					$error = $this->db->error();
-					if($error['message'] !="")
-					{
-						$MyException = new MyException();
-						$array = array(
-							'message' 	=>$error['message'] ,
-							'type' 		=>'db' ,
-							'status'	=>'001'
-						);
-						
-						$MyException->setParams($array);
-						throw $MyException;
-					}
-					$row = $query->row_array();
-					if(file_exists($this->big_image_path.$row['bb_image']) && $row['bb_image']!="")
-					{
-						if(!unlink($this->big_image_path.$row['bb_image']))
-						{
-							$MyException = new MyException();
-							$array = array(
-								'message' 	=>'删除档案失败' ,
-								'type' 		=>'system' ,
-								'status'	=>'003'
-							);
-							
-							$MyException->setParams($array);
-							throw $MyException;
-						}
-					}
-				}
-				
-				$in_id_str = join("','", $ary);
-				$sql="DELETE FROM  big_banner WHERE bb_id IN('".$in_id_str."')";
-				$query = $this->db->query($sql);
-				$error = $this->db->error();
-				if($error['message'] !="")
-				{
-					$MyException = new MyException();
-					$array = array(
-						'message' 	=>$error['message'] ,
-						'type' 		=>'db' ,
-						'status'	=>'001'
-					);
-					
-					$MyException->setParams($array);
-					throw $MyException;
-				}
-				
-				$affected_rows= $this->db->affected_rows();
-				if($affected_rows   == 0)
-				{
-					$MyException = new MyException();
-					$array = array(
-						'message' 	=>'无资料更新' ,
-						'type' 		=>'db' ,
-						'status'	=>'999'
-					);
-					
-					$MyException->setParams($array);
-					throw $MyException;
-				}
-
-				return $affected_rows;
-			}
-			catch(MyException $e)
-			{
+				$MyException->setParams($array);
 				throw $MyException;
 			}
+			$in_id_str = join("','", $ary);
+			$sql="DELETE FROM  big_banner WHERE bb_id IN('".$in_id_str."')";
+			$query = $this->db->query($sql);
+			$error = $this->db->error();
+			if($error['message'] !="")
+			{
+				$MyException = new MyException();
+				$array = array(
+					'message' 	=>$error['message'] ,
+					'type' 		=>'db' ,
+					'status'	=>'001'
+				);
+				
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			if($this->db->affected_rows()   == 0)
+			{
+				$MyException = new MyException();
+				$array = array(
+					'message' 	=>'无资料更新' ,
+					'type' 		=>'db' ,
+					'status'	=>'999'
+				);
+				
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			return true;
 		}
 		
 		public function update($ary = array())
@@ -139,7 +90,7 @@
 					$insert_id = $this->db->insert_id();
 					$filename ='big_banner_'.$ary['bb_id'] ;
 					$config['file_name'] = md5($filename);
-					$config['upload_path'] = $this->big_image_path;
+					$config['upload_path'] = FCPATH.'../images/big_banner/';
 					$config['allowed_types'] = 'gif|jpg|png|jpeg';
 					$config['max_size']	= '2048';
 					$config['max_width']  = '3000';
@@ -353,7 +304,7 @@
 				$insert_id = $this->db->insert_id();
 				$filename ='big_banner_'.$insert_id ;
 				$config['file_name'] = md5($filename);
-				$config['upload_path'] = $this->big_image_path;
+				$config['upload_path'] = FCPATH.'../images/big_banner/';
 				$config['allowed_types'] = 'gif|jpg|png|jpeg';
 				$config['max_size']	= '5120';
 				$config['max_width']  = '3000';

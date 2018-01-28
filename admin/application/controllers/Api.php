@@ -92,11 +92,12 @@ class Api extends CI_Controller {
     }
 	
 
+	
 	public function delAdmin()
 	{
 		$output['status'] = 100;
 		$output['body'] =array();
-		$output['title'] ='删除后台角色';
+		$output['title'] ='刪除后台管理者';
 		$output['message'] = '刪除成功';
 		try 
 		{
@@ -776,7 +777,7 @@ class Api extends CI_Controller {
 		try 
 		{
 			$ary['ad.ad_account'] =  array('value' =>$ad_account , 'operator' =>'=');
-			$ary['ad.ad_role'] =  array('value' =>1 , 'operator' =>'<>');
+			$ary['ad.ad_role'] =  array('value' =>'1' , 'operator' =>'<>');
 			$ary['order'] = array(
 				'ad.ad_id'=>'DESC'
 			);
@@ -983,21 +984,21 @@ class Api extends CI_Controller {
 		$output['body'] =array();
 		$output['title'] ='測試用';
 		$output['message'] = '成功取得';
+		$this->admin->test();
+		// try 
+		// {
+			// $this->user->insert();
+		// }catch(MyException $e)
+		// {
+			// $parames = $e->getParams();
+			// $parames['class'] = __CLASS__;
+			// $parames['function'] = __function__;
+			// $output['message'] = $parames['message']; 
+			// $output['status'] = $parames['status']; 
+			// $this->myLog->error_log($parames);
+		// }
 		
-		try 
-		{
-			$this->user->insert();
-		}catch(MyException $e)
-		{
-			$parames = $e->getParams();
-			$parames['class'] = __CLASS__;
-			$parames['function'] = __function__;
-			$output['message'] = $parames['message']; 
-			$output['status'] = $parames['status']; 
-			$this->myLog->error_log($parames);
-		}
-		
-		$this->response($output);
+		// $this->response($output);
 	}
 	
 	public function addChildUser()

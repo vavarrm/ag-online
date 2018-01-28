@@ -37,7 +37,8 @@
 							<td valign="middle" ng-bind="row.ad_account"></td>
 							<td valign="middle" ng-bind="row.ar_name"></td>
 							<td valign="middle" >
-								
+								<a href="/admin/Admin/renterTemplates#!/system/adminList{{action.router}}/{{row.u_id}}"  ng-click="buttonClick(action);" ng-repeat-start="action in data.actions" ng-show="action.type=='button' && action.id !=10" type="button" class="btn btn-xs btn-default" ng-bind="action.title"></a>
+								<d ng-repeat-end></d>
 							</td>
 						</tr>
 					</tbody>
