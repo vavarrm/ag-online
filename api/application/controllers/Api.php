@@ -10,7 +10,6 @@ class Api extends CI_Controller {
 	{
 		parent::__construct();	
 		
-
 		$get = $this->input->get();
 		$this->load->model('User_Model', 'user');
 		$this->load->helper('captcha');
@@ -26,11 +25,13 @@ class Api extends CI_Controller {
 		$gitignore =array(
 			'login',
 			'logout',
-			'registered'
+			'registered',
+			'test',
+			'getCaptcha'
 		);		
-		
 		try 
 		{
+			
 			if(!in_array($this->uri->segment(2),$gitignore))
 			{
 				
@@ -85,6 +86,11 @@ class Api extends CI_Controller {
 			exit;
 		}
     }
+	
+	public function index()
+	{
+		echo "D";
+	}
 	
 	public function withdrawal()
 	{
@@ -802,16 +808,42 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
-	public function test()
+	public function getCaptcha()
 	{
 		$output['status'] = 100;
 		$output['body'] =array();
-		$output['title'] ='測試用';
+		$output['title'] ='取得验证码';
 		$output['message'] = '成功取得';
 		
 		try 
 		{
-			$this->user->insert();
+			for($i = 0 ; $i < 6 ; $i++)
+			{
+			  $randomWord .= chr( rand( 97, 122 ) );
+			}
+			setcookie("captcha",$randomWord);
+			$vals = array(
+					'word'          => $randomWord,
+					'img_path'      => './captcha/',
+					'img_url'       => $_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'].'/api/captcha/',
+					'img_width'     => '150',
+					'img_height'    => 30,
+					'expiration'    => 7200,
+					'word_length'   => 8,
+					'font_size'     => 16,
+					'img_id'        => 'Imageid',
+					'pool'          => '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+					'colors'        => array(
+									'background' => array(255, 255, 255),
+									'border' => array(255, 255, 255),
+									'text' => array(0, 0, 0),
+									'grid' => array(255, 40, 40)
+					)
+			);
+
+			$cap = create_captcha($vals);
+			
+			$output['body'] = $cap;
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();
@@ -986,12 +1018,25 @@ class Api extends CI_Controller {
 				$this->request['name']	==""|| 
 				$this->request['account']	==""|| 
 				$this->request['passwd']	=="" ||
+				$this->request['captcha']	==""  ||
 				$rl_id ==""
 			){
 				$array = array(
 					'message' 	=>'reponse 必傳參數為空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			if($_COOKIE['captcha'] != $this->request['captcha'])
+			{
+				$array = array(
+					'message' 	=>'验证码错误' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
 				);
 				$MyException = new MyException();
 				$MyException->setParams($array);
