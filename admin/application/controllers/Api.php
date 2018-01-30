@@ -38,7 +38,7 @@ class Api extends CI_Controller {
 					$get['sess']	==""
 				){
 					$array = array(
-						'message' 	=>'reponse 必傳參數為空' ,
+						'message' 	=>'reponse 必传参数为空' ,
 						'type' 		=>'api' ,
 						'status'	=>'002'
 					);
@@ -91,7 +91,85 @@ class Api extends CI_Controller {
 		}
     }
 	
+	public function changePhoneCallBackStatus()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+			'affected_rows'	=>0
+		);
+		$output['title'] ='修改电话回拨状态';
+		$output['message'] = '成功';
+		try 
+		{
+			if(
+				$this->request['pcb_id']	=="" ||
+				$this->request['pcb_status']	==""
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
 
+			
+			$affected_rows  = $this->website->changePhoneCallBackStatus($this->request);
+			$output['affected_rows']= $affected_rows ;
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function getPhoneCallBackList()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='電話回撥列表';
+		$output['message'] = '执行成功';
+		
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
+		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
+		$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
+		$order = (isset($this->request['order']))?$this->request['order']:array();
+		$pcb_phone = (isset($this->request['pcb_phone']))?$this->request['pcb_phone']:'';
+		$pcb_status = (isset($this->request['pcb_status']))?$this->request['pcb_status']:'';
+		
+		try 
+		{
+			$ary['order']=$order ;
+			$ary['pcb_phone'] =  array('operator' => '=' , 'value'=>$pcb_phone); 
+			$ary['pcb_status'] =  array('operator' => '=' , 'value'=>$pcb_status); 
+			$ary['start_time'] =  array('operator' => '>=' , 'value'=>$start_time); 
+			$ary['end_time'] =  array('operator' => '<=' , 'value'=>$end_time); 
+			$output['body'] = $this->website->getPhoneCallBackList($ary);
+			$output['body']['actionlist'] = $this->admin->getActionlist($this->request['am_id']);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
 	
 	public function delAdmin()
 	{
@@ -106,7 +184,7 @@ class Api extends CI_Controller {
 				count($this->request['ad_id']) == 0
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -141,7 +219,7 @@ class Api extends CI_Controller {
 				$post['order'] ==="" 
 			){
 				$array = array(
-					'message' 	=>'必傳參數為空' ,
+					'message' 	=>'必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -191,7 +269,7 @@ class Api extends CI_Controller {
 				$post['bb_id'] =="" 
 			){
 				$array = array(
-					'message' 	=>'必傳參數為空11' ,
+					'message' 	=>'必传参数为空11' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -243,7 +321,7 @@ class Api extends CI_Controller {
 				$post['qq_account'] =="" 
 			){
 				$array = array(
-					'message' 	=>'必傳參數為空' ,
+					'message' 	=>'必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -343,7 +421,7 @@ class Api extends CI_Controller {
 				count($this->request['bb_id']) == 0
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -380,7 +458,7 @@ class Api extends CI_Controller {
 				$this->request['bb_id']	==""
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -448,7 +526,7 @@ class Api extends CI_Controller {
 				$this->request['ua_status']	==""
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -457,19 +535,19 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}	
 			
-			// if(
-				// $this->request['ua_status']	=="payment" ||
-				// $this->request['ua_status']	=="stopPayment" 
-			// ){
-				// $array = array(
-					// 'message' 	=>'已出款拒绝出款不能在修改' ,
-					// 'type' 		=>'api' ,
-					// 'status'	=>'999'
-				// );
-				// $MyException = new MyException();
-				// $MyException->setParams($array);
-				// throw $MyException;
-			// }
+			if(
+				$this->request['ua_status']	=="payment" ||
+				$this->request['ua_status']	=="stopPayment" 
+			){
+				$array = array(
+					'message' 	=>'已设定拒绝出款不能在修改' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
 			
 			$affected_rows  = $this->rechargenit->changeStatus(array($this->request['ua_id']), $this->request['ua_status'], $this->admin_data );
 			if($affected_rows  == 0)
@@ -559,7 +637,7 @@ class Api extends CI_Controller {
 				$post['an_id'] =="" 
 			){
 				$array = array(
-					'message' 	=>'必傳參數為空' ,
+					'message' 	=>'必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -610,7 +688,7 @@ class Api extends CI_Controller {
 				$this->request['an_id'] =="" 
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -646,7 +724,7 @@ class Api extends CI_Controller {
 				count($this->request['an_id']) == 0
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -684,7 +762,7 @@ class Api extends CI_Controller {
 				$post['type'] =="" 
 			){
 				$array = array(
-					'message' 	=>'必傳參數為空' ,
+					'message' 	=>'必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -812,7 +890,7 @@ class Api extends CI_Controller {
 				$this->request['role']	 =="" 
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -926,7 +1004,7 @@ class Api extends CI_Controller {
 			if($this->request['am_id']=="" && $post['am_id'] =="")
 			{
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -954,7 +1032,7 @@ class Api extends CI_Controller {
 				$this->request['am_id']	==""
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1016,7 +1094,7 @@ class Api extends CI_Controller {
 				$this->request['superior']	=="" 
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1119,7 +1197,7 @@ class Api extends CI_Controller {
 				$this->request['superior']	=="" 
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1219,7 +1297,7 @@ class Api extends CI_Controller {
 				$this->request['superior_id']	==""
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1253,7 +1331,7 @@ class Api extends CI_Controller {
 				$this->request['u_id']	==""
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1287,7 +1365,7 @@ class Api extends CI_Controller {
 				$this->request['u_id']	==""
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1322,7 +1400,7 @@ class Api extends CI_Controller {
 				$this->request['u_id']	==""
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1358,7 +1436,7 @@ class Api extends CI_Controller {
 				$this->request['passwd_confirm']	=="" 
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1438,7 +1516,7 @@ class Api extends CI_Controller {
 			if($ary['u_id']  =="")
 			{
 				$array = array(
-						'message' 	=>'reponse 必傳參數為空' ,
+						'message' 	=>'reponse 必传参数为空' ,
 						'type' 		=>'api' ,
 						'status'	=>'002'
 					);
@@ -1473,7 +1551,7 @@ class Api extends CI_Controller {
 				$this->request['passwd_confirm']	=="" 
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1594,7 +1672,7 @@ class Api extends CI_Controller {
 				$this->request['u_id']	==""
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1661,7 +1739,7 @@ class Api extends CI_Controller {
 			)
 			{
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1748,7 +1826,7 @@ class Api extends CI_Controller {
 			)
 			{
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1816,7 +1894,7 @@ class Api extends CI_Controller {
 				$this->request['u_id']	==""
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -1932,7 +2010,7 @@ class Api extends CI_Controller {
 				$this->request['passwd']	=="" 
 			){
 				$array = array(
-					'message' 	=>'reponse 必傳參數為空' ,
+					'message' 	=>'reponse 必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);

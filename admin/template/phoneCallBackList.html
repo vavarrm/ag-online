@@ -1,0 +1,88 @@
+<input type="hidden"  ng-model="data.router" ng-init="data.router ='/getPhoneCallBackList'">
+<div  ng-init="phoneCallBackListInit()">
+	<div class="grid_3 grid_4">
+		<div class="grid-form1">
+			<form class="form-inline">
+				<div class="form-group">
+					电话：<input type="text" ng-model="data.search.pcb_phone" class="form-control" placeholder="电话">
+				</div>
+				<p>
+				<div class="form-group">
+					处理状态：
+					<select ng-model="data.search.pcb_status" ng-init="data.search.pcb_status=''" ng-change="search_click()">
+						<option value="">全部</option>
+						<option value="processing">处理中</option>
+						<option value="reply">已回覆</option>
+						<option value="close">结案</option>
+					</select>
+				</div>
+				<p>
+				<div class="form-group">
+					时间：<input type="text" ng-model="data.search.start_time" class="form-control datepicker" placeholder="起" >~<input placeholder="迄" type="text" ng-model="data.search.end_time" class="form-control datepicker" >
+				</div><p>
+				<div class="form-group">
+					<button type="submit" class="btn btn-default" ng-click="search_click()">搜寻</button>
+					<button  class="btn btn-default" ng-click="reset()">清除搜寻条件</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="grid_3 grid_4">
+		<div class="col-md-12 page_1">
+			<a href="/admin/index.php?/Admin/renterTemplates#!/system{{action.router}}" ng-click="actionClick($event, action.func)" ng-repeat-start="action in data.actions" ng-if="action.type =='head_button' " type="button" class="btn btn-lg btn-default" ng-bind="action.title"></a>
+			<span ng-repeat-end></span>
+		</div>
+		<div class="clearfix"> </div>
+		<div class="but_list">
+			<div class="col-md-12 page_1">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th width="10%" style="text-align:center">電話</th>
+							<th width="10%" style="text-align:center">訊息</th>
+							<th width="10%" style="text-align:center">
+								<a href="" ng-click="orderClick('pcb_add_datetime	');$event.preventDefault();">发怖日</a> 
+								<i  ng-show="data.order.pcb_add_datetime=='DESC'" class="fa fa-chevron-down" aria-hidden="true"></i>
+								<i  ng-show="data.order.pcb_add_datetime=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
+							</th>
+							<th width="10%" style="text-align:center">
+								处理状态
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="row in data.list">
+							<td valign="middle" ng-bind="row.pcb_phone"></td>
+							<td valign="middle" ng-bind="row.pcb_message"></td>
+							<td valign="middle" ng-bind="row.pcb_add_datetime"></td>
+							<td valign="middle" ng-model="row.selectChange" ng-init="row.selectChange='0'">
+								<select ng-model="row.pcb_status" ng-change="pcbStatusChange(row)">
+									<option value="processing">处理中</option>
+									<option value="reply">已回覆</option>
+									<option value="close">已结案</option>
+								</select>
+								<input  ng-disabled="row.selectChange=='0'" type="text"  ng-model="row.pcb_remarks" ng-bind="row.pcb_remarks">
+								<a href="/admin/Admin/renterTemplates#!/website{{action.router}}" ng-click="actionClick($event, action.func, row)" ng-repeat-start="action in data.actions" ng-if="action.type =='button'" ng-show="row.selectChange=='1'" type="button" class="btn btn-xs btn-default" ng-bind="action.title"></a>
+								<span ng-repeat-end></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>  
+				<div>
+					<ul class="pagination pagination-sm">
+						<li  ng-class="data.p=='1'?'disabled':''">
+							<a ng-click="clickpage(data.p -1);$event.preventDefault();" href="#"><i class="fa fa-angle-left"></i></a>
+						</li>
+						<li  ng-class="($index +1)==data.p?'active':''" ng-repeat="n in [] | range:pageinfo.pages">
+							<a ng-click="clickpage($index +1);$event.preventDefault();" href="#" ng-bind="$index +1"></a>
+						</li>
+						<li ng-class="data.p==pageinfo.pages?'disabled':''">
+							<a ng-click="clickpage(data.p +1);$event.preventDefault();" href="#"><i class="fa fa-angle-right"></i></a>
+						</li>
+					</ul>	
+				</div>
+			</div>
+			<div class="clearfix"> </div>
+		</div>
+	</div>
+</div>

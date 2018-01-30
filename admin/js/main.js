@@ -91,6 +91,10 @@ agApp.config(function($routeProvider){
 		cache: false,
 	}).when("/admin/menuList/",{
 		templateUrl: templatePath+"menuList.html"+"?"+ Math.random(),
+		controller: "adminCtrl",
+		cache: false,
+	}).when("/website/phoneCallBackList/",{
+		templateUrl: templatePath+"phoneCallBackList.html"+"?"+ Math.random(),
 		controller: "websiteCtrl",
 		cache: false,
 	})
@@ -107,6 +111,136 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		p:1,
 		row:{},
 		search:{}
+	}
+	
+	$scope.changeStatus = function(row)
+	{
+		var obj =
+		{
+			'message' :'确认送出',
+			buttons: 
+			[
+				{
+					text: "是",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+						var obj={
+							pcb_status :row.pcb_status,
+							pcb_id :row.pcb_id,
+							pcb_remarks :row.pcb_remarks
+						}
+						var promise = apiService.adminApi('/changePhoneCallBackStatus', obj);
+						promise.then
+						(
+							function(r) 
+							{
+								if(r.data.status =="100")
+								{
+									var obj =
+									{
+										'message' :'送出成功',
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+													$scope.search();
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}else{
+									var obj =
+									{
+										'message' :r.data.message,
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}
+							},
+							function() {
+								var obj ={
+									'message' :'系統錯誤'
+								};
+								 dialog(obj);
+							}
+						)
+					}
+				},
+				{
+					text: "否",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+					}
+				}
+			]
+		};
+		dialog(obj);
+	}
+	
+	$scope.phoneCallBackListInit = function()
+	{
+		$scope.search();
+		var obj={};
+		var promise = apiService.adminApi('/getActionList', obj);
+		promise.then
+		(
+			function(r) 
+			{
+				if(r.data.status =="100")
+				{
+					$scope.data.actions = r.data.body.actionlist;
+				}else
+				{
+					var obj =
+					{
+						'message' :r.data.message,
+						buttons: 
+						[
+							{
+								text: "close",
+								click: function() 
+								{
+									$( this ).dialog( "close" );
+								}
+							}
+						]
+					};
+					dialog(obj);
+				}
+			},
+			function() {
+				var obj ={
+					'message' :'系統錯誤'
+				};
+				 dialog(obj);
+			}
+		)
+	}
+	
+	$scope.pcbStatusChange = function(row)
+	{
+		row.selectChange ='1';
+	}
+	
+	$scope.search_click = function()
+	{
+		$scope.data.p= 1;
+		$scope.search();
 	}
 	
 	$scope.editFooterInit = function()
@@ -151,14 +285,14 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		)
 	}
 	
-	$scope.actionClick = function($event,func)
+	$scope.actionClick = function($event,func, row)
 	{
 		if( func !=null)
 		{
 			$event.preventDefault();
 			if(typeof $scope[func] =='function')
 			{
-				$scope[func]();
+				$scope[func](row);
 			}
 		}
 		

@@ -10,6 +10,141 @@
 			$this->load->database();
 		}
 		
+		public function changePhoneCallBackStatus($ary =array())
+		{
+			try
+			{
+				$sql ="	UPDATE   phone_call_back 	
+						SET 
+							pcb_status= ?  ,
+							pcb_remarks =?
+						WHERE pcb_id =?";
+				$bind = array(
+					$ary['pcb_status'],
+					$ary['pcb_remarks'],
+					$ary['pcb_id'],
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$affected_rows = $this->db->affected_rows();
+				
+				
+				if($affected_rows ==0)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'无资料更新' ,
+						'type' 		=>'db' ,
+						'status'	=>'999'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				return 	$affected_rows ;
+			}	
+			catch(MyException $e)
+			{
+				throw $MyException;
+				return 0;
+			}
+		}
+		
+		public function getPhoneCallBackList($ary=array())
+		{
+			$where .=" WHERE 1 = 1";
+			$gitignore = array(
+				'limit',
+				'p',
+				'order'
+			);
+			$limit = sprintf(" LIMIT %d, %d",abs($ary['p']-1)*$ary['limit'],$ary['limit']);
+
+			if(is_array($ary))
+			{
+				foreach($ary as $key => $value)
+				{
+					if(in_array($key, $gitignore) ||  $value['value'] ==="" )	
+					{
+						continue;
+					}
+					if($key =="start_time" || $key=="end_time"  )
+					{
+						if($value['value']!='')
+						{
+							$where .=sprintf(" AND DATE_FORMAT(`pcb_add_datetime`, '%s') %s ?", '%Y-%m-%d', $value['operator']);					
+							$bind[] = $value['value'];
+						}
+					}else
+					{
+						$where .=sprintf(" AND %s %s ?", $key, $value['operator']);					
+						$bind[] = $value['value'];
+					}
+				}
+			}
+			
+			if(is_array($ary['order']) && count($ary['order']) >0)
+			{
+				$order =" ORDER BY ";
+				foreach($ary['order'] AS $key =>$value)
+				{
+					$order.=sprintf( ' %s %s ', $key, $value);
+				}
+			}
+			
+			$sql =" SELECT 
+						*,
+						CASE pcb_status 
+							WHEN 'processing' THEN '处理中'
+							WHEN 'close' THEN '以结案'
+						END 
+						AS 	pcb_status_str
+					FROM 
+						phone_call_back";
+			$search_sql = $sql.$where.$order.$limit ;
+			$query = $this->db->query($search_sql, $bind);
+			$rows = $query->result_array();
+			
+			$total_sql = sprintf("SELECT COUNT(*) AS total FROM(%s) AS t",$sql.$where) ;
+			$query = $this->db->query($total_sql, $bind);
+			$row = $query->row_array();
+			
+			$query->free_result();
+			$output['list'] = $rows;
+			$output['pageinfo']  = array(
+				'total'	=>$row['total'],
+				'pages'	=>ceil($row['total']/$ary['limit'])
+			);
+			
+			$error = $this->db->error();
+			if($error['message'] !="")
+			{
+				$MyException = new MyException();
+				$array = array(
+					'message' 	=>$error['message'] ,
+					'type' 		=>'db' ,
+					'status'	=>'001'
+				);
+				
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			return 	$output  ;
+		}
+		
 		public function getListByKey($ary = array())
 		{
 			$output= array('list' =>array());
