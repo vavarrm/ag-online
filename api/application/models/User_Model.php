@@ -694,7 +694,6 @@
 					
 					$MyException->setParams($array);
 					throw $MyException;
-					break;
 				}
 				return $affected_rows;
 				

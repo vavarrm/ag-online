@@ -97,6 +97,10 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"phoneCallBackList.html"+"?"+ Math.random(),
 		controller: "websiteCtrl",
 		cache: false,
+	}).when("/website/setAccountLimit/",{
+		templateUrl: templatePath+"setAccountLimit.html"+"?"+ Math.random(),
+		controller: "websiteCtrl",
+		cache: false,
 	})
 });
 var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $rootScope)
@@ -110,7 +114,125 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		order:{},
 		p:1,
 		row:{},
-		search:{}
+		search:{},
+		inputList:{},
+		input:{}
+	}
+	
+	
+	$scope.setAccountLimit = function()
+	{
+		var obj =
+		{
+			'message' :'确认修改',
+			buttons: 
+			[
+				{
+					text: "是",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+						var obj ={};
+						console.log();
+						var promise = apiService.adminApi("/setAccountLimit", $scope.data.input);
+						promise.then
+						(
+							function(r) 
+							{
+								if(r.data.status =="100")
+								{
+									var obj =
+									{
+										'message' :'送出成功',
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}else{
+									var obj =
+									{
+										'message' :r.data.message,
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}
+							},
+							function() {
+								var obj ={
+									'message' :'系統錯誤'
+								};
+								 dialog(obj);
+							}
+						)
+					}
+				},
+				{
+					text: "否",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+					}
+				}
+			]
+		};
+		dialog(obj);
+		return false;
+	}
+	
+	$scope.setAccountLimitInit = function()
+	{
+		var obj={};
+		var promise =  apiService.adminApi('/setAccountLimitInit', obj);
+		promise.then
+		(
+			function(r) 
+			{
+				if(r.data.status =="100")
+				{
+					$scope.data.list = r.data.body.list;
+				}else
+				{
+					var obj =
+					{
+						'message' :r.data.message,
+						buttons: 
+						[
+							{
+								text: "close",
+								click: function() 
+								{
+									$( this ).dialog( "close" );
+								}
+							}
+						]
+					};
+					dialog(obj);
+				}
+			},
+			function() {
+				var obj ={
+					'message' :'系統錯誤'
+				};
+				 dialog(obj);
+			}
+		)
 	}
 	
 	$scope.changeStatus = function(row)
@@ -1097,6 +1219,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			ua_remarks :$scope.data.remarks,
 			
 		};
+		console.log(obj);
 		var promise = apiService.adminApi('/addBalance', obj);
 		promise.then
 		(
@@ -1115,7 +1238,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 								{
 									$( this ).dialog( "close" );
 									$('input[name=am_id]', parent.document).val('19');
-									location.href="/admin/renterTemplates#!/account/rechargeAuditList/";
+									location.href="/admin/Admin/renterTemplates#!/account/rechargeAuditList/";
 								}
 							}
 						]
@@ -1162,7 +1285,6 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 				{
 					$scope.data.options = r.data.body.options;
 					$scope.data.user = r.data.body.user;
-					console.log($scope.data.user);
 				}else{
 					var obj =
 					{
@@ -1535,6 +1657,16 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		order:{}
 	};
 	
+	$scope.changeStatus = function(row)
+	{
+		if(row.ua_status!='audit')
+		{
+			row.change_select_onchange ='1';
+		}else{
+			row.change_select_onchange ='0';
+		}
+	}
+	
 	$scope.orderClick = function(order_key)
 	{
 		if( typeof $scope.data.order[order_key] =='undefined')
@@ -1672,12 +1804,29 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 	}
 	
 	
-	
-	$scope.checkRechargeAuditClick= function(action, ua_status, ua_id)
+	$scope.actionClick = function($event,action, row)
 	{
+		if( action.func !=null)
+		{
+			$event.preventDefault();
+			if(typeof $scope[action.func] =='function')
+			{
+				$scope[action.func](row,action);
+			}
+		}
+		
+	}
+	
+	$scope.RechargeAuditChange= function(row, action)
+	{
+		if(row.change_status_disabled =='1')
+		{
+			return false;
+		}
 		var postobj ={
-			ua_id : ua_id,
-			ua_status: ua_status
+			ua_id : row.ua_id,
+			ua_status: row.ua_status,
+			ua_change_status_remarks : row.ua_change_status_remarks
 		};
 		$('input[name=am_id]', parent.document).val(action.id);
 		var obj =
@@ -1707,6 +1856,7 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 												click: function() 
 												{
 													$( this ).dialog( "close" );
+													$scope.search();
 												}
 											}
 										]
@@ -2204,14 +2354,12 @@ var bodyCtrl = function($scope, apiService, $cookies, $rootScope, $routeParams){
 	
 	$scope.navclick = function(title, root_router, nodes_router ,nodes_id)
 	{
-		// console.log(nodes_id);
 		$scope.data.root.router = root_router;
 		$scope.data.nodes.router = nodes_router;
 		$scope.data.nodes.title = title;
 		$scope.data.nodes_id = nodes_id;
 		$scope.data.am_id = nodes_id;
 		$('input[name=am_id]').val(nodes_id);
-		// console.log($scope.data.am_id);
 		// $scope.data.nodes.router='s';
 	}
 	
@@ -2234,7 +2382,6 @@ var bodyCtrl = function($scope, apiService, $cookies, $rootScope, $routeParams){
 		{
 			$scope.data.selected=id;
 		}
-		// console.log(id);
 	}
 	
 	$scope.getMenu = function()
@@ -2307,6 +2454,20 @@ agApp.filter('range', function() {
     }
 
     return input;
+  };
+});
+
+agApp.directive('stringToNumber', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$parsers.push(function(value) {
+        return '' + value;
+      });
+      ngModel.$formatters.push(function(value) {
+        return parseFloat(value);
+      });
+    }
   };
 });
 

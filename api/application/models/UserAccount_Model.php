@@ -15,7 +15,7 @@
 				
 				$sql ="
 						SELECT   IFNULL(SUM(Balance),0)  AS balance FROM  (
-							SELECT ua_id , IFNULL(ua_value,0) AS Balance FROM user_account WHERE ua_u_id = ? AND ua_status = 'recorded'
+							SELECT ua_id , IFNULL(ua_value,0) AS Balance FROM user_account WHERE ua_u_id = ? AND ua_status = 'received'
 							UNION
 							SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'payment'
 						) AS t";
@@ -82,6 +82,122 @@
 			}
 		}
 		
+		public function getAccountLimit()
+		{
+			try {
+				$sql ="SELECT * FROM web_config WHERE wc_group ='account'";
+				$query=$this->db->query($sql);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw  $MyException;
+				}
+				$rows = $query->result_array();
+				$query->free_result();
+
+				
+				if(empty($rows))
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'无法取到充提限制' ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw  $MyException;
+				}
+				
+				foreach($rows as $value)
+				{
+					$output[$value['wc_key']] = $value;
+				}
+				return $output;
+			}
+			catch (Exception $e) {
+				throw $e;
+			}
+		}
+		
+		public function getWithdrawal($u_id)
+		{
+			try 
+			{
+
+						
+				$sql =" SELECT 
+								(
+									SELECT COUNT(*) 
+									FROM  
+										user_account 
+									WHERE 
+										ua_u_id = ua.ua_u_id  AND 
+										DATE_FORMAT(NOW(),'%Y-%m-%d') =  DATE_FORMAT(ua_add_datetime,'%Y-%m-%d') 
+										AND ua_status = 'audit'
+										AND ua_type in('3')
+								) AS today_audit_number,
+								(
+									SELECT COUNT(*) 
+									FROM  
+										user_account 
+									WHERE 
+										ua_u_id = ua.ua_u_id  AND 
+										DATE_FORMAT(NOW(),'%Y-%m-%d') =  DATE_FORMAT(ua_add_datetime,'%Y-%m-%d') 
+										AND ua_status = 'payment'
+										AND ua_type in('3')
+								) AS today_payment_number,
+								(
+									SELECT IFNULL(SUM(ua_value),0) 
+									FROM  
+										user_account 
+									WHERE 
+										ua_u_id = ua.ua_u_id  AND 
+										DATE_FORMAT(NOW(),'%Y-%m-%d') =  DATE_FORMAT(ua_add_datetime,'%Y-%m-%d') 
+										AND ua_status = 'payment'
+										AND ua_type in('3')
+								) AS today_payment_value
+								FROM 
+									 user_account AS ua
+								WHERE 
+								ua.ua_u_id =?
+								AND DATE_FORMAT(NOW(),'%Y-%m-%d') =  DATE_FORMAT(ua.ua_add_datetime,'%Y-%m-%d') 
+								";
+				$bind = array(
+					$u_id
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$row =  $query->row_array();
+				$query->free_result();
+				return $row;
+				
+			}catch(MyException $e)
+			{
+				throw $e;
+			}
+		}
+		
 		public function withdrawal($ary)
 		{
 			try 
@@ -109,6 +225,48 @@
 					$MyException = new MyException();
 					$array = array(
 						'message' 	=>'尚未绑定银行卡' ,
+						'type' 		=>'system' ,
+						'status'	=>'999'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$withdrawal= $this->getWithdrawal($ary['u_id']);
+				$accountLimit =$this->getAccountLimit();
+				
+				if( $withdrawal['today_audit_number']  >= $accountLimit['withdrawal_time_max']['wc_value'])
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'每日提款次数上限为'.$accountLimit['withdrawal_time_max']['wc_value'] ,
+						'type' 		=>'system' ,
+						'status'	=>'999'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				if( $withdrawal['today_payment_number']  >= $accountLimit['withdrawal_time_max']['wc_value'])
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'每日提款次数上限为'.$accountLimit['withdrawal_time_max']['wc_value'] ,
+						'type' 		=>'system' ,
+						'status'	=>'999'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				if( $withdrawal['today_payment_value']  >= $accountLimit['withdrawal_value_max']['wc_value'])
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'每日提款额度上限为'.$accountLimit['withdrawal_value_max']['wc_value'] ,
 						'type' 		=>'system' ,
 						'status'	=>'999'
 					);

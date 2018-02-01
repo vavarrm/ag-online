@@ -132,6 +132,88 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
+	public function setAccountLimit()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='设定平台充提设定';
+		$output['message'] = '执行成功';
+		
+		
+		try 
+		{
+			if(empty($this->request))
+			{
+				$array = array(
+					'message' 	=>'必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			foreach($this->request as $key=> $value)
+			{
+				if($value <1)
+				{
+					$array = array(
+						'message' 	=>'输入参数必须大于0' ,
+						'type' 		=>'api' ,
+						'status'	=>'002'
+					);
+					$MyException = new MyException();
+					$MyException->setParams($array);
+					throw $MyException;
+					break;
+				}
+				$ary['wc_id'] = $key; 
+				$ary['wc_value'] = $value; 
+				$this->website->setValue($ary);
+				
+			}
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function setAccountLimitInit()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='取得平台充提设定';
+		$output['message'] = '执行成功';
+		
+		
+		try 
+		{
+			$data = $this->website->getListByGroup('account');
+			$output['body']['list'] = $data['list'];
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
 	public function getPhoneCallBackList()
 	{
 		$output['status'] = 100;
@@ -144,7 +226,7 @@ class Api extends CI_Controller {
 		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
 		$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
-		$order = (isset($this->request['order']))?$this->request['order']:array();
+		$order = (count($this->request['order']) >0 && is_array($this->request['order']))?$this->request['order']:array("pcb_add_datetime" =>"DESC");
 		$pcb_phone = (isset($this->request['pcb_phone']))?$this->request['pcb_phone']:'';
 		$pcb_status = (isset($this->request['pcb_status']))?$this->request['pcb_status']:'';
 		
@@ -269,7 +351,7 @@ class Api extends CI_Controller {
 				$post['bb_id'] =="" 
 			){
 				$array = array(
-					'message' 	=>'必传参数为空11' ,
+					'message' 	=>'必传参数为空' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -392,7 +474,7 @@ class Api extends CI_Controller {
 			
 			foreach($rows['list'] as $key =>$value)
 			{
-				$output['body']['list'][$value['we_key']] = $value;
+				$output['body']['list'][$value['wc_key']] = $value;
 			}
 			
 		}catch(MyException $e)
@@ -535,21 +617,8 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}	
 			
-			if(
-				$this->request['ua_status']	=="payment" ||
-				$this->request['ua_status']	=="stopPayment" 
-			){
-				$array = array(
-					'message' 	=>'已设定拒绝出款不能在修改' ,
-					'type' 		=>'api' ,
-					'status'	=>'999'
-				);
-				$MyException = new MyException();
-				$MyException->setParams($array);
-				throw $MyException;
-			}
-			
-			$affected_rows  = $this->rechargenit->changeStatus(array($this->request['ua_id']), $this->request['ua_status'], $this->admin_data );
+	
+			$affected_rows  = $this->rechargenit->changeStatus($this->request, $this->admin_data );
 			if($affected_rows  == 0)
 			{
 				$array = array(
@@ -1747,7 +1816,7 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}	
-			$affected_rows  = $this->rechargenit->changeStatus(array($this->request['ua_id']),$this->request['ua_status'], $this->admin_data);
+			$affected_rows  = $this->rechargenit->changeStatus($this->request, $this->admin_data);
 			if($affected_rows  ==0)
 			{
 				$array = array(
@@ -1796,6 +1865,8 @@ class Api extends CI_Controller {
 			if(is_array($this->request['order']) && count($this->request['order'])>0)
 			{
 				$ary['order'] = $this->request['order'];
+			}else{
+				$ary['order'] = array('ua_id'=>'DESC');
 			}
 			$output['body'] = $this->rechargenit->getList($ary);
 			$output['body']['actions'] = $this->admin->getActionlist($this->request['am_id']);
@@ -1854,7 +1925,7 @@ class Api extends CI_Controller {
 				'ua_from' =>$this->admin_data['ad_id'],
 				'ua_to' =>$this->request['u_id'],
 				'ua_balance' =>intval($this->request['u_balance']),
-				'ua_remarks' =>intval($this->request['ua_remarks']),
+				'ua_remarks' =>$this->request['ua_remarks'],
 			);
 			$affected_rows = $this->rechargenit->addBalance($ary);
 			if($affected_rows <=0)

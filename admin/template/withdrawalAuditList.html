@@ -36,7 +36,7 @@
 								<i  ng-show="data.order.ua_value=='DESC'" class="fa fa-chevron-down" aria-hidden="true"></i>
 								<i  ng-show="data.order.ua_value=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
 							</th>
-							<th width="2%"  style="text-align:center">
+							<th width="5%"  style="text-align:center">
 								<a href="" ng-click="orderClick('ua_status_show');$event.preventDefault();">状态</a> 
 								<i  ng-show="data.order.ua_status_show=='DESC'" class="fa fa-chevron-down" aria-hidden="true"></i>
 								<i  ng-show="data.order.ua_status_show=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
@@ -64,13 +64,14 @@
 							</td>
 							<td valign="middle" ng-bind="row.ua_value"></td>
 							<td valign="middle" >
-								<select ng-model="row.ua_status" ng-disabled="row.withdrawal_disabled =='1'">
+								<select ng-model="row.ua_status" ng-disabled="row.withdrawal_disabled =='1'" ng-change="changeStatus(row)">
 									<option value="audit">未审核</option>
 									<option value="stopPayment">拒绝出款</option>
 									<option value="payment">已出款</option>
 								</select>
-								<a  ng-if="row.withdrawal_disabled !='1'" ng-repeat-start="action in data.actions" ng-click="withdrawalAuditClick(action,row.ua_status,row.ua_id)" type="button" class="btn btn-xs btn-default" ng-bind="action.title">新增</a>
+								<a  ng-if="row.withdrawal_disabled !='1'" ng-repeat-start="action in data.actions"  ng-click="actionClick($event, action, row)"  type="button" class="btn btn-xs btn-default" ng-bind="action.title">新增</a>
 								<span ng-repeat-end></span>
+								<input type="text" ng-model="row.ua_change_status_remarks" value="{row.ua_change_status_remarks}" ng-disabled="row.change_select_onchange!='1'" placeholder="请输入处理备注">
 							</td>
 							<td valign="middle" ng-bind="row.ua_add_datetime"></td>
 							<td valign="middle"  ng-bind="row.today_payment_number+'/'+row.today_payment_value"></td>

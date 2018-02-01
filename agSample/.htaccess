@@ -1,0 +1,6 @@
+<IfModule mod_env.c>
+	SetEnv API_URL http://www.connect6play.com/doBusiness.do
+	SetEnv MERCHANT_CODE ldylsoft
+	SetEnv DES_KEY lqPyVFhD
+	SetEnv SHA256_KEY u12Ew5unImS0fYHA
+</IfModule>

@@ -145,6 +145,85 @@
 			return 	$output  ;
 		}
 		
+		public function setValue($ary)
+		{
+			try
+			{
+				$affected_rows = 0;
+				if(!is_array($ary) || count($ary)==0)
+				{
+					$array = array(
+						'message' 	=>'参数传递错误' ,
+						'type' 		=>'api' ,
+						'status'	=>'002'
+					);
+					$MyException = new MyException();
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$this->db->where('wc_id', $ary['wc_id']);
+				$this->db->update('web_config', array('wc_value'=> $ary['wc_value']));
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$affected_rows += $this->db->affected_rows();
+				return $affected_rows;
+			}catch(MyException $e)
+			{
+				throw $MyException;
+			}
+
+		}
+		
+		
+		public function getListByGroup($group)
+		{
+			$output= array('list' =>array());
+			try
+			{
+				
+				$sql ="SELECT * FROM web_config WHERE 	wc_group =?";
+				$query = $this->db->query($sql, array($group));
+				$rows = $query->result_array();
+
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$query->free_result();
+				$output['list'] = $rows;
+				
+			}catch(MyException $e)
+			{
+				$this->db->trans_rollback();
+				throw $MyException;
+				return false;
+			}
+			return $output;
+		}
+		
 		public function getListByKey($ary = array())
 		{
 			$output= array('list' =>array());
@@ -171,7 +250,7 @@
 				
 				$in_str = join("','", $in_ary);
 				
-				$sql =sprintf("SELECT * FROM web_config WHERE we_key IN ('%s')", $in_str);
+				$sql =sprintf("SELECT * FROM web_config WHERE wc_key IN ('%s')", $in_str);
 				$query = $this->db->query($sql);
 				$rows = $query->result_array();
 
@@ -207,7 +286,7 @@
 			$this->db->trans_start();
 			try
 			{
-				$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='wechat_account'";
+				$sql = "UPDATE web_config SET wc_value =? WHERE wc_key ='wechat_account'";
 				
 				$bind = array(
 					$ary['wechat_account']
@@ -253,7 +332,7 @@
 					}
 					$image= $this->CI->upload->data();
 				
-					$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='wechat_qr_image'";
+					$sql = "UPDATE web_config SET wc_value =? WHERE wc_key ='wechat_qr_image'";
 			
 					$bind = array(
 						$image['file_name']
@@ -276,7 +355,7 @@
 				}
 			
 				
-				$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='qq_account'";
+				$sql = "UPDATE web_config SET wc_value =? WHERE wc_key ='qq_account'";
 				$bind = array(
 					$ary['qq_account']
 				);
@@ -323,7 +402,7 @@
 
 					$image= $this->CI->upload->data();
 				
-					$sql = "UPDATE web_config SET wc_value =? WHERE we_key ='qq_qr_image'";
+					$sql = "UPDATE web_config SET wc_value =? WHERE wc_key ='qq_qr_image'";
 			
 					$bind = array(
 						$image['file_name']
