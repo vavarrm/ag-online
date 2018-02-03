@@ -9,11 +9,16 @@
 			
 		}
 		
-		public function getAccountLimit()
+		public function getAccountLimit($ua_id)
 		{
 			try {
-				$sql ="SELECT * FROM web_config WHERE wc_group ='account'";
-				$query=$this->db->query($sql);
+				$sql ="SELECT 
+							* 
+						FROM 
+							user_account AS ua INNER JOIN user AS u ON  u.u_id = ua.ua_u_id
+						WHERE ua_id =?";
+
+				$query=$this->db->query($sql, array($ua_id));
 				$error = $this->db->error();
 				if($error['message'] !="")
 				{
@@ -27,11 +32,10 @@
 					$MyException->setParams($array);
 					throw  $MyException;
 				}
-				$rows = $query->result_array();
+				$row = $query->row_array();
 				$query->free_result();
 
-				
-				if(empty($rows))
+				if(empty($row))
 				{
 					$MyException = new MyException();
 					$array = array(
@@ -44,11 +48,7 @@
 					throw  $MyException;
 				}
 				
-				foreach($rows as $value)
-				{
-					$output[$value['wc_key']] = $value;
-				}
-				return $output;
+				return $row;
 			}
 			catch (Exception $e) {
 				throw $e;
@@ -83,20 +83,8 @@
 				
 				$affected_rows =  $this->db->affected_rows();
 				
-				// if($affected_rows ==0)
-				// {
-					// $MyException = new MyException();
-					// $array = array(
-						// 'message' 	=>'资料更新失败' ,
-						// 'type' 		=>'db' ,
-						// 'status'	=>'001'
-					// );
-					
-					// $MyException->setParams($array);
-					// throw  $MyException;
-				// }
 				
-				$accountLimit = $this->getAccountLimit();
+				$accountLimit = $this->getAccountLimit($ary['ua_id']);
 				
 				switch($ary['ua_status'])
 				{
@@ -158,15 +146,14 @@
 							throw  $MyException;
 						}
 						$query->free_result();
-						
 						if(
-							$row['today_payment_number'] >= $accountLimit['withdrawal_time_max']['wc_value'] ||
-							$row['today_payment_value']  >= $accountLimit['withdrawal_value_max']['wc_value']
+							$row['today_payment_number'] > ($accountLimit['u_payment_number_limit']) ||
+							$row['today_payment_value']  > $accountLimit['u_payment_value_limit']
 						)
 						{
 							$MyException = new MyException();
 							$array = array(
-								'message' 	=>'提款超过限制，一天只能出款'.$accountLimit['withdrawal_time_max']['wc_value'] .'次，最高额度为'.$accountLimit['withdrawal_value_max']['wc_value'] ,
+								'message' 	=>'提款超过限制，一天只能出款'. $accountLimit['u_payment_number_limit'].'次，最高额度为'.$accountLimit['u_payment_value_limit'] ,
 								'type' 		=>'db' ,
 								'status'	=>'999'
 							);
@@ -235,13 +222,13 @@
 						}
 						$query->free_result();
 						if(
-							$row['today_received_number'] >= $accountLimit['received_time_max']['wc_value'] ||
-							$row['today_received_value']  >= $accountLimit['received_value_max']['wc_value']
+							$row['today_received_number'] > $accountLimit['u_received_number_limit'] ||
+							$row['today_received_value']  > $accountLimit['u_received_value_limit']
 						)
 						{
 							$MyException = new MyException();
 							$array = array(
-								'message' 	=>'儲值超过限制，一天只能儲值'.$accountLimit['received_time_max']['wc_value'] .'次，最高额度为'.$accountLimit['received_value_max']['wc_value'] ,
+								'message' 	=>'儲值超过限制，一天只能儲值'.$accountLimit['u_received_number_limit'] .'次，最高额度为'.$accountLimit['u_received_value_limit'] ,
 								'type' 		=>'db' ,
 								'status'	=>'999'
 							);
@@ -367,7 +354,7 @@
 								AND ua_status = 'payment'
 						) AS today_payment_number,
 						(
-							SELECT IFNULL(0,SUM(ua_value)) 
+							SELECT IFNULL(SUM(ua_value),0) 
 							FROM  
 								user_account 
 							WHERE 

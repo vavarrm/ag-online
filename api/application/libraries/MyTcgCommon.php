@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * <code>lt_common.php</code>
  * TC-Gaming Sample Code 天成游戏范例代码
@@ -9,16 +9,18 @@
  * @Desc 首先很感谢大家参考我的第一次写的 PHP 代码, 如果有需要改进的地方请多多指教, 欢迎来信 phoenix.w@tc-gaming.com
  *       您的指导与批判是我们成长的动力来源, 小编我是 Java 工程师, 这是我的第一次 PHP 开发
   */
-class tcg_class{
+class MyTcgCommon{
 	/**
 	 * 共用参数区
 	 */
+	private $CI ;
     function __construct(){
         $this->url = $_SERVER['API_URL'];
         $this->merchant_code = $_SERVER['MERCHANT_CODE'];		//代理商号
         $this->desKey = $_SERVER['DES_KEY'];				//加密金钥
         $this->signKey = $_SERVER['SHA256_KEY'];				//加密签名档
-        $this->currency = 'CNY'; 						//币别
+        $this->currency = 'CNY'; 	
+		$this->CI =& get_instance();		//币别
     }
 	
     /**
@@ -227,8 +229,6 @@ class tcg_class{
         $context  = stream_context_create($options);
 		// echo $context ;
         $result = file_get_contents($this->url, false, $context);
-        // var_dump($result);
-        print_r($result);
         return $result;
     }
 	

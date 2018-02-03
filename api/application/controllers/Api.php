@@ -5,12 +5,14 @@ class Api extends CI_Controller {
 	
 	private $request = array();
 	private $_user = array();
+	private $product_type;
 	
 	public function __construct() 
 	{
 		parent::__construct();	
 		
 		$get = $this->input->get();
+		$this->product_type =4;
 		$this->load->model('User_Model', 'user');
 		$this->load->helper('captcha');
 		$this->load->model('Log_Model', 'myLog');
@@ -18,6 +20,7 @@ class Api extends CI_Controller {
 		$this->load->model('Bank_Model', 'bank');
 		$this->load->model('UserAccount_Model', 'account');
 		$this->load->model('phoneCallBack_Model', 'callback');
+		$this->load->model('Discount_Model', 'discount');
 		$this->request = json_decode(trim(file_get_contents('php://input'), 'r'), true);
 		
 		$output['status'] = 100;
@@ -87,6 +90,86 @@ class Api extends CI_Controller {
 			exit;
 		}
     }
+	
+	public function setDiscount()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='设定优汇';
+		$output['message'] = '成功';
+		try 
+		{
+			if(
+				$this->request['d_id']	=="" 
+		
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			$ary = array(
+				'u_id' => $this->_user['u_id'],
+				'd_id' => $this->request['d_id']
+			);
+			
+			$affected_rows = $this->discount->setDiscount($ary);
+			if($affected_rows ==0)
+			{
+				$array = array(
+					'message' 	=>'新增优汇失败' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function setDiscountFrom()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+			$output['title'] ='设定优汇页面';
+			$output['message'] = '成功';
+		try 
+		{
+			
+			$output['body']['list'] = $this->discount->getDiscountList();
+			
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
 	
 	public function setAccountLimitInit()
 	{
@@ -442,12 +525,12 @@ class Api extends CI_Controller {
 	{
 		$output['status'] = 100;
 		$output['body'] =array();
-		$output['title'] ='成功取得绑定页面';
+		$output['title'] ='成功取得绑定银行‘卡页面';
 		$output['message'] = '成功取得';
 		try 
 		{
-			$output['body']['bank_list'] = $this->bank->getBankList();
-			$output['body']['user_bank_list'] = $this->user->getUserBankInfoByID($this->_user['u_id']);
+			$output['body']['list']['bank_list'] = $this->bank->getBankList();
+			$output['body']['list']['user_bank_list'] = $this->user->getUserBankInfoByID($this->_user['u_id']);
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();
@@ -830,7 +913,8 @@ class Api extends CI_Controller {
 		{
 			$row = $this->account->getBalance($this->_user['u_id']);
 			$output['body']= $row;
-			$output['body']['user_bank_list'] = $this->user->getUserBankInfoByID($this->_user['u_id']);
+			$output['body']['list']['user_bank'] = $this->user->getUserBankInfoByID($this->_user['u_id']);
+			$output['body']['u_account']=$this->_user['u_account'];
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();
@@ -969,13 +1053,72 @@ class Api extends CI_Controller {
 	
 	private function doLogin($row)
 	{
-		$randomKey = $this->token->getRandomKey();
-		$rsaRandomKey = $this->token->publicEncrypt($randomKey);
-		$encrypt_user_data = $this->token->AesEncrypt(serialize($row), $randomKey);
-		$this->session->set_userdata('encrypt_user_data', $encrypt_user_data);
-		$encrypt_user_data = $this->session->userdata('encrypt_user_data');
-		$urlRsaRandomKey = urlencode($rsaRandomKey) ;
-		return $urlRsaRandomKey ;
+		try 
+		{
+			$randomKey = $this->token->getRandomKey();
+			$rsaRandomKey = $this->token->publicEncrypt($randomKey);
+
+			
+			$encrypt_user_data = $this->token->AesEncrypt(serialize($row), $randomKey);
+			$this->session->set_userdata('encrypt_user_data', $encrypt_user_data);
+			$encrypt_user_data = $this->session->userdata('encrypt_user_data');
+			$urlRsaRandomKey = urlencode($rsaRandomKey) ;
+			$this->user->addLoginLog($row['u_id']);
+			if(!ereg('^[a-z0-9]{4,14}$', $row['ag_u_account']))
+			{
+				$array = array(
+					'message' 	=>'ag帐号长度为4~14位、由小写英文及数字组合' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			if(!ereg('^[a-z0-9A-Z]{6,12}$', $row['u_ag_passwd']))
+			{
+				$array = array(
+					'message' 	=>'ag密码长度为6~12位、由大小写英文及数字组合' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			if($row['u_ag_is_reg'] ==0)
+			{
+				$result_json = $this->tcgcommon->create_user($row['ag_u_account'],$row['u_ag_passwd']);
+				$json = json_decode($result_json, true);
+				if($json['status'] !=0 || empty($json))
+				{
+					$array = array(
+						'message' 	=> $json['error_desc'],
+						'type' 		=>'api' ,
+						'status'	=>'999'
+					);
+					$MyException = new MyException();
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$this->user->updAgIsLogin($row);
+			}
+			
+		
+			return $urlRsaRandomKey ;
+		}
+		catch(MyException $e)
+		{
+			$this->session->unset_userdata('encrypt_user_data');
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			throw $e;
+			
+		}
 	}
 	
 	public function login()
@@ -1066,6 +1209,423 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
+	public function getGameList(){
+		$get= $this->input->get();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='取得游戏列表';
+		$output['message'] = '执行成功';
+		$page_size = (isset($get['limit']))?$get['limit']:6;
+		$page = (isset($get['p']))?$get['p']:1;
+		$product_type = (isset($get['product_type']))?$get['product_type']:4;
+		
+		$game_type_ary =array(
+			'LIVE',
+			'RNG'
+		);
+		$game_type = (in_array($get['game_type'] , $game_type_ary))?$get['game_type']:'';
+		
+		$platform_ary =array(
+			'html5',
+			'flash',
+			'all'
+		);
+		$platform = (in_array($get['platform'], $platform_ary))?$get['platform']:'';
+		
+		$client_type_ary =array(
+			'web',
+			'phone',
+			'pc',
+			'html5'
+		);
+		$client_type = (in_array($get['client_type'],$client_type_ary))?$get['client_type']:'';
+	
+		
+		try 
+		{
+			if(	
+				$game_type  =='' ||
+				$platform	=='' ||
+				$client_type	==''
+			)
+			{
+				$array = array(
+						'message' 	=>'reponse 传入参数有误' ,
+						'type' 		=>'api' ,
+						'status'	=>'003'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$result_json_str = $this->tcgcommon->getGameList($product_type, $platform, $client_type, $game_type, $page, $page_size);
+			$result_ary = json_decode($result_json_str , true);
+			if($result_ary['status'] !=0  ||  empty($result_ary['games']) )
+			{
+				$array = array(
+					'message' 	=>'无法取得游戏列表' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$output['body']['list'] = $result_ary['games'];
+			$output['body']['pageinfo']  = array(
+				'total'	=>$result_ary['page_info']['totalCount'],
+				'pages'	=>$result_ary['page_info']['totalPage'],
+				'p'	=>$result_ary['page_info']['currentPage']
+			);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function UserMoneyPasswd()
+	{
+		$get= $this->input->get();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='取得资金密码是否设定';
+		$output['message'] = '执行成功';
+		try 
+		{
+			$row = $this->user->moneyPassedIsSet($this->_user);
+			if($row['u_money_passwd'] !="")
+			{
+				$output['body']['isSet'] =1;
+			}else
+			{
+				$output['body']['isSet'] =0;
+			}
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function getThirdBetByUser()
+	{
+		$get= $this->input->get();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='取得用户投注列表';
+		$output['message'] = '执行成功';
+		$page_size = (isset($get['limit']))?$get['limit']:6;
+		$page = (isset($get['p']))?$get['p']:1;
+		$start_date = (isset($get['start_date']))?$get['start_date']:date('Y-m-d 00:00:00');
+		$end_date = (isset($get['end_date']))?$get['end_date']:date('Y-m-d 23:59:59');
+		try 
+		{
+			$ag_user_name = $this->_user['ag_u_account'];
+			$result_json_str = $this->tcgcommon->get_bet_details_member($ag_user_name, $start_date, $end_date, $page);
+			$result_ary = json_decode($result_json_str , true);
+			if($result_ary['status'] !=0 || empty($result_ary))
+			{
+				$array = array(
+					'message' 	=>'无法取得用户投注列表' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			$output['body']['list'] = $result_ary['details'];
+			$output['body']['page_info']['pages'] = $result_ary['page_info']['totalPage'];
+			$output['body']['page_info']['total'] = $result_ary['page_info']['totalCount'];
+			$output['body']['page_info']['p'] = $result_ary['page_info']['currentPage'];
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function transferToThird()
+	{
+		$get= $this->input->get();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='转帐至第三方平台';
+		$output['message'] = '成功';
+		
+		$product_type = (isset($get['product_type']))?$get['product_type']:4;
+		$amount = (isset($get['amount']))?intval($get['amount']):0;
+		
+		
+		try 
+		{
+			
+			if($amount <=0)
+			{
+				$array = array(
+					'message' 	=>'额度不能小于0' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			if( $this->_user['u_ag_game_model'] ==0)
+			{
+				$array = array(
+					'message' 	=>'此帐号为测试帐号无法使用转帐功能' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ag_user_name = $this->_user['ag_u_account'];
+			$result_json_str = $this->tcgcommon->get_balance($ag_user_name ,$product_type);
+			$result_ary = json_decode($result_json_str , true);
+	
+			if($result_ary['status'] !=0 || empty($result_ary))
+			{
+				$array = array(
+					'message' 	=>'无法取得使用者馀额' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			
+			$ary = array(
+				'user' =>$this->_user,
+				'fund_type' =>1,
+				'amount'  =>$amount,
+				'product_type'	=>$product_type,
+			);
+			
+			$this->account->transfer($ary);
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function transferToLdyl()
+	{
+		$get= $this->input->get();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='第三方平台转入';
+		$output['message'] = '成功';
+		
+		$product_type = (isset($get['product_type']))?$get['product_type']:4;
+		$amount = (isset($get['amount']))?intval($get['amount']):0;
+		
+		
+		try 
+		{
+			
+			if($amount <=0)
+			{
+				$array = array(
+					'message' 	=>'额度不能小于0' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			if( $this->_user['u_ag_game_model'] ==0)
+			{
+				$array = array(
+					'message' 	=>'此帐号为测试帐号无法使用转帐功能' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ag_user_name = $this->_user['ag_u_account'];
+			$result_json_str = $this->tcgcommon->get_balance($ag_user_name ,$product_type);
+			$result_ary = json_decode($result_json_str , true);
+	
+			if($result_ary['status'] !=0 || empty($result_ary))
+			{
+				$array = array(
+					'message' 	=>'无法取得使用者馀额' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ary = array(
+				'user' =>$this->_user,
+				'fund_type' =>2,
+				'amount'  =>$amount,
+				'product_type'	=>$product_type,
+				'ag_balance'	=>$result_ary['balance'],
+			);
+			
+			$this->account->transfer($ary);
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function getThirdBlance()
+	{
+		$get= $this->input->get();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='取得第三方用户馀额';
+		$output['message'] = '成功';
+		$product_type = (isset($get['product_type']))?$get['product_type']:4;
+		try 
+		{
+			$ag_user_name = $this->_user['ag_u_account'];
+		
+			$result_json_str = $this->tcgcommon->get_balance($ag_user_name ,$product_type);
+			$result_ary = json_decode($result_json_str , true);
+			if($result_ary['status'] !=0 || empty($result_ary ))
+			{
+				$array = array(
+					'message' 	=>'无法取得取得第三方用户馀额' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$output['body'] =$result_ary;
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function  getGameUrl()
+	{
+		$get= $this->input->get();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='取得游戏入口';
+		$output['message'] = '执行成功';
+		
+		$game_code = (isset($get['game_code']))?$get['game_code']:'';
+		$platform_ary =array(
+			'html5',
+			'flash',
+			'all'
+		);
+		$platform = (in_array($get['platform'], $platform_ary))?$get['platform']:'';
+		
+		$product_type = (isset($get['product_type']))?$get['product_type']:4;
+		try 
+		{
+			if(
+				$game_code =="" ||
+				$platform =="" 
+			)
+			{
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			$ag_username =$this->_user['ag_u_account'];
+			$ag_game_model =$this->_user['u_ag_game_model'];
+			$result_json_str = $this->tcgcommon->getLaunchGameRng($ag_username, $product_type, $ag_game_model, $game_code, $platform);
+			$result_ary = json_decode($result_json_str , true);
+			if($result_ary['status'] !=0 || empty($result_ary))
+			{
+				$array = array(
+					'message' 	=>'无法取得取得游戏入口' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$output['body']['game_url'] =$result_ary['game_url'];
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
 	public function registered($rl_id='')
 	{
 		$output['status'] = '100';
@@ -1104,9 +1664,9 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			if(strlen($this->request['name']) <8 || strlen($this->request['name'])>12){
+			if(strlen($this->request['name']) <4 || strlen($this->request['name'])>12){
 				$array = array(
-					'message' 	=>'暱稱長度為8~12位' ,
+					'message' 	=>'昵称长度为4~12位' ,
 					'type' 		=>'api' ,
 					'status'	=>'999'
 				);
@@ -1115,9 +1675,9 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			if(strlen($this->request['account']) <8 || strlen($this->request['account'])>12){
+			if(!ereg('^[a-z0-9]{4,10}$', $this->request['account'])){
 				$array = array(
-					'message' 	=>'帳號長度為8~12位' ,
+					'message' 	=>'帐号为4~10为小写英文与数字组合' ,
 					'type' 		=>'api' ,
 					'status'	=>'999'
 				);
@@ -1126,9 +1686,9 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			if(strlen($this->request['passwd']) <8 || strlen($this->request['passwd'])>12){
+			if(strlen($this->request['passwd']) <6 || strlen($this->request['passwd'])>12){
 				$array = array(
-					'message' 	=>'密碼長度為8~12位' ,
+					'message' 	=>'密码长度为6~12位' ,
 					'type' 		=>'api' ,
 					'status'	=>'999'
 				);
@@ -1139,7 +1699,7 @@ class Api extends CI_Controller {
 			
 			if($this->request['name'] == $this->request['account']){
 				$array = array(
-					'message' 	=>'使用者名稱不能與帳號相同' ,
+					'message' 	=>'昵称与用户名不可相同' ,
 					'type' 		=>'api' ,
 					'status'	=>'999'
 				);
@@ -1165,7 +1725,7 @@ class Api extends CI_Controller {
 			if($accountIsExist ==1)
 			{
 				$array = array(
-					'message' 	=>'使用者帳號已存在' ,
+					'message' 	=>'此帐号已注册' ,
 					'type' 		=>'api' ,
 					'status'	=>'999'
 				);

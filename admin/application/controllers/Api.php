@@ -91,6 +91,121 @@ class Api extends CI_Controller {
 		}
     }
 	
+	public function setUseraAccountLimit()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+			'affected_rows'	=>0
+		);
+		$output['title'] ='设定使用者充提限制';
+		$output['message'] = '成功';
+		try 
+		{
+			if(
+				$this->request['u_id']	==""  
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			if(
+				intval($this->request['payment_number_limit']) <1 	==""  ||
+				intval($this->request['payment_value_limit']) <1 	==""  ||
+				intval($this->request['received_number_limit']) <1 	==""  ||
+				intval($this->request['received_value_limit']) <1 	==""  
+			){
+				$array = array(
+					'message' 	=>'设定限制不能小于0' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			
+			$affected_rows  = $this->user->setAccountLimit($this->request);
+			if($affected_rows  ==0)
+			{
+				$array = array(
+					'message' 	=>'无资料更新' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$output['affected_rows']= $affected_rows ;
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function setUseraAccountLimitForm()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='用户充提设定表单';
+		$output['message'] = '成功';
+		try 
+		{
+			if(
+				$this->request['u_id']	=="" 
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			$user = $this->user->getUserByID($this->request['u_id']);
+			if(empty($user))
+			{
+				$array = array(
+					'message' 	=>'查无使用者' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			$output['body'] = $user;
+		
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
 	public function changePhoneCallBackStatus()
 	{
 		$output['status'] = 100;
@@ -721,6 +836,7 @@ class Api extends CI_Controller {
 				'an_id' =>$post['an_id']
 			);
 			$affected_rows  = $this->announcemet->update($ary);
+			
 			
 			if($affected_rows == 0)
 			{
@@ -1686,6 +1802,45 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
+	public function uesrLoginList()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='使用者登入记录列表';
+		$output['message'] = '成功';
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
+		$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
+		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
+		$u_account = (isset($this->request['u_account']))?$this->request['u_account']:'';
+		
+		$ary['start_time'] =array('value' =>$start_time, 'operator' =>'>=');
+		$ary['end_time'] =array('value' =>$end_time, 'operator' =>'<=');
+		$ary['u_account'] =array('value' =>$u_account, 'operator' =>'=');
+		
+		if(is_array($this->request['order']) && count($this->request['order'])>0)
+		{
+			$ary['order'] = $this->request['order'];
+		}else{
+			$ary['order'] = array('ull_id'=>'DESC');
+		}
+
+		try 
+		{
+			$output['body'] = $this->user->getLoginList($ary);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
 	public function userList()
 	{
 		$output['status'] = 100;
@@ -1694,7 +1849,7 @@ class Api extends CI_Controller {
 		$output['message'] = '成功取得';
 		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
 		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
-		$ary['u.u_superior_id'] = (isset($this->request['superior_id']))?$this->request['superior_id']:0;
+		$ary['u.u_superior_id'] = ($this->request['superior_id'] !="")?$this->request['superior_id']:0;
 		$ary['u.u_account'] = (isset($this->request['u_account']))?$this->request['u_account']:'';
 		if($ary['u.u_account']  !="")
 		{

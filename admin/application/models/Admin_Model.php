@@ -547,7 +547,7 @@
 						am_title AS title ,
 						am_type AS type
 					FROM admin_menu 
-					WHERE am_type ='menu'
+					WHERE am_type ='menu' AND am_show ='1'
 					ORDER BY parent_id ASC , am_id ASC";
 			$query = $this->db->query($sql, $bind);
 			$rows = $query->result_array();

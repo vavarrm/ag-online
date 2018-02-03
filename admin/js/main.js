@@ -35,8 +35,16 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"setParent.html"+"?"+ Math.random(),
 		controller: "userCtrl",
 		cache: false,
+	}).when("/user/list/setUseraAccountLimitForm/:u_id",{
+		templateUrl: templatePath+"setUseraAccountLimitForm.html"+"?"+ Math.random(),
+		controller: "userCtrl",
+		cache: false,
 	}).when("/user/list/rechargeForm/:u_id",{
 		templateUrl: templatePath+"rechargeForm.html"+"?"+ Math.random(),
+		controller: "userCtrl",
+		cache: false,
+	}).when("/user/loginList/",{
+		templateUrl: templatePath+"loginList.html"+"?"+ Math.random(),
 		controller: "userCtrl",
 		cache: false,
 	}).when("/account/rechargeAuditList/",{
@@ -763,9 +771,111 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 		balance :0,
 		remarks :'',
 		router:'',
-		order:{}
+		order:{},
+		input :{},
+		user_level_ary :[]
 	};
 	
+	$scope.loginListInit = function()
+	{
+		$( ".datepicker" ).datepicker({ dateFormat:'yy-mm-dd' });
+		$( ".datepicker" ).datepicker({ dateFormat:'yy-mm-dd' });
+		$scope.search();
+	}
+	
+	$scope.setUserAccountLimit = function()
+	{
+
+		var promise = apiService.adminApi('/setUseraAccountLimit', $scope.data.input);
+		promise.then
+		(
+			function(r) 
+			{
+				if(r.data.status =="100")
+				{
+					$scope.data.input = r.data.body;
+					var obj =
+					{
+						'message' :'成功更新',
+						buttons: 
+						[
+							{
+								text: "close",
+								click: function() 
+								{
+									$( this ).dialog( "close" );
+									history.go(-1);
+								}
+							}
+						]
+					};
+					dialog(obj);
+				}else{
+					var obj =
+					{
+						'message' :r.data.message,
+						buttons: 
+						[
+							{
+								text: "close",
+								click: function() 
+								{
+									$( this ).dialog( "close" );
+								}
+							}
+						]
+					};
+					dialog(obj);
+				}
+			},
+			function() {
+				var obj ={
+					'message' :'系統錯誤'
+				};
+				 dialog(obj);
+			}
+		)
+	}
+	
+	$scope.setAccountLimitInit = function()
+	{
+		var obj={
+			u_id:$routeParams.u_id
+		};
+		var promise = apiService.adminApi('/setUseraAccountLimitForm', obj);
+		promise.then
+		(
+			function(r) 
+			{
+				if(r.data.status =="100")
+				{
+					$scope.data.input = r.data.body;;
+				}else{
+					var obj =
+					{
+						'message' :r.data.message,
+						buttons: 
+						[
+							{
+								text: "close",
+								click: function() 
+								{
+									$( this ).dialog( "close" );
+								}
+							}
+						]
+					};
+					dialog(obj);
+				}
+			},
+			function() {
+				var obj ={
+					'message' :'系統錯誤'
+				};
+				 dialog(obj);
+			}
+		)
+	}
 	
 	$scope.search_click = function()
 	{
@@ -1084,15 +1194,31 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			dialog(obj);
 	}
 	
-	$scope.actionClick = function($event,func)
+	$scope.superiorBreadcrumb=function()
 	{
-		if( func !=null)
+	}
+	
+	$scope.searchSubordinate = function(row)
+	{
+		$scope.data.search.superior_id = row.u_id;
+		$scope.data.user_level_ary.push({
+			u_account : row.u_account
+		});
+		$scope.search();
+	}
+	
+	$scope.actionClick = function($event,action, row)
+	{
+		if( action.func !=null)
 		{
 			$event.preventDefault();
-			if(typeof $scope[func] =='function')
+			if(typeof $scope[action.func] =='function')
 			{
-				$scope[func]();
+				$scope[action.func](row,action);
 			}
+		}else
+		{
+			$('input[name=am_id]', parent.document).val(action.id);
 		}
 		
 	}
@@ -1219,7 +1345,6 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			ua_remarks :$scope.data.remarks,
 			
 		};
-		console.log(obj);
 		var promise = apiService.adminApi('/addBalance', obj);
 		promise.then
 		(
@@ -1502,8 +1627,9 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 									click: function() 
 									{
 										$( this ).dialog( "close" );
-									$('input[name=am_id]', parent.document).val('2');
-										location.href="/admin/renterTemplates#!/user/list/";
+										$('input[name=am_id]', parent.document).val('2');
+										history.go(-1);
+										// location.href="/admin/renterTemplates#!/user/list/";
 									}
 								}
 							]
@@ -1566,6 +1692,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 				$scope.data.search[i] = '';
 			})
 		}
+		$scope.data.user_level_ary =[];
 		$scope.data.p =1;
 		$scope.search();
 		
@@ -1806,11 +1933,13 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 	
 	$scope.actionClick = function($event,action, row)
 	{
+	
 		if( action.func !=null)
 		{
 			$event.preventDefault();
 			if(typeof $scope[action.func] =='function')
 			{
+				$('input[name=am_id]', parent.document).val();
 				$scope[action.func](row,action);
 			}
 		}

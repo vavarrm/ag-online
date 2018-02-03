@@ -8,6 +8,63 @@
 			$this->load->database();
 		}
 		
+		public function addLoginLog($u_id)
+		{
+			$sql ="INSERT user_login_log (	ull_ip, ull_add_datetime, ull_u_id) VALUES(?,NOW(),?)";
+			$bind = array(
+				$this->getIP(),
+				$u_id,
+			);
+			$query = $this->db->query($sql, $bind);
+		}
+		
+		public function moneyPassedIsSet($user)
+		{
+			try
+			{
+				$sql ="SELECT 	u_money_passwd FROM user WHERE u_id =?";
+				$bind = array(
+					$user['u_id']
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$row =  $query->row_array();
+				$query->free_result();
+				return $row;
+			}catch(MyException $e)
+			{
+				throw $e;
+			}
+		}
+		
+		public function getIP(){
+			 if(!empty($_SERVER["HTTP_CLIENT_IP"])){
+				$cip = $_SERVER["HTTP_CLIENT_IP"];
+			 }
+			 elseif(!empty($_SERVER["HTTP_X_FORWARDED_FOR"])){
+				$cip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+			 }
+			 elseif(!empty($_SERVER["REMOTE_ADDR"])){
+				$cip = $_SERVER["REMOTE_ADDR"];
+			 }
+			 else{
+				$cip = "无法取得ip位址";
+			 }
+			 return $cip;
+		}
+		
 		public function getMessageList($ary)
 		{
 			$where .=" WHERE 1 = 1";
@@ -755,9 +812,40 @@
 			return $rows;
 		}
 		
+		public function  updAgIsLogin($ary)
+		{
+			try 
+			{
+				$sql="UPDATE user SET u_ag_is_reg =? WHERE u_id =?";
+				$bind = array(
+					$ary['u_id'],
+					!$ary['u_ag_is_reg']
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+			}catch(MyException $e)
+			{
+				throw $e;
+				return false;
+			}
+		}
+		
 		public function getUesrByAccount($account)
 		{
-			$sql = "SELECT *  FROM user WHERE u_account = ?";
+			$sql = "SELECT * ,CONCAT('ldyl',u_account) AS ag_u_account FROM user WHERE u_account = ?";
 			$bind = array(
 				$account
 			);

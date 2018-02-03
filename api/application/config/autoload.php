@@ -64,6 +64,7 @@ $autoload['libraries'] = array(
 	'Mysmarty' =>'smarty', 
 	'MyFunc'=>'myfunc', 
 	'MyToken'=>'token', 
+	'MyTcgCommon'=>'tcgcommon', 
 	'session'
 );
 

@@ -1,5 +1,6 @@
 <?php
-
+ini_set('display_errors', 1);
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);
 /**
  * TC-Gaming 天成游戏
  * PHPSample 范例, 测试页面, 您可以直接执行此 test.php
@@ -16,26 +17,27 @@ $tcg_class = new tcg_class();
  * @param $username 会员名称
  * @param $password 会员密码
  */
-echo "--------> TC-Gaming Sample Code 天成游戏范例代码 <--------\n";
-echo print_r('執行 --> 2.1. CREATE/REGISTER PLAYER API 创建/确认玩家接口');
-echo "\n";
-$username = 'phoenixPHP';
-$password = 'phoenix';
-$tcg_class-> create_user($username,$password);
-echo "\n";
-echo "\n";
+// echo "--------> TC-Gaming Sample Code 天成游戏范例代码 <--------\n";
+// echo print_r('執行 --> 2.1. CREATE/REGISTER PLAYER API 创建/确认玩家接口');
+// echo "\n";
+$username = 'tryion';
+$password = '12345678';
+// $tcg_class-> create_user($username,$password);
+// echo "\n";
+// echo "\n";
 
 /**
  * 2.2. UPDATE PASSWORD API 更新密码接口
  * @param $username 会员名称
  * @param $password 会员密码
  */
-echo print_r('執行 --> 2.2. UPDATE PASSWORD API 更新密码接口');
-echo "\n";
-$newpassword = 'phoenix';
-$tcg_class-> update_password($username,$newpassword);
-echo "\n";
-echo "\n";
+// echo print_r('執行 --> 2.2. UPDATE PASSWORD API 更新密码接口');
+// echo "\n";
+// $newpassword = time();
+// $tcg_class-> update_password($username,$newpassword);
+// echo "\n";
+// echo "\n";
+
 
 	
 /**
@@ -45,7 +47,7 @@ echo "\n";
  */
 echo print_r('執行 --> 2.3. GET BALANCE API 获取余额接口');
 echo "\n";
-$product_type = 7;
+$product_type = 4;
 $tcg_class-> get_balance($username,$product_type);
 echo "\n";
 echo "\n";
@@ -58,29 +60,29 @@ echo "\n";
  * @param $amount			金额
  * @param $reference_no		交易代码
  */
-echo print_r('執行 --> 2.4. FUND TRANSFER API 资金转账接口');
-echo "\n";
-$username = 'phoenixPHP';
-$product_type=7;
-$fund_type='2';
-$amount=1;
-$reference_no='201606190004';
-$tcg_class-> user_transfer($username, $product_type, $fund_type, $amount, $reference_no);
-echo "\n";
-echo "\n";
+// echo print_r('執行 --> 2.4. FUND TRANSFER API 资金转账接口');
+// echo "\n";
+// $username = 'phoenixPHP';
+// $product_type=4;
+// $fund_type='1';
+// $amount=1;
+// $reference_no=date("Ymd").rand(1,999);
+// $tcg_class-> user_transfer($username, $product_type, $fund_type, $amount, $reference_no);
+// echo "\n";
+// echo "\n";
 
 /**
  * 2.5. CHECK TRANSACTION STATUS API 检查交易状态接口
  * @param $product_type	产品代码
  * @param $reference_no	交易代码
  */
-echo print_r('執行 --> 2.5. CHECK TRANSACTION STATUS API 检查交易状态接口');
-echo "\n";
-$product_type=7;
-$reference_no='201606190004';
-$tcg_class-> check_transfer($product_type, $reference_no);
-echo "\n";
-echo "\n";
+// echo print_r('執行 --> 2.5. CHECK TRANSACTION STATUS API 检查交易状态接口');
+// echo "\n";
+// $product_type=4;
+// $reference_no='201606190004';
+// $tcg_class-> check_transfer($product_type, $reference_no);
+// echo "\n";
+// echo "\n";
 
 /**
  * 2.6. LAUNCH GAME API 启动游戏接口 - 电子游戏
@@ -92,9 +94,9 @@ echo "\n";
  */
 echo print_r('執行 --> 2.6. LAUNCH GAME API 启动游戏接口 - 电子游戏');
 echo "\n";
-$product_type = 7;
+$product_type = 4;
 $gameMode = 1;
-$gameCode = 'G00001';
+$gameCode = 'A00179';
 $platform = 'html5';
 $tcg_class-> getLaunchGameRng($username, $product_type, $gameMode, $gameCode, $platform);
 echo "\n";
@@ -109,16 +111,16 @@ echo "\n";
  * @param $platform
  * @param $view
  */
-echo print_r('執行 --> 2.6. LAUNCH GAME API 启动游戏接口 - 彩票游戏');
-echo "\n";
-$product_type = 2;
-$game_mode = '1';
-$game_code = 'Lobby';
-$platform = 'html5';
-$view = 'Lobby';
-$tcg_class-> getLaunchGameLottery($username, $product_type, $game_mode, $game_code, $platform, $view);
-echo "\n";
-echo "\n";
+// echo print_r('執行 --> 2.6. LAUNCH GAME API 启动游戏接口 - 彩票游戏');
+// echo "\n";
+// $product_type = 4;
+// $game_mode = '1';
+// $game_code = 'Lobby';
+// $platform = 'html5';
+// $view = 'Lobby';
+// $tcg_class-> getLaunchGameLottery($username, $product_type, $game_mode, $game_code, $platform, $view);
+// echo "\n";
+// echo "\n";
 
 
 /**
@@ -133,10 +135,10 @@ echo "\n";
  */
 echo print_r('執行 --> 2.7. GAME LIST API 游戏列表接口');
 echo "\n";
-$product_type = 7;
+$product_type = 4;
 $platform = "html5";
 $client_type = "web";
-$game_type = "RNG";
+$game_type = "LIVE";
 $page = 1 ;
 $page_size = 100;
 $tcg_class-> getGameList($product_type, $platform, $client_type, $game_type, $page, $page_size);
@@ -155,7 +157,7 @@ echo "\n";
  */
 echo print_r('執行 --> 2.8. Player Game Rank API 玩家游戏排名接口');
 echo "\n";
-$product_type = 7;
+$product_type = 4;
 $game_category = "RNG";
 $game_code = "G00001";
 $start_date = "2017-06-01 00:00:00";
