@@ -1,4 +1,4 @@
-<dd ng-model="data.search_api" ng-init="data.search_api='/rechargeAuditList'"></dd>
+<dd ng-model="data.search_api" ng-init="data.search_api='/chargebackAuditList'"></dd>
 <div  ng-init="auditListInit()">
 	<div class="grid_3 grid_4">
 		<div class="grid-form1">
@@ -43,7 +43,7 @@
 								<i  ng-show="data.order.ua_from=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
 							</th>
 							<th  style="text-align:center">
-								<a href="" ng-click="orderClick('ua_value');$event.preventDefault();">充值额</a> 
+								<a href="" ng-click="orderClick('ua_value');$event.preventDefault();">扣减额</a> 
 								<i  ng-show="data.order.ua_value=='DESC'" class="fa fa-chevron-down" aria-hidden="true"></i>
 								<i  ng-show="data.order.ua_value=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
 							</th>
@@ -62,7 +62,7 @@
 								<select ng-model="row.ua_status" ng-disabled="row.change_status_disabled =='1'" ng-change="changeStatus(row)">
 									<option value="audit">待审核</option>
 									<option value="noAllowed">拒绝</option>
-									<option value="received">入帐</option>
+									<option value="chargeback">扣减</option>
 								</select>
 								<a  ng-repeat-start="action in data.actions" ng-disabled="row.change_status_disabled =='1'" ng-click="actionClick($event, action, row)" type="button" class="btn btn-xs btn-default" ng-bind="action.title">新增</a>
 								<span ng-repeat-end></span>

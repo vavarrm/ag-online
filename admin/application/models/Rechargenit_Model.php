@@ -242,8 +242,6 @@
 				}
 				
 				
-			
-				
 				if($affected_rows >0)
 				{
 
@@ -314,8 +312,11 @@
 							$where .=sprintf(" %s DATE_FORMAT(`ua_add_datetime`, '%s') %s ?",$logic  ,'%Y-%m-%d', $row['operator']);					
 							$bind[] = $row['value'];
 						}
-					}else
+					}else if($row['operator'] =='in')
 					{
+						$where .=sprintf(" AND %s IN (%s) ", $key, $row['value']);
+					}
+					else{
 						$where .=sprintf(" AND %s %s ?", $key, $row['operator']);					
 						$bind[] = $row['value'];
 					}
@@ -344,6 +345,7 @@
 						ad.*,
 						ub.*,
 						bi.*,
+						uat.*,
 						(
 							SELECT COUNT(*) 
 							FROM  
@@ -374,9 +376,10 @@
 					FROM 
 						user_account AS ua 
 							INNER JOIN user AS u  ON ua.ua_u_id = u.u_id
-							LEFT JOIN admin AS ad  ON ua.ua_from = ad.ad_id
+							LEFT JOIN admin AS ad  ON ua.ua_from_am_id = ad.ad_id
 							LEFT JOIN user_bank_info AS ub ON ub.ub_id = ua_ub_id
 							LEFT JOIN bank_info AS bi ON ub.ub_bank_id = bi_id
+							LEFT JOIN user_account_type AS uat ON ua.ua_type = uat.uat_id
 					";
 			$search_sql = $sql.$where.$order.$limit ;
 			$query = $this->db->query($search_sql, $bind);
@@ -538,6 +541,37 @@
 			}
 			
 			return $affected_rows;
+		}
+		
+		public function addChargebackFroAudit($ary)
+		{
+			try 
+			{
+				$sql ="INSERT INTO user_account(ua_value, ua_type,ua_add_datetime,ua_from_am_id,ua_u_id,ua_remarks)
+					  VALUES(?,7,NOW(),?,?,?)";
+				$bind = array(
+					$ary['balance'],
+					$ary['ad_id'],
+					$ary['u_id'],
+					$ary['remarks'],
+				);
+				$this->db->query($sql, $bind );
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+				}
+			}
+			catch (Exception $e) {
+				throw $e;
+			}
 		}
 		
 		public function getTypeList($outin, $ary)

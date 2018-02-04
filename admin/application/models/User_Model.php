@@ -10,6 +10,39 @@
 		
 	
 
+		public function lock($ary)
+		{
+			try
+			{
+				$sql= "UPDATE user SET 	u_is_lock =? WHERE u_id =?";
+				$bind = array(
+					$ary['lock'],
+					$ary['u_id'],
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$affected_rows = $this->db->affected_rows();
+				return $affected_rows ;
+			}	
+			catch(MyException $e)
+			{
+				throw $MyException;
+				return 0;
+			}
+		}
+	
 		public function getLoginList($ary)
 		{
 			try
@@ -138,14 +171,25 @@
 		{
 			try 
 			{
-				
 				$sql ="
 						SELECT   IFNULL(SUM(Balance),0)  AS balance FROM  (
 							SELECT ua_id , IFNULL(ua_value,0) AS Balance FROM user_account WHERE ua_u_id = ? AND ua_status = 'received'
 							UNION
+								SELECT 
+									ua.ua_id , IFNULL(ua.ua_value,0) AS Balance FROM user_account AS ua  INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
+								WHERE 
+									ua_u_id = ? AND ua_status = 'transfer_in'
+							UNION
 							SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'payment'
+							UNION
+								SELECT 
+									ua.ua_id , IFNULL(ua.ua_value,0)*-1 AS Balance FROM user_account AS ua INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
+								WHERE 
+									ua_u_id = ? AND ua_status = 'transfer_out' 
 						) AS t";
 				$bind = array(
+					$u_id,
+					$u_id,
 					$u_id,
 					$u_id
 				);
@@ -374,7 +418,12 @@
 						u2.u_account AS superior_account,
 						'' AS nodes,
 						'false' AS `show`,
-						(SELECT COUNT(*)  FROM user u3 WHERE u.u_id = u3.u_superior_id) AS u_have_child
+						(SELECT COUNT(*)  FROM user u3 WHERE u.u_id = u3.u_superior_id) AS u_have_child,
+						CASE 	u.u_is_lock
+							WHEN '1' THEN '已冻结'
+							WHEN '0' THEN '未冻结'
+						END AS u_is_lock_str,
+						u.u_is_lock
 					FROM 
 						user AS u LEFT JOIN  user u2 ON u.u_superior_id =  u2.u_id";
 			$search_sql = $sql.$where.$limit ;

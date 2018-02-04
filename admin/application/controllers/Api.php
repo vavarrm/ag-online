@@ -62,6 +62,7 @@ class Api extends CI_Controller {
 			
 				$decrypt_admin_data= $this->decryptUser($get['sess'], $encrypt_admin_data);
 				$this->admin_data =$decrypt_admin_data;
+
 	
 				if(empty($decrypt_admin_data))
 				{
@@ -90,6 +91,198 @@ class Api extends CI_Controller {
 			exit;
 		}
     }
+	
+	public function chargebackInit()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='系统扣款表单';
+		$output['message'] = '成功';
+		
+		try 
+		{
+			if(
+				$this->request['u_id']	==""
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			$output['body']['user'] = $this->user->getUserByID($this->request['u_id']);
+			$row = $this->user->getBalance($this->request['u_id']);
+			$output['body']['user']['balance'] = $row['balance'];
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function chargebackAuditList()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='扣减审核列表';
+		$output['message'] = '成功';
+	
+		try 
+		{
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
+			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
+			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
+			$u_account = (isset($this->request['u_account']))?$this->request['u_account']:'';
+			
+			$ary['start_time'] =array('value' =>$start_time, 'operator' =>'>=');
+			$ary['end_time'] =array('value' =>$end_time, 'operator' =>'<=');
+			$ary['u_account'] =array('value' =>$u_account, 'operator' =>'<=');
+			$ary['ua.ua_type'] =  array('value' =>'7', 'operator' =>'=');
+			$ary['ua.ua_value'] =  array('value' =>0, 'operator' =>'>');
+			if(is_array($this->request['order']) && count($this->request['order'])>0)
+			{
+				$ary['order'] = $this->request['order'];
+			}else{
+				$ary['order'] = array('ua_id'=>'DESC');
+			}
+			$output['body'] = $this->rechargenit->getList($ary);
+			$output['body']['actions'] = $this->admin->getActionlist($this->request['am_id']);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function chargeback()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='系统扣款';
+		$output['message'] = '成功';
+		
+		try 
+		{
+			if(
+				$this->request['u_id']	==""
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			if(
+				intval($this->request['balance'])	<1
+			){
+				$array = array(
+					'message' 	=>'扣款馀额不可小于0' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			$row = $this->user->getBalance($this->request['u_id']);
+			if($row['balance'] <intval($this->request['balance']) )
+			{
+				$array = array(
+					'message' 	=>'使用者馀额不足' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			$ary = array(
+				'u_id'	=>$this->request['u_id']	,
+				'balance'	=>$this->request['balance']	,
+				'remarks'	=>$this->request['remarks']	,
+				'ad_id'	=>$this->admin_data['ad_id']	,
+			);
+			$this->rechargenit->addChargebackFroAudit($ary);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function thirdTransferList()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='第三方转帐列表';
+		$output['message'] = '成功';
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
+		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
+		$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
+		$u_account = (isset($this->request['u_account']))?$this->request['u_account']:'';
+		$order = (isset($this->request['order']))?$this->request['order']:array();
+		try 
+		{
+			$ary['start_time'] =  array('operator' => '>=' , 'value'=>$start_time); 
+			$ary['end_time'] =  array('operator' => '<=' , 'value'=>$end_time); 
+			$ary['u_account'] =  array('operator' => '<=' , 'value'=>$u_account); 
+			if(is_array($order) && count($order) >0)
+			{
+				$ary['order']=$order ;
+			}else
+			{
+				$ary['order'] = array(
+					'ua_add_datetime' =>	'DESC'
+				);
+			}
+			$ary['ua_type'] = array(
+				'value' => '4,5',
+				'operator' => "in",
+			);
+			
+			$output['body'] = $this->rechargenit->getList($ary);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
 	
 	public function setUseraAccountLimit()
 	{
@@ -756,6 +949,57 @@ class Api extends CI_Controller {
 			$this->myLog->error_log($parames);
 		}
 		
+		$this->response($output);
+	}
+	
+	public function lockUser()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='使用者冻结变更';
+		$output['message'] = '执行成功';
+		$post = $this->input->post();
+		try
+		{
+			if(
+				$this->request['u_id'] =="" || 
+				$this->request['lock'] ==="" 
+			){
+				$array = array(
+					'message' 	=>'必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ary  =array(
+				'u_id'=>$this->request['u_id'],
+				'lock'=>$this->request['lock'],
+			);
+			$affected_rows  = $this->user->lock($ary);
+			if($affected_rows === 0)
+			{
+				$array = array(
+					'message' 	=>'冻结变更失败' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
 		$this->response($output);
 	}
 	
@@ -1808,7 +2052,7 @@ class Api extends CI_Controller {
 		$output['body'] =array();
 		$output['title'] ='使用者登入记录列表';
 		$output['message'] = '成功';
-		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:25;
 		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 		$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
 		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
@@ -1945,6 +2189,58 @@ class Api extends CI_Controller {
 		}
 	}
 	
+    public function doChargebackAudit()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+			'affected_rows' => 0
+		);
+		$output['title'] ='审核充值';
+		$output['message'] = '成功';
+	
+		try 
+		{
+			if(
+				$this->request['ua_id']	=="" ||
+				count($this->request['ua_id'])	==0 ||
+				$this->request['ua_status']	 ==""
+			)
+			{
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			$affected_rows  = $this->rechargenit->changeStatus($this->request, $this->admin_data);
+			if($affected_rows  ==0)
+			{
+				$array = array(
+					'message' 	=>'无资料更新' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			$output['body']['affected_rows'] =$affected_rows;
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
 	public function doRechargeAudit()
 	{
 		$output['status'] = 100;
@@ -1996,6 +2292,7 @@ class Api extends CI_Controller {
 		
 		$this->response($output);
 	}
+	
 	
 	public function  rechargeAuditList()
 	{

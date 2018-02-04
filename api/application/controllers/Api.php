@@ -866,7 +866,7 @@ class Api extends CI_Controller {
 		try 
 		{
 			if(
-					$type	==""
+				$type	==""
 			){
 					$array = array(
 						'message' 	=>'reponse 必传参数为空' ,
@@ -877,9 +877,10 @@ class Api extends CI_Controller {
 					$MyException->setParams($array);
 					throw $MyException;
 			}	
+			
 			$ary['ua_type']=array(
 				'value' =>$type,
-				'operator' =>'='
+				'operator' =>'in'
 			);
 			$ary['ua_u_id']=array(
 				'value' =>$this->_user['u_id'],
@@ -1055,6 +1056,19 @@ class Api extends CI_Controller {
 	{
 		try 
 		{
+			
+			if($row['u_is_lock'] == '1')
+			{
+				$array = array(
+					'message' 	=>'此帐号已被冻结' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
 			$randomKey = $this->token->getRandomKey();
 			$rsaRandomKey = $this->token->publicEncrypt($randomKey);
 
@@ -1088,7 +1102,7 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			if($row['u_ag_is_reg'] ==0)
+			if($row['u_ag_is_reg'] ==0 && $row['u_ag_game_model'] !='0')
 			{
 				$result_json = $this->tcgcommon->create_user($row['ag_u_account'],$row['u_ag_passwd']);
 				$json = json_decode($result_json, true);

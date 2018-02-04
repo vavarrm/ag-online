@@ -43,6 +43,10 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"rechargeForm.html"+"?"+ Math.random(),
 		controller: "userCtrl",
 		cache: false,
+	}).when("/user/list/chargeback/:u_id",{
+		templateUrl: templatePath+"chargeback.html"+"?"+ Math.random(),
+		controller: "userCtrl",
+		cache: false,
 	}).when("/user/loginList/",{
 		templateUrl: templatePath+"loginList.html"+"?"+ Math.random(),
 		controller: "userCtrl",
@@ -53,6 +57,10 @@ agApp.config(function($routeProvider){
 		cache: false,
 	}).when("/account/withdrawalAuditList/",{
 		templateUrl: templatePath+"withdrawalAuditList.html"+"?"+ Math.random(),
+		controller: "accountCtrl",
+		cache: false,
+	}).when("/account/chargebackAuditList/",{
+		templateUrl: templatePath+"chargebackAuditList.html"+"?"+ Math.random(),
 		controller: "accountCtrl",
 		cache: false,
 	}).when("/system/addAdmin/",{
@@ -108,6 +116,14 @@ agApp.config(function($routeProvider){
 	}).when("/website/setAccountLimit/",{
 		templateUrl: templatePath+"setAccountLimit.html"+"?"+ Math.random(),
 		controller: "websiteCtrl",
+		cache: false,
+	}).when("/report/thirdTransferList/",{
+		templateUrl: templatePath+"thirdTransferList.html"+"?"+ Math.random(),
+		controller: "accountCtrl",
+		cache: false,
+	}).when("/report/thirdBettinglList/",{
+		templateUrl: templatePath+"thirdBettinglList.html"+"?"+ Math.random(),
+		controller: "accountCtrl",
 		cache: false,
 	})
 });
@@ -184,7 +200,7 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 							},
 							function() {
 								var obj ={
-									'message' :'系統錯誤'
+									'message' :'系统错误'
 								};
 								 dialog(obj);
 							}
@@ -236,7 +252,7 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -303,7 +319,7 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 							},
 							function() {
 								var obj ={
-									'message' :'系統錯誤'
+									'message' :'系统错误'
 								};
 								 dialog(obj);
 							}
@@ -355,7 +371,7 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -408,7 +424,7 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -510,7 +526,7 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 							},
 							function() {
 								var obj ={
-									'message' :'系統錯誤'
+									'message' :'系统错误'
 								};
 								 dialog(obj);
 							}
@@ -566,7 +582,7 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -628,7 +644,7 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -725,7 +741,7 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -775,6 +791,248 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 		input :{},
 		user_level_ary :[]
 	};
+	
+	$scope.chargebackInit = function()
+	{
+		var obj={
+			u_id :$routeParams.u_id
+		}
+		var promise = apiService.adminApi('/chargebackInit', obj);
+		promise.then
+		(
+			function(r) 
+			{
+				if(r.data.status =="100")
+				{
+					$scope.data.user= r.data.body.user;
+				}
+			},
+			function() {
+				var obj ={
+					'message' :'系统错误'
+				};
+				 dialog(obj);
+			}
+		)
+	}
+	
+	$scope.chargeback = function()
+	{
+		
+		
+		var obj={
+			u_id :$routeParams.u_id,
+			balance :$scope.data.input.balance,
+			remarks :$scope.data.input.remarks
+			
+		}
+		var promise = apiService.adminApi('/chargeback', obj);
+		promise.then
+		(
+			function(r) 
+			{
+				if(r.data.status =="100")
+				{
+					var obj =
+					{
+						'message' :'送出成功，请审核',
+						buttons: 
+						[
+							{
+								text: "close",
+								click: function() 
+								{
+									$( this ).dialog( "close" );
+									location.href="/admin/Admin/renterTemplates#!/account/rechargeAuditList/";
+								}
+							}
+						]
+					};
+					dialog(obj);
+				}
+			},
+			function() {
+				var obj ={
+					'message' :'系统错误'
+				};
+				dialog(obj);
+			}
+		)
+	}
+	
+	$scope.unLock = function(row)
+	{
+		if(row.u_is_lock =='0')
+		{
+			var obj ={
+				'message' :'此用未被冻结'
+			};
+			dialog(obj);
+			return false;
+		}
+		
+		var obj =
+		{
+			'message' :'确认冻结',
+			buttons: 
+			[
+				{
+					text: "是",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+						var obj ={
+							u_id :row.u_id,
+							lock :0
+						}
+						var promise = apiService.adminApi('/lockUser', obj);
+						promise.then
+						(
+							function(r) 
+							{
+								if(r.data.status =="100")
+								{
+									var obj =
+									{
+										'message' :'变更成功',
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+													$scope.search();
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}else{
+									var obj =
+									{
+										'message' :r.data.message,
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}
+							},
+							function() {
+								var obj ={
+									'message' :'系统错误'
+								};
+								 dialog(obj);
+							}
+						)
+					}
+				},
+				{
+					text: "否",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+					}
+				}
+			]
+		};
+		dialog(obj);
+	}
+	
+	$scope.lockUser = function(row)
+	{
+		if(row.u_is_lock ==1)
+		{
+			var obj ={
+				'message' :'此用互已被冻结'
+			};
+			dialog(obj);
+			return false;
+		}
+		
+		var obj =
+		{
+			'message' :'确认冻结',
+			buttons: 
+			[
+				{
+					text: "是",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+						var obj ={
+							u_id :row.u_id,
+							lock :1
+						}
+						var promise = apiService.adminApi('/lockUser', obj);
+						promise.then
+						(
+							function(r) 
+							{
+								if(r.data.status =="100")
+								{
+									var obj =
+									{
+										'message' :'冻结成功',
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+													$scope.search();
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}else{
+									var obj =
+									{
+										'message' :r.data.message,
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}
+							},
+							function() {
+								var obj ={
+									'message' :'系统错误'
+								};
+								 dialog(obj);
+							}
+						)
+					}
+				},
+				{
+					text: "否",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+					}
+				}
+			]
+		};
+		dialog(obj);
+	}
 	
 	$scope.loginListInit = function()
 	{
@@ -830,7 +1088,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -870,7 +1128,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -938,7 +1196,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -978,7 +1236,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -1041,7 +1299,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -1086,7 +1344,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -1175,7 +1433,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 								},
 								function() {
 									var obj ={
-										'message' :'系統錯誤'
+										'message' :'系统错误'
 									};
 									 dialog(obj);
 								}
@@ -1282,7 +1540,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -1322,7 +1580,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -1389,7 +1647,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -1430,7 +1688,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -1563,7 +1821,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -1656,7 +1914,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 				},
 				function() {
 					var obj ={
-						'message' :'系統錯誤'
+						'message' :'系统错误'
 					};
 					 dialog(obj);
 				}
@@ -1764,7 +2022,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -1876,7 +2134,7 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 							},
 							function() {
 								var obj ={
-									'message' :'系統錯誤'
+									'message' :'系统错误'
 								};
 								 dialog(obj);
 							}
@@ -1895,6 +2153,12 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		dialog(obj);
 	}
 
+	
+	$scope.thirdTransferList = function()
+	{
+		$( ".datepicker" ).datepicker({ dateFormat:'yy-mm-dd' });
+		$scope.search();
+	}
 	
 	$scope.withdrawalAuditListInit = function()
 	{
@@ -1948,6 +2212,16 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 	
 	$scope.RechargeAuditChange= function(row, action)
 	{
+		
+		if(row.ua_status =="audit")
+		{
+			var obj ={
+					'message' :'请勿选择待审核'
+				};
+			dialog(obj);
+			return false;
+		}
+		
 		if(row.change_status_disabled =='1')
 		{
 			return false;
@@ -2012,7 +2286,7 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 							},
 							function() {
 								var obj ={
-									'message' :'系統錯誤'
+									'message' :'系统错误'
 								};
 								 dialog(obj);
 							}
@@ -2098,7 +2372,7 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -2205,7 +2479,7 @@ var adminCtrl = function($scope, $http, apiService, $cookies, $routeParams, $roo
 							},
 							function() {
 								var obj ={
-									'message' :'系統錯誤'
+									'message' :'系统错误'
 								};
 								 dialog(obj);
 							}
@@ -2288,7 +2562,7 @@ var adminCtrl = function($scope, $http, apiService, $cookies, $routeParams, $roo
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -2376,7 +2650,7 @@ var adminCtrl = function($scope, $http, apiService, $cookies, $routeParams, $roo
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -2420,7 +2694,7 @@ var adminCtrl = function($scope, $http, apiService, $cookies, $routeParams, $roo
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -2458,7 +2732,7 @@ var adminCtrl = function($scope, $http, apiService, $cookies, $routeParams, $roo
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				 dialog(obj);
 			}
@@ -2547,7 +2821,7 @@ var bodyCtrl = function($scope, apiService, $cookies, $rootScope, $routeParams){
 			},
 			function() {
 				var obj ={
-					'message' :'系統錯誤'
+					'message' :'系统错误'
 				};
 				dialog(obj);
 			}

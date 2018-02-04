@@ -580,85 +580,105 @@
 		
 		public function getReportList($ary = array())
 		{
-			$where .=" WHERE 1 = 1";
-			$gitignore = array(
-				'limit',
-				'p',
-				'order'
-			);
-			$limit = sprintf(" LIMIT %d, %d",abs($ary['p']-1)*$ary['limit'],$ary['limit']);
-
-			if(is_array($ary))
+			try 
 			{
-				foreach($ary as $key => $value)
+				$where .=" WHERE 1 = 1";
+				$gitignore = array(
+					'limit',
+					'p',
+					'order'
+				);
+				$limit = sprintf(" LIMIT %d, %d",abs($ary['p']-1)*$ary['limit'],$ary['limit']);
+
+				if(is_array($ary))
 				{
-					if(in_array($key, $gitignore) ||  $value ==='' || $value['value'] ==="")	
+					foreach($ary as $key => $value)
 					{
-						continue;
-					}
-					if($key =="start_time" || $key=="end_time"  )
-					{
-						if($value['value']!='')
+						if(in_array($key, $gitignore) ||  $value ==='' || $value['value'] ==="")	
 						{
-							$where .=sprintf(" AND DATE_FORMAT(`an_datetime`, '%s') %s ?", '%Y-%m-%d', $value['operator']);					
+							continue;
+						}
+						if($key =="start_time" || $key=="end_time"  )
+						{
+							if($value['value']!='')
+							{
+								$where .=sprintf(" AND DATE_FORMAT(`an_datetime`, '%s') %s ?", '%Y-%m-%d', $value['operator']);					
+								$bind[] = $value['value'];
+							}
+						}
+						elseif($value['operator'] == 'in')
+						{
+							
+							$where .=sprintf(" AND %s IN (%s) ", $key, $value['value']);					
+						}
+						else{
+							$where .=sprintf(" AND %s %s ?", $key, $value['operator']);					
 							$bind[] = $value['value'];
 						}
 					}
-					elseif($value['operator'] == 'in')
-					{
-						$where .=sprintf(" AND %s IN (%s) ?", $key, $value);					
-						$bind[] = $value['value'];
-					}
-					else{
-						$where .=sprintf(" AND %s %s ?", $key, $value['operator']);					
-						$bind[] = $value['value'];
-					}
 				}
-			}
-			
-			if(is_array($ary['order']))
-			{
-				$order =" ORDER BY ";
-				foreach($ary['order'] AS $key =>$value)
+				
+				if(is_array($ary['order']))
 				{
-					$order.=sprintf( '%s %s', $key, $value);
+					$order =" ORDER BY ";
+					foreach($ary['order'] AS $key =>$value)
+					{
+						$order.=sprintf( '%s %s', $key, $value);
+					}
 				}
-			}
-			
-			$sql =" SELECT 
-						*
-					FROM 
-						user_account";
-			$search_sql = $sql.$where.$order.$limit ;
-			// echo $search_sql;
-			$query = $this->db->query($search_sql, $bind);
-			$rows = $query->result_array();
-			
-			$total_sql = sprintf("SELECT COUNT(*) AS total FROM(%s) AS t",$sql.$where) ;
-			$query = $this->db->query($total_sql, $bind);
-			$row = $query->row_array();
-			
-			$query->free_result();
-			$output['list'] = $rows;
-			$output['pageinfo']  = array(
-				'total'	=>$row['total'],
-				'pages'	=>ceil($row['total']/$ary['limit'])
-			);
-			
-			$error = $this->db->error();
-			if($error['message'] !="")
-			{
-				$MyException = new MyException();
-				$array = array(
-					'message' 	=>$error['message'] ,
-					'type' 		=>'db' ,
-					'status'	=>'001'
+				
+				$sql =" SELECT 
+							*
+						FROM 
+							user_account AS ua LEFT JOIN  user_account_type AS uat ON uat.uat_id = ua.ua_type";
+				$search_sql = $sql.$where.$order.$limit ;
+				// echo $search_sql;
+				$query = $this->db->query($search_sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$rows = $query->result_array();
+				
+				$total_sql = sprintf("SELECT COUNT(*) AS total FROM(%s) AS t",$sql.$where) ;
+				$query = $this->db->query($total_sql, $bind);
+				$row = $query->row_array();
+				
+				$query->free_result();
+				$output['list'] = $rows;
+				$output['pageinfo']  = array(
+					'total'	=>$row['total'],
+					'pages'	=>ceil($row['total']/$ary['limit'])
 				);
 				
-				$MyException->setParams($array);
-				throw $MyException;
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				return 	$output  ;
+			}catch(MyException $e)
+			{
+				throw $e;
 			}
-			return 	$output  ;
 		}
 	}
 ?>

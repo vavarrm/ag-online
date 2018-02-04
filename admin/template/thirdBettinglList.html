@@ -1,5 +1,5 @@
-<dd ng-model="data.router" ng-init="data.router='/uesrLoginList'"></dd>
-<div  ng-init="loginListInit()">
+<dd ng-model="data.search_api" ng-init="data.search_api='/thirdBettinglList'"></dd>
+<div  ng-init="thirdBettinglList()">
 	<div class="grid_3 grid_4">
 		<div class="grid-form1">
 			<form class="form-inline">
@@ -9,7 +9,7 @@
 			  </div>
 			  <div class="form-group">
 				<label class="sr-only" for="exampleInputPassword3"></label>
-				用户帐号：<input type="text" ng-model="data.search.u_account" class="form-control" >
+				用户名：<input type="text" ng-model="data.search.u_account" class="form-control" >
 			  </div>
 			  <button type="submit" class="btn btn-default" ng-click="search()">搜寻</button>
 			  <button  class="btn btn-default" ng-click="reset()">清除搜寻条件</button>
@@ -17,32 +17,33 @@
 		</div>
 	</div>
 	<div class="grid_3 grid_4">
+		<div class="col-md-12 page_1">
+			<a href="/admin/index.php?/Admin/renterTemplates#!/website{{action.router}}" ng-click="actionClick($event, action.func)" ng-repeat-start="action in data.actions" ng-if="action.type =='head_button' " type="button" class="btn btn-lg btn-default" ng-bind="action.title"></a>
+			<span ng-repeat-end></span>
+		</div>
 		<div class="clearfix"> </div>
 		<div class="but_list">
 			<div class="col-md-12 page_1">
 				<table class="table table-bordered">
 					<thead>
 						<tr>
-							<th  width="2%" style="text-align:center">
-								<a href="" ng-click="orderClick('u_account');$event.preventDefault();">用户帐号</a> 
-								<i  ng-show="data.order.u_account=='DESC'" class="fa fa-chevron-down" aria-hidden="true"></i>
-								<i  ng-show="data.order.u_account=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
-							</th>
-							<th width="2%"  style="text-align:center">
-								IP位址
-							</th>
-							<th width="5%"  style="text-align:center">
-								<a href="" ng-click="orderClick('ull_add_datetime');$event.preventDefault();">登入时间</a> 
-								<i  ng-show="data.order.ull_add_datetime=='DESC'" class="fa fa-chevron-down" aria-hidden="true"></i>
-								<i  ng-show="data.order.ull_add_datetime=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
+							<th width="10%" style="text-align:center" >用户名</th>
+							<th width="10%" style="text-align:center" >转入/转出</th>
+							<th width="10%" style="text-align:center" >金额</th>
+							<th width="15%"  style="text-align:center">
+								<a href="" ng-click="orderClick('ua_add_datetime');$event.preventDefault();">发怖日</a> 
+								<i  ng-show="data.order.ua_add_datetime=='DESC'" class="fa fa-chevron-down" aria-hidden="true"></i>
+								<i  ng-show="data.order.ua_add_datetime=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
 							</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr ng-repeat="row in data.list">
 							<td valign="middle" ng-bind="row.u_account"></td>
-							<td valign="middle" ng-bind="row.ull_ip"></td>
-							<td valign="middle" ng-bind="row.ull_add_datetime"></td>
+							<td valign="middle" ng-bind="row.uat_name"></td>
+							<td valign="middle" ng-bind="row.ua_value"></td>
+							<td valign="middle" ng-bind="row.ua_add_datetime"></td>
+						</tr>
 						</tr>
 					</tbody>
 				</table>  
@@ -51,13 +52,13 @@
 						<li  ng-class="data.p=='1'?'disabled':''">
 							<a ng-click="clickpage(data.p -1);$event.preventDefault();" href="#"><i class="fa fa-angle-left"></i></a>
 						</li>
-						<li  ng-class="($index +1)==data.p?'active':''" ng-repeat="n in [] | range:pageinfo.pages">
+						<li  ng-class="($index +1)==data.p?'active':''" ng-repeat="n in [] | range:data.pages">
 							<a ng-click="clickpage($index +1);$event.preventDefault();" href="#" ng-bind="$index +1"></a>
 						</li>
 						<li ng-class="data.p==pageinfo.pages?'disabled':''">
 							<a ng-click="clickpage(data.p +1);$event.preventDefault();" href="#"><i class="fa fa-angle-right"></i></a>
 						</li>
-					</ul>	
+					</ul>		
 				</div>
 			</div>
 			<div class="clearfix"> </div>
