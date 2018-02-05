@@ -92,6 +92,68 @@ class Api extends CI_Controller {
 		}
     }
 	
+	public function thirdBettinglList()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='用户投注列表';
+		$output['message'] = '成功';
+	
+		try 
+		{
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
+			$start_time = (isset($this->request['start_time']))?$this->request['start_time']." 00:00:00":date('Y-m-d 00:00:00');
+			$end_time = (isset($this->request['end_time']))?$this->request['end_time']." 23:59:59":date('Y-m-d 23:59:59');
+			$u_account = (isset($this->request['u_account']))?$this->request['u_account']:'';
+			if($u_account == '')
+			{
+				$array = array(
+						'message' 	=>'reponse 必传参数为空' ,
+						'type' 		=>'api' ,
+						'status'	=>'002'
+					);
+					$MyException = new MyException();
+					$MyException->setParams($array);
+					throw $MyException;	
+			}
+			$username = 'ldyl'.$u_account;
+	
+			$page=$ary['p'] ;
+			$json_str = $this->tcgcommon->get_bet_details_member($username, $start_time , $end_time , $page);
+			$json = json_decode($json_str , true);
+			if($json['status'] !=0 || empty($json))
+			{
+				$array = array(
+					'message' 	=>'无法取得第三方投注记录' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			// var_dump($json);
+			$output['body']['list']=$json['details'];
+			
+			$output['body']["pageinfo"]  =array(
+				"total"=>$json['page_info']['totalCount'],
+				"pages"=>$json['page_info']['totalPage']
+			);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	
 	public function chargebackInit()
 	{
 		$output['status'] = 100;

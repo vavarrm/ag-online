@@ -1,5 +1,5 @@
 <dd ng-model="data.search_api" ng-init="data.search_api='/thirdBettinglList'"></dd>
-<div  ng-init="thirdBettinglList()">
+<div  ng-init="thirdBettinglListInit()">
 	<div class="grid_3 grid_4">
 		<div class="grid-form1">
 			<form class="form-inline">
@@ -27,22 +27,18 @@
 				<table class="table table-bordered">
 					<thead>
 						<tr>
-							<th width="10%" style="text-align:center" >用户名</th>
-							<th width="10%" style="text-align:center" >转入/转出</th>
-							<th width="10%" style="text-align:center" >金额</th>
-							<th width="15%"  style="text-align:center">
-								<a href="" ng-click="orderClick('ua_add_datetime');$event.preventDefault();">发怖日</a> 
-								<i  ng-show="data.order.ua_add_datetime=='DESC'" class="fa fa-chevron-down" aria-hidden="true"></i>
-								<i  ng-show="data.order.ua_add_datetime=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
-							</th>
+							<th width="10%" style="text-align:center" >ag用户名</th>
+							<th width="10%" style="text-align:center" >投注金额</th>
+							<th width="10%" style="text-align:center" >中奖金额</th>
+							<th width="10%" style="text-align:center" >投注时间</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr ng-repeat="row in data.list">
-							<td valign="middle" ng-bind="row.u_account"></td>
-							<td valign="middle" ng-bind="row.uat_name"></td>
-							<td valign="middle" ng-bind="row.ua_value"></td>
-							<td valign="middle" ng-bind="row.ua_add_datetime"></td>
+							<td valign="middle" ng-bind="row.username"></td>
+							<td valign="middle" ng-bind="row.betAmount"></td>
+							<td valign="middle" ng-bind="row.winAmount"></td>
+							<td valign="middle" ng-bind="row.betTime"></td>
 						</tr>
 						</tr>
 					</tbody>

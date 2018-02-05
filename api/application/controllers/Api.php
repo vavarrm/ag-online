@@ -1345,10 +1345,11 @@ class Api extends CI_Controller {
 		$output['message'] = '执行成功';
 		$page_size = (isset($get['limit']))?$get['limit']:6;
 		$page = (isset($get['p']))?$get['p']:1;
-		$start_date = (isset($get['start_date']))?$get['start_date']:date('Y-m-d 00:00:00');
-		$end_date = (isset($get['end_date']))?$get['end_date']:date('Y-m-d 23:59:59');
+		$start_date = (isset($get['start_date']))?$get['start_date']." 00:00:00":date('Y-m-d 00:00:00');
+		$end_date = (isset($get['end_date']))?$get['end_date']." 23:59:59":date('Y-m-d 23:59:59');
 		try 
 		{
+			
 			$ag_user_name = $this->_user['ag_u_account'];
 			$result_json_str = $this->tcgcommon->get_bet_details_member($ag_user_name, $start_date, $end_date, $page);
 			$result_ary = json_decode($result_json_str , true);

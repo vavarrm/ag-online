@@ -2039,8 +2039,14 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		p:1,
 		search:{},
 		search_api:'',
-		order:{}
+		order:{},
+		isload :0
 	};
+	
+	$scope.thirdBettinglListInit = function()
+	{
+		$( ".datepicker" ).datepicker({ dateFormat:'yy-mm-dd' });
+	}
 	
 	$scope.changeStatus = function(row)
 	{
@@ -2309,9 +2315,16 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 	}
 	
 	
-	
 	$scope.search = function()
 	{
+		if($scope.data.isload == 1)
+		{
+			var obj ={
+				'message' :'资料读取中～请稍后'
+			};
+			dialog(obj);
+			return false;
+		}
 		
 		if($scope.data.search.end_time < $scope.data.search.start_time)
 		{
@@ -2342,6 +2355,7 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		})
 		
 		var promise = apiService.adminApi($scope.data.search_api, obj);
+		$scope.data.isload  = 1;
 		promise.then
 		(
 			function(r) 
@@ -2351,6 +2365,7 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 					$scope.data.list = r.data.body.list;
 					$scope.data.pages = r.data.body.pageinfo.pages;
 					$scope.data.actions = r.data.body.actions;
+					$scope.data.isload  = 0;
 				}else
 				{
 					var obj =
@@ -2368,13 +2383,15 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 						]
 					};
 					dialog(obj);
+					$scope.data.isload  = 0;
 				}
 			},
 			function() {
 				var obj ={
 					'message' :'系统错误'
 				};
-				 dialog(obj);
+				dialog(obj);
+				$scope.data.isload  = 0;
 			}
 		)
 	}
@@ -2833,7 +2850,6 @@ agApp.controller('bodyCtrl',  ['$scope','apiService' , '$cookies', '$rootScope' 
 
 var apiService = function($http, $cookies)
 {
-
 	var sess = $cookies.get('sess');
 	return {
 		adminApi :function($router, postdata, root_id, nodes_id){
