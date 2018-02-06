@@ -49,6 +49,38 @@
 			}
 		}
 		
+		public function checkMoneyPasswd($ary)
+		{
+			try
+			{
+				$sql ="SELECT 	count(*) AS total FROM user WHERE u_id =? OR u_money_passwd=MD5(?)";
+				$bind = array(
+					$ary['u_id'],
+					$ary['passwd'],
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$row =  $query->row_array();
+				$query->free_result();
+				return $row;
+			}catch(MyException $e)
+			{
+				throw $e;
+			}
+		}
+		
 		public function getIP(){
 			 if(!empty($_SERVER["HTTP_CLIENT_IP"])){
 				$cip = $_SERVER["HTTP_CLIENT_IP"];

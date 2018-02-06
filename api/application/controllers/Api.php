@@ -31,7 +31,8 @@ class Api extends CI_Controller {
 			'logout',
 			'registered',
 			'test',
-			'getCaptcha'
+			'getCaptcha',
+			'addPhonecCallBack'
 		);		
 		try 
 		{
@@ -722,7 +723,8 @@ class Api extends CI_Controller {
 		try 
 		{
 			if(
-				$this->request['passwd']	=="" 
+				$this->request['passwd']	==""  ||
+				$this->request['oldpasswd']	=="" 
 			){
 				$array = array(
 					'message' 	=>'reponse 必传参数为空' ,
@@ -733,6 +735,31 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}	
+			
+			if($this->request['passwd'] == $this->request['oldpasswd'])
+			{
+					$array = array(
+					'message' 	=>'新密码不能与旧密码相同' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			$passwd= $this->user->getUsetByID($this->_user['u_id']);
+			if($passwd['u_passwd'] != MD5($this->request['oldpasswd']))
+			{
+					$array = array(
+					'message' 	=>'旧密码不符' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
 			
 			if(strlen($this->request['passwd']) <8 || strlen($this->request['passwd'])>12){
 				$array = array(
@@ -756,6 +783,8 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}
+			
+			
 			
 			$affected_rows = $this->user->setUserPasswd($this->request['passwd'], $this->_user['u_id']);
 			if($affected_rows==0)
@@ -792,7 +821,8 @@ class Api extends CI_Controller {
 		try 
 		{
 			if(
-				$this->request['passwd']	=="" 
+				$this->request['passwd']	==""  ||
+				$this->request['oldpasswd']	=="" 
 			){
 				$array = array(
 					'message' 	=>'reponse 必传参数为空' ,
@@ -803,6 +833,32 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}	
+			
+			if($this->request['passwd'] == $this->request['oldpasswd'])
+			{
+					$array = array(
+					'message' 	=>'新密码不能与旧密码相同' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$passwd= $this->user->getUsetByID($this->_user['u_id']);
+			
+			if($passwd['u_money_passwd'] != MD5($this->request['oldpasswd']))
+			{
+					$array = array(
+					'message' 	=>'旧密码不符' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
 			
 			if(strlen($this->request['passwd']) <8 || strlen($this->request['passwd'])>12){
 				$array = array(
@@ -1038,6 +1094,60 @@ class Api extends CI_Controller {
 			$decrypt_user_data= $this->decryptUser($get['sess'], $encrypt_user_data);
 			unset($this->_user['u_passwd']);
 			$output['body']['user'] = $this->_user ;
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	
+	public function  checkMoneyPasswd()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='验证资金密码';
+		$output['message'] = '成功';
+		try 
+		{
+			
+			if(
+				$this->request['passwd']	=="" 
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ary = array(
+				'u_id' => $this->_user['u_id'],
+				'passwd' =>$this->request['passwd'],
+			);
+			
+			$row = $this->user->checkMoneyPasswd($ary);
+			if($row['total'] ==0)
+			{
+				$array = array(
+					'message' 	=>'失敗' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
 			
 		}catch(MyException $e)
 		{
