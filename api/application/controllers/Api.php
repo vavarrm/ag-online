@@ -304,7 +304,7 @@ class Api extends CI_Controller {
 		try 
 		{
 			$output['body']['subordinate'] = $this->user->getUserBySuperiorID($this->_user['u_id']);
-			$output['body']['superior'] = $this->user->getUsetByID($this->_user['u_superior_id']);
+			$output['body']['superior'] = $this->user->getUserByID($this->_user['u_superior_id']);
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();
@@ -575,6 +575,36 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}	
 			
+			$user = $this->user->getUserById($this->_user['u_id']);
+			if($user['u_bank_card_lock'] ==1)
+			{
+				$array = array(
+					'message' 	=>'用戶已鎖定銀行卡' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ary = array(
+				$this->request['account']
+			);
+			$bankCardIsBlack = $this->bank->bankCardIsBlack($ary);
+			
+			if($bankCardIsBlack['total'] ==1)
+			{
+				$array = array(
+					'message' 	=>'此银行卡号已被锁定无法新增' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
 			if (mb_strlen($this->request['province'],"utf-8") == strlen($this->request['province']))
 			{
 				$array = array(
@@ -747,7 +777,7 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}
-			$passwd= $this->user->getUsetByID($this->_user['u_id']);
+			$passwd= $this->user->getUserByID($this->_user['u_id']);
 			if($passwd['u_passwd'] != MD5($this->request['oldpasswd']))
 			{
 					$array = array(
@@ -812,17 +842,59 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
-	public function setUserMoneyPassword()
+	public function lockUserBankCard()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+			'affected_rows'	=>0
+		);
+		$output['title'] ='锁定銀行卡';
+		$output['message'] = '成功';
+		
+		try 
+		{
+			$ary = array(
+				'u_id' =>$this->_user['u_id']
+			);
+			$affected_rows = $this->user->lockUserBankCard($ary);
+			
+			if($affected_rows ==0)
+			{
+				$array = array(
+					'message' 	=>'锁定失败' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;	
+			}
+			$output['body']['affected_rows'] = $affected_rows;
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function delUserBankCard()
 	{
 		$output['status'] = 100;
 		$output['body'] =array();
-		$output['title'] ='設定資金密碼';
-		$output['message'] = '設定成功';
+		$output['title'] ='刪除銀行卡';
+		$output['message'] = '成功';
+		
 		try 
 		{
 			if(
-				$this->request['passwd']	==""  ||
-				$this->request['oldpasswd']	=="" 
+				$this->request['ub_id']	==""  
 			){
 				$array = array(
 					'message' 	=>'reponse 必传参数为空' ,
@@ -833,6 +905,78 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}	
+			
+			$user = $this->user->getUserByID($this->_user['u_id']);
+			if($user['u_bank_card_lock'] ==1)
+			{
+				$array = array(
+					'message' 	=>'用戶已鎖定銀行卡' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ary = array(
+				'ub_id' =>$this->request['ub_id'],
+				'u_id' =>$this->_user['u_id'],
+			);
+			
+			$bank_card = $this->user->getUserBankCard($ary);
+			
+
+			
+			if(empty($bank_card))
+			{
+				$array = array(
+					'message' 	=>'用互无绑定此银行卡' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			
+			$this->user->delUserBankCard($ary);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function setUserMoneyPassword()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='設定資金密碼';
+		$output['message'] = '設定成功';
+		try 
+		{
+			if(
+				$this->request['passwd']	==""  
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			
 			
 			if($this->request['passwd'] == $this->request['oldpasswd'])
 			{
@@ -846,9 +990,9 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			$passwd= $this->user->getUsetByID($this->_user['u_id']);
+			$passwd= $this->user->getUserByID($this->_user['u_id']);
 			
-			if($passwd['u_money_passwd'] != MD5($this->request['oldpasswd']))
+			if($passwd['u_money_passwd'] != MD5($this->request['oldpasswd']) && $passwd['u_money_passwd']!="")
 			{
 					$array = array(
 					'message' 	=>'旧密码不符' ,
@@ -1135,7 +1279,6 @@ class Api extends CI_Controller {
 				'u_id' => $this->_user['u_id'],
 				'passwd' =>$this->request['passwd'],
 			);
-			
 			$row = $this->user->checkMoneyPasswd($ary);
 			if($row['total'] ==0)
 			{

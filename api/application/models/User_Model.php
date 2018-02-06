@@ -49,11 +49,69 @@
 			}
 		}
 		
+		public function lockUserBankCard($ary)
+		{
+			try
+			{
+				$sql ="UPDATE   user SET u_bank_card_lock =1  WHERE 	u_id=? ";
+				$bind = array(
+					$ary['u_id'],
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				return $this->db->affected_rows();
+			}catch(MyException $e)
+			{
+				throw $e;
+			}
+		}
+		
+		public function delUserBankCard($ary)
+		{
+			try
+			{
+				$sql ="DELETE  FROM user_bank_info WHERE 	ub_id=? AND ub_u_id=?";
+				$bind = array(
+					$ary['ub_id'],
+					$ary['u_id'],
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+			}catch(MyException $e)
+			{
+				throw $e;
+			}
+		}
+		
 		public function checkMoneyPasswd($ary)
 		{
 			try
 			{
-				$sql ="SELECT 	count(*) AS total FROM user WHERE u_id =? OR u_money_passwd=MD5(?)";
+				$sql ="SELECT 	count(*) AS total FROM user WHERE u_id =? AND  u_money_passwd=MD5(?)";
 				$bind = array(
 					$ary['u_id'],
 					$ary['passwd'],
@@ -216,6 +274,40 @@
 			return $rows;
 		}
 		
+		public function getUserBankCard($ary)
+		{
+			try 
+			{
+				$sql="SELECT * FROM user_bank_info  WHERE ub_id=? AND ub_u_id=?";
+				$bind = array(
+					$ary['ub_id'],
+					$ary['u_id'],
+				);
+				$query = $this->db->query($sql,$bind);
+
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$row =  $query->row_array();
+				$query->free_result();
+				return $row;
+			}catch(MyException $e)
+			{
+				throw $e;
+				return false;
+			}
+		}
+		
 		public function addRegisteredLink($u_id)
 		{
 			$output = array(
@@ -224,7 +316,7 @@
 			);
 			try 
 			{
-				$user = $this->getUsetByID($u_id);
+				$user = $this->getUserByID($u_id);
 				if(empty($user))
 				{
 					$MyException = new MyException();
@@ -269,22 +361,23 @@
 		
 		public function setBankInfo($ary=array())
 		{
-			if(!is_array($ary) || count($ary) == 0)
-			{
-				$MyException = new MyException();
-				$array = array(
-					'message' 	=>'參數輸入有誤' ,
-					'type' 		=>'system' ,
-					'status'	=>'003'
-				);
-				
-				$MyException->setParams($array);
-				throw $MyException;
-			}
 			
 			try 
 			{
-				$user = $this->getUsetByID($ary['u_id']);
+				if(!is_array($ary) || count($ary) == 0)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'參數輸入有誤' ,
+						'type' 		=>'system' ,
+						'status'	=>'003'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+			
+				$user = $this->getUserByID($ary['u_id']);
 				if(empty($user))
 				{
 					$MyException = new MyException();
@@ -516,7 +609,7 @@
 			return $this->db->affected_rows();
 		}
 		
-		public function getUsetByID($u_id)
+		public function getUserByID($u_id)
 		{
 			$sql = "SELECT *   FROM user WHERE u_id = ?";
 			$bind = array(
@@ -647,7 +740,7 @@
 			try 
 			{
 				
-				$user = $this->getUsetByID($ary['u_id']);
+				$user = $this->getUserByID($ary['u_id']);
 				if(empty($user))
 				{
 					$MyException = new MyException();
