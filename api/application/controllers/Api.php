@@ -1406,12 +1406,12 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
-	public function transferToThird()
+	public function transferToThird ()
 	{
 		$get= $this->input->get();
 		$output['status'] = 100;
 		$output['body'] =array();
-		$output['title'] ='转帐至第三方平台';
+		$output['title'] ='用户额度转入第三方平台';
 		$output['message'] = '成功';
 		
 		$product_type = (isset($get['product_type']))?$get['product_type']:4;
@@ -1489,7 +1489,7 @@ class Api extends CI_Controller {
 		$get= $this->input->get();
 		$output['status'] = 100;
 		$output['body'] =array();
-		$output['title'] ='第三方平台转入';
+		$output['title'] ='第三方额度转到平台';
 		$output['message'] = '成功';
 		
 		$product_type = (isset($get['product_type']))?$get['product_type']:4;

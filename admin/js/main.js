@@ -125,8 +125,151 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"thirdBettinglList.html"+"?"+ Math.random(),
 		controller: "accountCtrl",
 		cache: false,
+	}).when("/bank/bankList/",{
+		templateUrl: templatePath+"userBankList.html"+"?"+ Math.random(),
+		controller: "bankCtrl",
+		cache: false,
+	}).when("/bank/bankList/",{
+		templateUrl: templatePath+"userBankList.html"+"?"+ Math.random(),
+		controller: "bankCtrl",
+		cache: false,
 	})
 });
+
+var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootScope)
+{
+	$scope.data={
+		actions:{},
+		from_post :{},
+		posturl :'',
+		list:{},
+		order:{},
+		p:1,
+		row:{},
+		search:{},
+		inputList:{},
+		input:{},
+		issearch : 0,
+		setting :{}
+	}
+	
+	$scope.search_click = function()
+	{
+		$scope.data.p= 1;
+		$scope.search();
+	}
+	
+	
+	$scope.init = function()
+	{
+		$( ".datepicker" ).datepicker({ dateFormat:'yy-mm-dd' });
+		$scope.search();
+	}
+	
+	$scope.reset= function()
+	{
+		$scope.data.p =1;
+		$.each($scope.data.order,function(i,e){
+			$scope.data.order[i] ="";
+		})
+		$.each($scope.data.search,function(i,e){
+			$scope.data.search[i] ="";
+		})
+		$scope.search();	
+	}
+	
+	
+	$scope.clickpage = function(p, fun)
+	{
+		if(p>$scope.pageinfo.pages || p<1)
+		{
+			return ;
+		}
+		$scope.data.p = p;
+		$scope.search();
+	}
+	
+	$scope.search = function()
+	{
+		var obj ={
+			p	:$scope.data.p,
+			order:$scope.data.order
+		};
+		
+		if(typeof $scope.data.search !="undefined")
+		{
+			$.each($scope.data.search,function(i,e){
+				obj[i] = e;
+			})
+		}
+		
+		if(typeof $scope.data.search !="undefined" && typeof $scope.data.search.start_time !="undefined" && typeof $scope.data.search.end_time !="undefined")
+		{
+			if($scope.data.search.start_time > $scope.data.search.end_time )
+			{
+				var obj =
+				{
+					'message' :'起始时间要小于结束时间',
+				};
+				dialog(obj);
+				return false;
+			}
+		}
+		var promise = apiService.adminApi($scope.data.setting.search_api, obj);
+		promise.then
+		(
+			function(r) 
+			{
+				if(r.data.status =="100")
+				{
+					$scope.data.list = r.data.body.list;
+					$scope.pageinfo = r.data.body.pageinfo;
+				}else
+				{
+					var obj =
+					{
+						'message' :r.data.message,
+						buttons: 
+						[
+							{
+								text: "close",
+								click: function() 
+								{
+									$( this ).dialog( "close" );
+								}
+							}
+						]
+					};
+					dialog(obj);
+				}
+			},
+			function() {
+				var obj ={
+					'message' :'系统错误'
+				};
+				 dialog(obj);
+			}
+		)
+		
+		$scope.orderClick = function(order_key)
+		{
+
+			if( typeof $scope.data.order[order_key] =='undefined')
+			{
+				$scope.data.order[order_key] ='DESC';
+			}else if($scope.data.order[order_key] =='DESC'){
+				$scope.data.order[order_key] ='ASC';
+			}else
+			{
+				$scope.data.order[order_key] ='DESC';
+			}
+			$scope.data.p=1;
+			$scope.search();
+		}
+	}
+}
+agApp.controller('bankCtrl',  ['$scope', '$http' ,'apiService', '$cookies', '$routeParams', '$rootScope', bankCtrl]);
+
 var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $rootScope)
 {
 	$( ".datepicker" ).datepicker({ dateFormat:'yy-mm-dd' });
@@ -2814,8 +2957,8 @@ var bodyCtrl = function($scope, apiService, $cookies, $rootScope, $routeParams){
 				if(r.data.status =="100")
 				{
 					$scope.menuList =r.data.body.menulist;
-					var menulist = $cookies.getObject('menulist');
-					$cookies.putObject('menulist', r.data.body.menulist, { path: '/'});
+					// var menulist = $cookies.getObject('menulist');
+					// $cookies.putObject('menulist', r.data.body.menulist, { path: '/'});
 				}else
 				{
 					var obj =

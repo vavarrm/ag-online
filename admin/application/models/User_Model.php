@@ -180,14 +180,17 @@
 								WHERE 
 									ua_u_id = ? AND ua_status = 'transfer_in'
 							UNION
-							SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'payment'
+								SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'payment'
 							UNION
 								SELECT 
 									ua.ua_id , IFNULL(ua.ua_value,0)*-1 AS Balance FROM user_account AS ua INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
 								WHERE 
 									ua_u_id = ? AND ua_status = 'transfer_out' 
+							UNION
+								SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'chargeback'
 						) AS t";
 				$bind = array(
+					$u_id,
 					$u_id,
 					$u_id,
 					$u_id,

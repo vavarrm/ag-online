@@ -20,6 +20,7 @@ class Api extends CI_Controller {
 		$this->load->model('Announcemet_Model', 'announcemet');
 		$this->load->model('Banner_Model', 'banner');
 		$this->load->model('Website_Model', 'website');
+		$this->load->model('Bank_Model', 'bank');
 
 		$output['status'] = 100;
 		$output['body'] =array();
@@ -92,6 +93,47 @@ class Api extends CI_Controller {
 		}
     }
 	
+	public function userBankList()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='用户银行列表';
+		$output['message'] = '成功';
+	
+		try 
+		{
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
+			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
+			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
+			$ub_account = (isset($this->request['ub_account']))?$this->request['ub_account']:'';
+			
+			if(is_array($this->request['order']) && count($this->request['order'])>0)
+			{
+				$ary['order'] = $this->request['order'];
+			}else{
+				$ary['order'] = array('ub_id'=>'DESC');
+			}
+			
+			$ary['start_time'] =array('value' =>$start_time, 'operator' =>'>=');
+			$ary['end_time'] =array('value' =>$end_time, 'operator' =>'<=');
+			$ary['ubi.ub_account'] =array('value' =>$ub_account, 'operator' =>'=');
+			
+			$output['body'] = $this->bank->getList($ary);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	
 	public function thirdBettinglList()
 	{
 		$output['status'] = 100;
@@ -138,7 +180,7 @@ class Api extends CI_Controller {
 			
 			$output['body']["pageinfo"]  =array(
 				"total"=>$json['page_info']['totalCount'],
-				"pages"=>$json['page_info']['totalPage']
+				"pages"=>$json['page_info']['totalPage'],
 			);
 		}catch(MyException $e)
 		{
@@ -2178,14 +2220,16 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
-	private function createTree(&$list, $parent)
+	private function createTree(&$list, $parent,$l=1)
 	{
 		$tree = array();
+		
+		$l++;
 		foreach ($parent as $k=>$l)
 		{
 			if(isset($list[$l['id']]))
 			{
-				$l['nodes'] = $this->createTree($list, $list[$l['id']]);
+				$l['nodes'] = $this->createTree($list, $list[$l['id']],$l);
 			}
 			$tree[] = $l;
 		} 
@@ -2520,6 +2564,7 @@ class Api extends CI_Controller {
 				$new[$value['parent_id']][] = $value;
 			}
 			$tree = $this->createTree($new, $new[0]);
+			// var_dump($tree);
 			$output['body']['menulist']= $tree;
 		}catch(MyException $e)
 		{
