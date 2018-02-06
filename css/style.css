@@ -1932,12 +1932,13 @@ body main .sect-member-detail > .container .member-detail > .container .row .dis
 body main .sect-member-detail > .container .member-detail > .container .row .discount-group .detail {
   margin-bottom: 30px;
   line-height: 1.5;
-  max-height: 76px;
+  height: 76px;
   overflow: hidden;
 }
 
 body main .sect-member-detail > .container .member-detail > .container .row .discount-group .detail.open {
-  max-height: initial;
+  min-height: 76px;
+  height: auto;
   overflow: visible;
 }
 
@@ -2003,12 +2004,13 @@ body main .sect-discount > .container .row .discount-group .title span {
 body main .sect-discount > .container .row .discount-group .detail {
   margin-bottom: 30px;
   line-height: 1.5;
-  max-height: 76px;
+  height: 76px;
   overflow: hidden;
 }
 
 body main .sect-discount > .container .row .discount-group .detail.open {
-  max-height: initial;
+  min-height: 76px;
+  height: auto;
   overflow: visible;
 }
 
@@ -2052,12 +2054,13 @@ body main .sect-notice > .container .row .notice-group .title span {
 body main .sect-notice > .container .row .notice-group .detail {
   margin-bottom: 30px;
   line-height: 1.5;
-  max-height: 76px;
+  height: 76px;
   overflow: hidden;
 }
 
 body main .sect-notice > .container .row .notice-group .detail.open {
-  max-height: initial;
+  min-height: 76px;
+  height: auto;
   overflow: visible;
 }
 
@@ -2623,7 +2626,7 @@ body .pop-window .pop-message-view .form-group .row > .detail {
 
 body .pop-window .pop-bankcard {
   width: 500px;
-  height: 455px;
+  height: 400px;
   background-color: #ffffff;
   border-radius: 5px;
   opacity: 0;

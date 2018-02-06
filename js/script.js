@@ -196,7 +196,7 @@ var Live = {
 
     notice_event: function () {
 
-      $('.jq-btn-notice-more').on('click', function () {
+      $(document).on('click', '.jq-btn-notice-more', function () {
         if ($(this).hasClass('open')) {
           $(this).parents('.jq-notice-group').find('.jq-detail').removeClass('open');
           $(this).removeClass('open');

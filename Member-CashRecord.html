@@ -25,24 +25,24 @@
                     <img src="img/logo.png" alt="乐鼎国际">
                 </a>
                 <div class="login-information">
-                    <div class="login-before" style="display: none;">
+                    <div class="login-before jq-login-before ajax-login-form" style="display: none;">
                         <div class="row">
-                            <input class="account" type="text" placeholder="游戏账号">
+                            <input class="account" type="text" name="account" placeholder="游戏账号">
                             <i class="icon-ic-user3"></i>
                         </div>
                         <div class="row">
-                            <input class="password" type="text" placeholder="游戏密码">
+                            <input class="password" type="password" name="passwd" placeholder="游戏密码">
                             <i class="icon-ic-lock1"></i>
                         </div>
-                        <input class="btn btn-solid-blue" type="button" value="登入">
+                        <input class="btn btn-solid-blue ajax-btn-login" type="button" value="登入">
                         <a class="btn btn-bg-blue jq-btn-pop-register jq-cancelBubble" href="javascript:void(0)">
                             <i class="icon-ic-roulette1"></i>
                             <span>免费开户</span>
                         </a>
                     </div>
-                    <div class="login-after">
+                    <div class="login-after jq-login-after" style="display: none;">
                         <div class="login-member-detail jq-login-member-detail jq-cancelBubble">
-                            <span class="member-nam">会员名称</span>
+                            <span class="member-nam jq-member-nam"></span>
                             <ul class="member-list jq-member-list jq-cancelBubble">
                                 <li>
                                     <span class="title">本地额度</span>
@@ -62,7 +62,7 @@
                             <i class="icon-ic-crown1"></i>
                             <span>充值/会员中心</span>
                         </a>
-                        <input class="btn btn-solid-orange" type="button" value="登出">
+                        <input class="btn btn-solid-orange ajax-btn-logout" type="button" value="登出">
                     </div>
                 </div>
             </div>
@@ -281,22 +281,27 @@
                 <form class="form-group">
                     <div class="row">
                         <i class="icon-ic-user3"></i>
-                        <input class="input" type="text" name="" id="" placeholder="帐号必须由4-9位数字或小写英文字母组合">
+                        <input class="input" type="text" name="" placeholder="请输入姓名...">
+                        <p class="warning-text">警示文字警示文字警示文字</p>
+                    </div>
+                    <div class="row">
+                        <i class="icon-ic-user3"></i>
+                        <input class="input" type="text" name="" placeholder="帐号必须由4-9位数字或小写英文字母组合">
                         <p class="warning-text">警示文字警示文字警示文字</p>
                     </div>
                     <div class="row">
                         <i class="icon-ic-lock1"></i>
-                        <input class="input" type="password" name="" id="" placeholder="密码必须由8至10个字符之间">
+                        <input class="input" type="password" name="" placeholder="密码必须由8至10个字符之间">
                         <p class="warning-text">警示文字警示文字警示文字</p>
                     </div>
                     <div class="row">
                         <i class="icon-ic-shield"></i>
-                        <input class="input" type="text" name="" id="" placeholder="请输入验证码">
+                        <input class="input" type="text" name="" placeholder="请输入验证码">
                         <p class="warning-text">警示文字警示文字警示文字</p>
                     </div>
                     <div class="form-action">
                         <input class="btn btn-bg-blue" type="button" value="注册">
-                        <input type="checkbox" name="" id="" checked>
+                        <input type="checkbox" name="" checked>
                         <span>我已经阅读并同意乐鼎國際</span>
                         <a href="">《客户协议》</a>
                     </div>
@@ -306,17 +311,17 @@
                 <div class="pop-close jq-pop-close"></div>
                 <p class="title">电话回拨</p>
                 <form class="form-group">
-                    <p class="warning-text">请填写您的电话与问题并送出，后须将会有专人客服与您联系。</p>
+                    <p class="warning-text">请填写您的电话与问题并送出，后续将会有专人客服与您联系。</p>
                     <div class="row">
-                        <p class="title">电话号码</p>
-                        <input class="input" type="password" name="" id="" placeholder="请输入电话号码">
+                        <p class="title">手机号码</p>
+                        <input class="input" type="text" name="phone-num" placeholder="请输入电话号码">
                     </div>
                     <div class="row">
                         <p class="title">讯息</p>
-                        <textarea class="textarea" name="" id="" cols="30" rows="6"></textarea>
+                        <textarea class="textarea" name="message" cols="30" rows="6"></textarea>
                     </div>
                     <div class="form-action">
-                        <input class="btn btn-bg-blue" type="button" value="确认发送">
+                        <input class="btn btn-bg-blue ajax-btn-pcb" type="button" value="确认发送">
                     </div>
                 </form>
             </div>
@@ -334,12 +339,12 @@
                     </div>
                     <div class="row">
                         <p class="title">收件人</p>
-                        <input class="input" type="password" name="" id="" placeholder="请输入收件人资讯">
+                        <input class="input" type="password" name="" placeholder="请输入收件人资讯">
                         <p class="warning-text">警示文字警示文字警示文字</p>
                     </div>
                     <div class="row">
                         <p class="title">讯息</p>
-                        <textarea class="textarea" name="" id="" cols="30" rows="6"></textarea>
+                        <textarea class="textarea" name="" cols="30" rows="6"></textarea>
                     </div>
                     <div class="form-action">
                         <input class="btn btn-bg-blue" type="button" value="确认发送">
@@ -372,40 +377,31 @@
                 <form class="form-group">
                     <div class="row">
                         <p class="title">帐户名称</p>
-                        <input class="input" type="password" name="" id="" placeholder="请输入帐户名称">
+                        <input class="input" type="text" name="account_name" placeholder="请输入帐户名称">
                     </div>
                     <div class="row">
                         <p class="title">银行帐号</p>
-                        <input class="input" type="password" name="" id="" placeholder="请输入银行帐号">
+                        <input class="input" type="text" name="account" placeholder="请输入银行帐号">
                     </div>
                     <div class="row">
                         <p class="title">确认银行帐号</p>
-                        <input class="input" type="password" name="" id="" placeholder="请再次输入银行帐号">
+                        <input class="input" type="text" name="account_check" placeholder="请再次输入银行帐号">
                     </div>
                     <div class="row">
-                        <p class="title">银行卡类型</p>
-                        <select class="select" name="" id="">
-                            <option value="">选项A</option>
-                            <option value="">选项B</option>
-                            <option value="">选项C</option>
-                        </select>
+                        <p class="title">分行名称</p>
+                        <input class="input" type="text" name="branch_name" placeholder="请输入分行名称">
                     </div>
                     <div class="row clear">
                         <p class="title">开户所在地</p>
                         <div class="col-xs-6" style="padding-left: 0;">
-                            <select class="select" name="" id="">
-                                <option value="">选择县市</option>
-                            </select>
+                            <select class="select" id="province" name="P1"></select>
                         </div>
                         <div class="col-xs-6" style="padding-right: 0;">
-                            <select class="select" name="" id="">
-                                <option value="">选择行政区</option>
-                            </select>
+                            <select class="select" id="city" name="C1"></select>
                         </div>
-                        <input class="input" type="password" name="" id="" placeholder="请输入地址" style="margin-top: 20px;">
                     </div>
                     <div class="form-action">
-                        <input class="btn btn-bg-blue" type="button" value="确认新增">
+                        <input class="btn btn-bg-blue ajax-btn-bankcard" type="button" value="确认新增">
                     </div>
                 </form>
             </div>

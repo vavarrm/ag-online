@@ -884,10 +884,11 @@ body {
                 .detail {
                   margin-bottom: 30px;
                   line-height: 1.5;
-                  max-height: 76px;
+                  height: 76px;
                   overflow: hidden;
                   &.open {
-                    max-height: initial;
+                    min-height: 76px;
+                    height: auto;
                     overflow: visible;
                   }
                 }
@@ -949,10 +950,11 @@ body {
             .detail {
               margin-bottom: 30px;
               line-height: 1.5;
-              max-height: 76px;
+              height: 76px;
               overflow: hidden;
               &.open {
-                max-height: initial;
+                min-height: 76px;
+                height: auto;
                 overflow: visible;
               }
             }
@@ -994,10 +996,11 @@ body {
             .detail {
               margin-bottom: 30px;
               line-height: 1.5;
-              max-height: 76px;
+              height: 76px;
               overflow: hidden;
               &.open {
-                max-height: initial;
+                min-height: 76px;
+                height: auto;
                 overflow: visible;
               }
             }
@@ -1483,7 +1486,7 @@ body {
     }
     .pop-bankcard {
       width: 500px;
-      height: 455px;
+      height: 400px;
       background-color: #ffffff;
       border-radius: 5px;
       opacity: 0;
