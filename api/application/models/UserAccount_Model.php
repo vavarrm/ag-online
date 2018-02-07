@@ -598,11 +598,11 @@
 						{
 							continue;
 						}
-						if($key =="start_time" || $key=="end_time"  )
+						if($key =="start_date" || $key=="end_date"  )
 						{
 							if($value['value']!='')
 							{
-								$where .=sprintf(" AND DATE_FORMAT(`an_datetime`, '%s') %s ?", '%Y-%m-%d', $value['operator']);					
+								$where .=sprintf(" AND DATE_FORMAT(`ua_add_datetime`, '%s') %s ?", '%Y-%m-%d', $value['operator']);					
 								$bind[] = $value['value'];
 							}
 						}

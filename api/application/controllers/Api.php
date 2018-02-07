@@ -1063,6 +1063,8 @@ class Api extends CI_Controller {
 		$ary['limit'] = (isset($get['limit']))?$get['limit']:5;
 		$ary['p'] = (isset($get['p']))?$get['p']:1;
 		$type= (isset($get['type']))?$get['type']:'';
+		$start_date = (isset($get['start_date']))?$get['start_date']:date('Y-m-d');
+		$end_date = (isset($get['end_date']))?$get['end_date']:date('Y-m-d');
 		try 
 		{
 			if(
@@ -1085,6 +1087,16 @@ class Api extends CI_Controller {
 			$ary['ua_u_id']=array(
 				'value' =>$this->_user['u_id'],
 				'operator' =>'='
+			);
+			
+			$ary['start_date'] = array(
+				'value'	=>$start_date,
+				'operator' =>'>='
+			);
+			
+			$ary['end_date'] = array(
+				'value'	=>$end_date,
+				'operator' =>'<='
 			);
 			
 			$output['body'] = $this->account->getReportList($ary);

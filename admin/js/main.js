@@ -935,6 +935,84 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 		user_level_ary :[]
 	};
 	
+	$scope.unlockUserBankCard = function(row)
+	{
+		var obj =
+		{
+			'message' :'确认解決鎖定',
+			buttons: 
+			[
+				{
+					text: "是",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+						var obj ={
+							u_id :row.u_id,
+							lock :0
+						}
+						var promise = apiService.adminApi('/unlockUserBankCard', obj);
+						promise.then
+						(
+							function(r) 
+							{
+								if(r.data.status =="100")
+								{
+									var obj =
+									{
+										'message' :'变更成功',
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+													$scope.search();
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}else{
+									var obj =
+									{
+										'message' :r.data.message,
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}
+							},
+							function() {
+								var obj ={
+									'message' :'系统错误'
+								};
+								 dialog(obj);
+							}
+						)
+					}
+				},
+				{
+					text: "否",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+					}
+				}
+			]
+		};
+		dialog(obj);
+	}
+	
 	$scope.chargebackInit = function()
 	{
 		var obj={
