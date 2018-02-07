@@ -111,6 +111,7 @@ var Live = {
         console.log(key);
         $('.jq-member-tag').removeClass('active');
         $(this).addClass('active');
+        $('[type=password]').val('');
         if (key == 'user') {
           $('.jq-user-password').show();
           $('.jq-user-cashpassword-first').hide();
@@ -121,19 +122,19 @@ var Live = {
       });
 
       $('.jq-member-option').click(function () {
-        var daily_key = $(this).attr('data-daily-option');
+        daily_key = $(this).attr('data-daily-option');
         $('.jq-member-option').removeClass('active');
         $(this).addClass('active');
-        if (daily_key == 1) {
+        if (daily_key == 1.2) {
           $('[data-daily-table]').hide();
           $('[data-daily-table=1]').show();
-        } else if (daily_key == 2) {
-          $('[data-daily-table]').hide();
-          $('[data-daily-table=2]').show();
         } else if (daily_key == 3) {
           $('[data-daily-table]').hide();
+          $('[data-daily-table=2]').show();
+        } else if (daily_key == 6) {
+          $('[data-daily-table]').hide();
           $('[data-daily-table=3]').show();
-        } else if (daily_key == 4) {
+        } else if (daily_key == 4.5) {
           $('[data-daily-table]').hide();
           $('[data-daily-table=4]').show();
         }
@@ -154,17 +155,18 @@ var Live = {
         $('.jq-pop-message').addClass('active');
       });
 
-      $('.jq-btn-message-delete').on('click', function () {
+      $(document).on('click', '.jq-btn-message-delete', function () {
         delete_key = $(this)
         $('.jq-pop-window').addClass('active');
         $('.jq-pop-true-false').addClass('active');
         $('.jq-pop-true-false').find('.jq-title').html('删除讯息');
         $('.jq-pop-true-false').find('.jq-detail').html('是否确认删除此站内讯息');
-      });
+      })
 
-      $('.jq-btn-message-view').on('click', function () {
+      $(document).on('click', '.jq-btn-message-view', function () {
         $('.jq-pop-window').addClass('active');
         $('.jq-pop-message-view').addClass('active');
+        $(".jq-pop-message-view").find('.form-group').find('.row').remove();
       });
 
       $('.jq-pop-window').click(function () {
