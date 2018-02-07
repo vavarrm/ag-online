@@ -135,20 +135,20 @@
                         </li>
                     </ul>
                     <div class="member-detail">
-                        <form class="container" action="">
+                        <div class="container jq-container-step1">
                             <div class="row">
                                 <div class="input-group-container clear">
                                     <p class="title">请输入资金密码</p>
                                     <div class="input-group">
-                                        <input type="text" placeholder="请输入资金密码">
+                                        <input type="password" name="cashpassword" placeholder="请输入资金密码">
                                     </div>
                                 </div>
                             </div>
                             <div class="row btn-action">
-                                <input class="btn btn-bg-blue" type="button" value="提交">
+                                <input class="btn btn-bg-blue ajax-cashpassword-submit" type="button" value="提交">
                             </div>
-                        </form>
-                        <div class="container" action="">
+                        </div>
+                        <div class="container jq-container-step2" style="display: none;">
                             <div class="row" style="border-bottom: none;">
                                 <div class="member-table">
                                     <div class="thead">
@@ -502,6 +502,42 @@
             // Privity
             var _bank_id = 1
             var delete_key
+
+            function bankInfor() {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/setUserBankInfoForm?sess=" + sessionStorage.session +
+                        "&p=1&limit=5",
+                    type: "GET",
+                    success: function (data) {
+                        var _each = $(".jq-tbody");
+                        var _length = data.body.list.user_bank_list.length;
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    for (i = 0; i < _length; i++) {
+                                        _each.append(
+                                            '<div class="tr">' +
+                                            '<div class="td" data-title="开户名">' + data.body.list
+                                            .user_bank_list[i].ub_account_name + '</div>' +
+                                            '<div class="td" data-title="开户行">' + data.body.list
+                                            .user_bank_list[i].ub_branch_name + '</div>' +
+                                            '<div class="td jq-aaa" data-title="卡号">' + data.body
+                                            .list.user_bank_list[i].ub_account + '</div>' +
+                                            '<div class="td" data-title="绑定时间">' + data.body.list
+                                            .user_bank_list[i].ub_add_datetime + '</div>' +
+                                            '<div class="td td-action" data-title="操作">' +
+                                            '<a class="ajax-btn-bankcard-delete" href="javascript:void(0)" data-ub-id="' +
+                                            data.body.list.user_bank_list[i].ub_id + '">删除</a>' +
+                                            '</div>' +
+                                            '</div>'
+                                        )
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                });
+            }
             function banklock() {
                 $('[data-btn-true-false]').click(function () {
                     var key = $(this).attr('data-btn-true-false');
@@ -562,41 +598,6 @@
                 });
             }
 
-            $(window).load(function () {
-                $.ajax({
-                    url: "http://ldyllive.com/api/Api/setUserBankInfoForm?sess=" + sessionStorage.session +
-                        "&p=1&limit=5",
-                    type: "GET",
-                    success: function (data) {
-                        var _each = $(".jq-tbody");
-                        var _length = data.body.list.user_bank_list.length;
-                        if (data.status) {
-                            switch (data.status) {
-                                case 100:
-                                    for (i = 0; i < _length; i++) {
-                                        _each.append(
-                                            '<div class="tr">' +
-                                            '<div class="td" data-title="开户名">' + data.body.list
-                                            .user_bank_list[i].ub_account_name + '</div>' +
-                                            '<div class="td" data-title="开户行">' + data.body.list
-                                            .user_bank_list[i].ub_branch_name + '</div>' +
-                                            '<div class="td jq-aaa" data-title="卡号">' + data.body
-                                            .list.user_bank_list[i].ub_account + '</div>' +
-                                            '<div class="td" data-title="绑定时间">' + data.body.list
-                                            .user_bank_list[i].ub_add_datetime + '</div>' +
-                                            '<div class="td td-action" data-title="操作">' +
-                                            '<a class="ajax-btn-bankcard-delete" href="javascript:void(0)" data-ub-id="' +
-                                            data.body.list.user_bank_list[i].ub_id + '">删除</a>' +
-                                            '</div>' +
-                                            '</div>'
-                                        )
-                                    }
-                                    break;
-                            }
-                        }
-                    }
-                });
-            });
             $('.ajax-btn-bankcard').click(function () {
                 var _account_name = $('.jq-pop-bankcard').find('[name="account_name"]').val();
                 var _account = $('.jq-pop-bankcard').find('[name="account"]').val();
@@ -656,6 +657,48 @@
                 bankdelete(delete_key2);
             });
 
+            // CashCheck
+            function cashpassword_check(_passwd) {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/checkMoneyPasswd?sess=" + sessionStorage.session,
+                    type: "POST",
+                    data: JSON.stringify({
+                        passwd: _passwd,
+                    }),
+                    success: function (data) {
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    alert('驗證成功');
+                                    $('.jq-container-step1').hide();
+                                    $('.jq-container-step2').show();
+                                    bankInfor()
+                                    break;
+                                case '999':
+                                    alert('密碼驗證失敗，請重新輸入');
+                            }
+                        }
+                    }
+                });
+            };
+
+            $(window).load(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/UserMoneyPasswd?sess=" + sessionStorage.session,
+                    type: "GET",
+                    success: function (data) {
+                        if (data.body.isSet == 0) {
+                            $('.jq-pop-window').addClass('active');
+                            $('.jq-pop-cash-password').addClass('active');
+                        }
+                    }
+                });
+            });
+            $('.ajax-cashpassword-submit').click(function () {
+                var cash_key = $('[name=cashpassword]').val();
+                cashpassword_check(cash_key);
+            });
+            
         </script>
 </body>
 

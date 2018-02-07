@@ -354,12 +354,15 @@
         <script>
             // Public
             var _phone_key
+
             function setCookie(_sess) {
                 sessionStorage.session = _sess;
             }
+
             function clearCookie() {
                 sessionStorage.session = '';
             }
+
             function checkPhone(namber) {
                 var phone = namber
                 if (!(/^1[34578]\d{9}$/.test(phone))) {
@@ -370,6 +373,7 @@
                     _phone_key = true;
                 }
             }
+
             function userInformation() {
                 $.ajax({
                     url: "http://ldyllive.com/api/Api/getUser?sess=" + sessionStorage.session,
@@ -482,7 +486,8 @@
                                 case 100:
                                     for (i = 0; i < _length; i++) {
                                         _each.append(
-                                            '<option value="' + data.body.list[i].d_id + '">' + data.body.list[i].d_name + '</option>'
+                                            '<option value="' + data.body.list[i].d_id + '">' +
+                                            data.body.list[i].d_name + '</option>'
                                         )
                                     }
                                     break;
@@ -512,7 +517,6 @@
                     }
                 });
             });
-
         </script>
     </div>
 </body>
