@@ -93,6 +93,122 @@ class Api extends CI_Controller {
 		}
     }
 	
+	public function unlockUserBankCard()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='解锁使用者银行卡绑定';
+		$output['message'] = '执行成功';
+		$post = $this->input->post();
+		try
+		{
+			if(
+				$this->request['u_id'] ==""
+			){
+				$array = array(
+					'message' 	=>'必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ary  =array(
+				'u_id'=>$this->request['u_id'],
+			);
+			
+			
+			
+			$affected_rows  = $this->user->lockUserBankCard($ary);
+			if($affected_rows === 0)
+			{
+				$array = array(
+					'message' 	=>'无资料更新' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		$this->response($output);
+	}
+	
+	public function bankBlackInit()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='黑名单列表初始化';
+		$output['message'] = '成功';
+		
+		try 
+		{
+			$output['body']['actions'] = $this->admin->getActionlist($this->request['am_id']);
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function bankBlackList()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='银行卡黑名单列表';
+		$output['message'] = '成功';
+	
+		try 
+		{
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
+			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
+			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
+			$ub_account = (isset($this->request['ub_account']))?$this->request['ub_account']:'';
+			
+			if(is_array($this->request['order']) && count($this->request['order'])>0)
+			{
+				$ary['order'] = $this->request['order'];
+			}else{
+				$ary['order'] = array('bbl_id'=>'DESC');
+			}
+			
+			$ary['start_time'] =array('value' =>$start_time, 'operator' =>'>=');
+			$ary['end_time'] =array('value' =>$end_time, 'operator' =>'<=');
+			$ary['ubi.ub_account'] =array('value' =>$ub_account, 'operator' =>'=');
+			
+			$output['body'] = $this->bank->getBlackList($ary);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
 	public function userBankList()
 	{
 		$output['status'] = 100;

@@ -1073,11 +1073,11 @@ class Api extends CI_Controller {
 		$output['title'] ='日常记录-提款';
 		$output['message'] = '成功';
 		$get= $this->input->get();
-		$ary['limit'] = (isset($get['limit']))?$get['limit']:5;
-		$ary['p'] = (isset($get['p']))?$get['p']:1;
-		$type= (isset($get['type']))?$get['type']:'';
-		$start_date = (isset($get['start_date']))?$get['start_date']:'';
-		$end_date = (isset($get['end_date']))?$get['end_date']:'';
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
+		$type= (isset($this->request['type']))?$this->request['type']:'';
+		$start_date = (isset($this->request['start_date']))?$this->request['start_date']:'';
+		$end_date = (isset($this->request['end_date']))?$this->request['end_date']:'';
 		try 
 		{
 			if(

@@ -28,6 +28,7 @@
 						<tr>
 							<th width="10%" style="text-align:center" >用互帐号</th>
 							<th width="10%" style="text-align:center" >用互状态</th>
+							<th width="10%" style="text-align:center" >锁定绑定银行卡</th>
 							<th width="10%" style="text-align:center">上級</th>
 							<th width="60%" style="text-align:center">功能</th>
 						</tr>
@@ -38,6 +39,7 @@
 								{{row.u_account}}
 							</td>
 							<td valign="middle" ng-bind="row.u_is_lock_str"></td>
+							<td valign="middle" ng-bind="row.u_bank_card_lock_str"></td>
 							<td  valign="middle" ng-if="row.u_superior_id =='0'"  >總代號</td>
 							<td ng-if="row.u_superior_id !='0'"  ng-bind="row.superior_account"></td>
 							<td valign="middle">

@@ -129,8 +129,12 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"userBankList.html"+"?"+ Math.random(),
 		controller: "bankCtrl",
 		cache: false,
-	}).when("/bank/bankList/",{
-		templateUrl: templatePath+"userBankList.html"+"?"+ Math.random(),
+	}).when("/bank/addBlackList",{
+		templateUrl: templatePath+"addBlackList.html"+"?"+ Math.random(),
+		controller: "bankCtrl",
+		cache: false,
+	}).when("/bank/bankBlackList/",{
+		templateUrl: templatePath+"bankBlackList.html"+"?"+ Math.random(),
 		controller: "bankCtrl",
 		cache: false,
 	})
@@ -150,12 +154,15 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 		inputList:{},
 		input:{},
 		issearch : 0,
-		setting :{}
+		setting :{},
+		init:{},
+		click_search:0
 	}
 	
 	$scope.search_click = function()
 	{
 		$scope.data.p= 1;
+		$scope.data.click_search = 1;
 		$scope.search();
 	}
 	
@@ -163,6 +170,43 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 	$scope.init = function()
 	{
 		$( ".datepicker" ).datepicker({ dateFormat:'yy-mm-dd' });
+		if(typeof $scope.data.setting.init_api !="undefined")
+		{
+			var promise = apiService.adminApi($scope.data.setting.init_api);
+			promise.then
+			(
+				function(r) 
+				{
+					if(r.data.status =="100")
+					{
+						$scope.data.init = r.data.body;
+					}else
+					{
+						var obj =
+						{
+							'message' :r.data.message,
+							buttons: 
+							[
+								{
+									text: "close",
+									click: function() 
+									{
+										$( this ).dialog( "close" );
+									}
+								}
+							]
+						};
+						dialog(obj);
+					}
+				},
+				function() {
+					var obj ={
+						'message' :'系统错误'
+					};
+					 dialog(obj);
+				}
+			)
+		}
 		$scope.search();
 	}
 	
@@ -948,8 +992,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 					{
 						$( this ).dialog( "close" );
 						var obj ={
-							u_id :row.u_id,
-							lock :0
+							u_id :row.u_id
 						}
 						var promise = apiService.adminApi('/unlockUserBankCard', obj);
 						promise.then

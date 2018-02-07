@@ -9,7 +9,49 @@
 		}
 		
 	
-
+		public function lockUserBankCard($ary)
+		{
+			try
+			{
+				$user = $this->getUserByID($ary['u_id']);
+				if($user['u_bank_card_lock'] ==0)
+				{
+					
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'使用者未锁动绑定银行卡' ,
+						'type' 		=>'db' ,
+						'status'	=>'999'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$sql ="UPDATE   user SET u_bank_card_lock =0  WHERE 	u_id=? ";
+				$bind = array(
+					$ary['u_id'],
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				return $this->db->affected_rows();
+			}catch(MyException $e)
+			{
+				throw $e;
+			}
+		}
+			
 		public function lock($ary)
 		{
 			try
@@ -426,7 +468,11 @@
 							WHEN '1' THEN '已冻结'
 							WHEN '0' THEN '未冻结'
 						END AS u_is_lock_str,
-						u.u_is_lock
+						u.u_is_lock,
+						CASE 	u.u_bank_card_lock
+							WHEN '1' THEN '已锁定'
+							WHEN '0' THEN '未锁定'
+						END AS u_bank_card_lock_str
 					FROM 
 						user AS u LEFT JOIN  user u2 ON u.u_superior_id =  u2.u_id";
 			$search_sql = $sql.$where.$limit ;

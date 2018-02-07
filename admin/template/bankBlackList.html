@@ -1,4 +1,5 @@
-<input type="hidden"  ng-model="data.setting.search_api" ng-init="data.setting.search_api ='/userBankList'">
+<input type="hidden"  ng-model="data.setting.search_api" ng-init="data.setting.search_api ='/bankBlackList'">
+<input type="hidden"  ng-model="data.setting.init_api" ng-init="data.setting.init_api ='/bankBlackInit'">
 <div  ng-init="init()">
 	<div class="grid_3 grid_4">
 		<div class="grid-form1">
@@ -18,7 +19,7 @@
 	</div>
 	<div class="grid_3 grid_4">
 		<div class="col-md-12 page_1">
-			<a href="/admin/index.php?/Admin/renterTemplates#!/website{{action.router}}" ng-click="actionClick($event, action.func)" ng-repeat-start="action in data.actions" ng-if="action.type =='head_button' " type="button" class="btn btn-lg btn-default" ng-bind="action.title"></a>
+			<a href="/admin/index.php?/Admin/renterTemplates#!/bank{{action.router}}" ng-click="actionClick($event, action.func)" ng-repeat-start="action in data.init.actions" ng-if="action.type =='head_button' " type="button" class="btn btn-lg btn-default" ng-bind="action.title"></a>
 			<span ng-repeat-end></span>
 		</div>
 		<div class="clearfix"> </div>
@@ -68,7 +69,7 @@
 					</ul>	
 				</div>
 			</div>
-			<div ng-show="data.list.length == 0" class="col-md-12 page_1">
+			<div ng-show="data.list.length == 0 && data.click_search=='1'" class="col-md-12 page_1">
 				<span>查无资料</span>
 			</div>
 			<div class="clearfix"> </div>
