@@ -630,7 +630,9 @@
 				$sql =" SELECT 
 							*
 						FROM 
-							user_account AS ua LEFT JOIN  user_account_type AS uat ON uat.uat_id = ua.ua_type";
+							user_account AS ua 
+								LEFT JOIN  user_account_type AS uat ON uat.uat_id = ua.ua_type
+								LEFT JOIN  discount d ON ua.ua_from_d_id = d.d_id";
 				$search_sql = $sql.$where.$order.$limit ;
 				// echo $search_sql;
 				$query = $this->db->query($search_sql, $bind);
