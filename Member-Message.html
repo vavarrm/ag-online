@@ -396,6 +396,122 @@
             Live.Global.owl_banner();
         </script>
         <script>
+            // Public
+            var _phone_key
+            function setCookie(_sess) {
+                sessionStorage.session = _sess;
+            }
+            function clearCookie() {
+                sessionStorage.session = '';
+            }
+            function checkPhone(namber) {
+                var phone = namber
+                if (!(/^1[34578]\d{9}$/.test(phone))) {
+                    alert("手机号码有误，请重填");
+                    _phone_key = false;
+                    return false;
+                } else {
+                    _phone_key = true;
+                }
+            }
+            function userInformation() {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getUser?sess=" + sessionStorage.session,
+                    type: "GET",
+                    success: function (data) {
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    $('.jq-login-before').hide();
+                                    $('.jq-login-after').show();
+                                    $('.jq-member-nam').text(data.body.user.u_name)
+                                    break;
+                            }
+                        }
+                    }
+                });
+            }
+
+            $(window).load(function () {
+                if (sessionStorage.session == undefined || sessionStorage.session == '') {
+                    $('.jq-login-before').show();
+                    $('.jq-login-after').hide();
+                } else {
+                    userInformation()
+                }
+            });
+            $('.ajax-btn-login').click(function () {
+                var _parent = $(this).parents('.ajax-login-form');
+                var _account = _parent.find('[name=account]').val();
+                var _passwd = _parent.find('[name=passwd]').val();
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/login",
+                    type: "POST",
+                    data: JSON.stringify({
+                        account: _account,
+                        passwd: _passwd
+                    }),
+                    success: function (data) {
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    setCookie(data.body.sess);
+                                    console.log(data.body.sess);
+                                    alert('登入成功');
+                                    userInformation()
+                                    break;
+                                case '999':
+                                    alert('帐号或密码错误');
+                            }
+                        }
+                    }
+                });
+            });
+            $('.ajax-btn-logout').click(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/logout",
+                    type: "GET",
+                    success: function (data) {
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    clearCookie();
+                                    alert('登出成功');
+                                    $('.jq-login-before').show();
+                                    $('.jq-login-after').hide();
+                                    $('.jq-member-nam').empty()
+                                    break;
+                            }
+                        }
+                    }
+                });
+            });
+            $('.ajax-btn-pcb').click(function () {
+                var _pcb_phone = $('.jq-pop-service').find('[name=phone-num]').val();
+                var _pcb_message = $('.jq-pop-service').find('[name=message]').val();
+                checkPhone(_pcb_phone);
+                if (_phone_key == true) {
+                    $.ajax({
+                        url: "http://ldyllive.com/api/Api/addPhonecCallBack?sess=" + sessionStorage.session,
+                        type: "POST",
+                        data: JSON.stringify({
+                            pcb_phone: _pcb_phone,
+                            pcb_message: _pcb_message
+                        }),
+                        success: function (data) {
+                            if (data.status) {
+                                switch (data.status) {
+                                    case 100:
+                                        alert('问题已送出，后续将会有专人客服与您联系。');
+                                        window.location.reload();
+                                        break;
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
             // Privity
             var delete_key
             $('[data-btn-true-false]').on('click', function () {
@@ -409,6 +525,48 @@
                     $('.jq-pop-true-false').removeClass('active');
                 };
             });
+
+            $(window).load(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getUserMessageList?sess=" + sessionStorage.session,
+                    type: "GET",
+                    success: function (data) {
+                        var _each = $(".jq-sect-discount").find('.container');
+                        var _length = data.body.list.length;
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    for (i = 0; i < _length; i++) {
+                                        _each.append(
+                                            '<div class="row">' +
+                                            '<div class="discount-group jq-notice-group">' +
+                                            '<div class="img-container">' +
+                                            '<img class="absolute-center-xs img" src="images/announcemet/' +
+                                            data.body.list[i].an_image + '" alt="">' +
+                                            '</div>' +
+                                            '<p class="title">' +
+                                            '<i class="icon-ic-broadcast1"></i>' +
+                                            '<span style="display: inline-block; margin-right: 20px;">' +
+                                            data.body.list[i].an_title + '</span>' +
+                                            '<span>' + data.body.list[i].an_datetime +
+                                            '</span>' +
+                                            '</p>' +
+                                            '<p class="detail jq-detail">' + data.body.list[i].an_content +
+                                            '</p>' +
+                                            '<div class="discount-action">' +
+                                            '<a class="jq-btn-notice-more" href="javascript:void(0)">更多内容 ></a>' +
+                                            '</div>' +
+                                            '</div>' +
+                                            '</div>'
+                                        )
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                });
+            });
+
         </script>
     </div>
 </body>
