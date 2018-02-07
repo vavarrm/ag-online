@@ -385,15 +385,12 @@
         <script>
             // Public
             var _phone_key
-
             function setCookie(_sess) {
                 sessionStorage.session = _sess;
             }
-
             function clearCookie() {
                 sessionStorage.session = '';
             }
-
             function checkPhone(namber) {
                 var phone = namber
                 if (!(/^1[34578]\d{9}$/.test(phone))) {
@@ -404,7 +401,6 @@
                     _phone_key = true;
                 }
             }
-
             function userInformation() {
                 $.ajax({
                     url: "http://ldyllive.com/api/Api/getUser?sess=" + sessionStorage.session,
@@ -505,6 +501,67 @@
 
             // Privity
             var _bank_id = 1
+            var delete_key
+            function banklock() {
+                $('[data-btn-true-false]').click(function () {
+                    var key = $(this).attr('data-btn-true-false');
+                    if (key == 'true') {
+                        $.ajax({
+                            url: "http://ldyllive.com/api/Api/lockUserBankCard?sess=" + sessionStorage
+                                .session,
+                            type: "GET",
+                            success: function (data) {
+                                if (data.status) {
+                                    switch (data.status) {
+                                        case 100:
+                                            alert('银行卡已锁定');
+                                            window.location.reload();
+                                            break;
+                                    }
+                                }
+                            }
+                        });
+                    } else if (key == 'false') {
+                        $('.jq-pop-window').removeClass('active');
+                        $('.jq-pop-true-false').removeClass('active');
+                        $('.jq-pop-true-false').find('.jq-title').empty();
+                        $('.jq-pop-true-false').find('.jq-detail').empty();
+                    }
+                });
+            }
+            function bankdelete(num) {
+                $('[data-btn-true-false]').click(function () {
+                    var key = $(this).attr('data-btn-true-false');
+                    if (key == 'true') {
+                        $.ajax({
+                            url: "http://ldyllive.com/api/Api/delUserBankCard?sess=" + sessionStorage
+                                .session,
+                            type: "POST",
+                            data: JSON.stringify({
+                                ub_id: num
+                            }),
+                            success: function (data) {
+                                console.log(data);
+                                if (data.status) {
+                                    switch (data.status) {
+                                        case 100:
+                                            alert('银行卡已删除');
+                                            delete_key.parents('.tr').remove();
+                                            window.location.reload();
+                                            break;
+                                    }
+                                }
+                            }
+                        });
+                    } else if (key == 'false') {
+                        $('.jq-pop-window').removeClass('active');
+                        $('.jq-pop-true-false').removeClass('active');
+                        $('.jq-pop-true-false').find('.jq-title').empty();
+                        $('.jq-pop-true-false').find('.jq-detail').empty();
+                    }
+                });
+            }
+
             $(window).load(function () {
                 $.ajax({
                     url: "http://ldyllive.com/api/Api/setUserBankInfoForm?sess=" + sessionStorage.session +
@@ -528,7 +585,8 @@
                                             '<div class="td" data-title="绑定时间">' + data.body.list
                                             .user_bank_list[i].ub_add_datetime + '</div>' +
                                             '<div class="td td-action" data-title="操作">' +
-                                            '<a href="javascript:void(0)">删除</a>' +
+                                            '<a class="ajax-btn-bankcard-delete" href="javascript:void(0)" data-ub-id="' +
+                                            data.body.list.user_bank_list[i].ub_id + '">删除</a>' +
                                             '</div>' +
                                             '</div>'
                                         )
@@ -580,6 +638,24 @@
                     alert('银行帐号不一致，请重新输入')
                 }
             });
+            $('.jq-btn-card-lock').click(function () {
+                $('.jq-pop-window').addClass('active');
+                $('.jq-pop-true-false').addClass('active');
+                $('.jq-pop-true-false').find('.jq-title').html('锁定银行卡');
+                $('.jq-pop-true-false').find('.jq-detail').html(
+                    '银行卡锁定可增强帐户安全，锁定后不能增加新银行卡绑定，自身不能解绑和解锁银行卡，如需解锁请联系在线客服申请');
+                banklock();
+            });
+            $(document).on('click', '.ajax-btn-bankcard-delete', function () {
+                delete_key = $(this)
+                delete_key2 = $(this).attr('data-ub-id');
+                $('.jq-pop-window').addClass('active');
+                $('.jq-pop-true-false').addClass('active');
+                $('.jq-pop-true-false').find('.jq-title').html('删除讯息');
+                $('.jq-pop-true-false').find('.jq-detail').html('是否确认删除此笔银行卡资讯');
+                bankdelete(delete_key2);
+            });
+
         </script>
 </body>
 

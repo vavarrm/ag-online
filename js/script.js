@@ -39,6 +39,9 @@ var Live = {
           $('.jq-pop-window').removeClass('active');
           $('.jq-pop-register').removeClass('active');
           $('.jq-pop-service').removeClass('active');
+          $('.jq-pop-true-false').removeClass('active');
+          $('.jq-pop-true-false').find('.jq-title').empty();
+          $('.jq-pop-true-false').find('.jq-detail').empty();
         }
       });
 
@@ -99,15 +102,22 @@ var Live = {
 
     member: function () {
 
-      var delete_key
-
       var action_length = $('.jq-member-action-list').find('li').length - 1;
       var action_height = 55 + (73 * action_length);
       $('.jq-member-action-list').parent().css('min-height', action_height + 'px');
 
       $('.jq-member-tag').click(function () {
+        var key = $(this).attr('data-password');
+        console.log(key);
         $('.jq-member-tag').removeClass('active');
         $(this).addClass('active');
+        if (key == 'user') {
+          $('.jq-user-password').show();
+          $('.jq-user-cashpassword-first').hide();
+          $('.jq-user-cashpassword').hide();
+        } else if (key == 'cash') {
+          $('.jq-user-password').hide();
+        };
       });
 
       $('.jq-member-option').click(function () {
@@ -127,13 +137,6 @@ var Live = {
           $('[data-daily-table]').hide();
           $('[data-daily-table=4]').show();
         }
-      });
-
-      $('.jq-btn-card-lock').click(function () {
-        $('.jq-pop-window').addClass('active');
-        $('.jq-pop-true-false').addClass('active');
-        $('.jq-pop-true-false').find('.jq-title').html('锁定银行卡');
-        $('.jq-pop-true-false').find('.jq-detail').html('银行卡锁定可增强帐户安全，锁定后不能增加新银行卡绑定，自身不能解绑和解锁银行卡，如需解锁请联系在线客服申请');
       });
 
       $('.jq-btn-card-add').click(function () {
@@ -162,18 +165,6 @@ var Live = {
       $('.jq-btn-message-view').on('click', function () {
         $('.jq-pop-window').addClass('active');
         $('.jq-pop-message-view').addClass('active');
-      });
-
-      $('[data-btn-true-false]').on('click', function () {
-        var key = $(this).attr('data-btn-true-false');
-        if (key == 'true') {
-          delete_key.parents('.tr').remove();
-          $('.jq-pop-window').removeClass('active');
-          $('.jq-pop-true-false').removeClass('active');
-        } else {
-          $('.jq-pop-window').removeClass('active');
-          $('.jq-pop-true-false').removeClass('active');
-        };
       });
 
       $('.jq-pop-window').click(function () {

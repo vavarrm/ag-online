@@ -395,6 +395,21 @@
             Live.Global.member();
             Live.Global.owl_banner();
         </script>
+        <script>
+            // Privity
+            var delete_key
+            $('[data-btn-true-false]').on('click', function () {
+                var key = $(this).attr('data-btn-true-false');
+                if (key == 'true') {
+                    delete_key.parents('.tr').remove();
+                    $('.jq-pop-window').removeClass('active');
+                    $('.jq-pop-true-false').removeClass('active');
+                } else {
+                    $('.jq-pop-window').removeClass('active');
+                    $('.jq-pop-true-false').removeClass('active');
+                };
+            });
+        </script>
     </div>
 </body>
 

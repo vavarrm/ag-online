@@ -562,18 +562,16 @@ body {
                 background-color: #ffffff;
               }
             }
-            &+.container {
-              border-top: 0;
-              border-top-left-radius: 0px;
-              border-top-right-radius: 0px;
-            }
           }
           >.container {
             width: 100%;
             background-color: #ffffff;
             border: 1px solid #848588;
-            padding: 50px;
             border-radius: 5px;
+            border-top: 0;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+            padding: 50px;
             margin-bottom: 20px;
             .row {
               margin-bottom: 25px;
