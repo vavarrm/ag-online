@@ -188,9 +188,9 @@
 			}
 			
 			$sql =" SELECT 
-						*
+						um.*
 					FROM 
-						user_message";
+						user_message  AS um INNER JOIN user AS u ON u.u_id = um.um_from_u_id ";
 			$search_sql = $sql.$where.$order.$limit ;
 			$query = $this->db->query($search_sql, $bind);
 			$rows = $query->result_array();
@@ -689,7 +689,13 @@
 		
 		public function getUserMessageByID($id, $u_id)
 		{
-			$sql = "SELECT *   FROM user_message WHERE um_id= ? AND um_u_id =?";
+			$sql = "SELECT 
+						um.*,
+						u.u_account  
+					FROM 
+						user_message AS um	INNER JOIN  user AS u ON um.um_from_u_id = u.u_id					
+					WHERE um_id= ? AND um_u_id =?
+						";
 			$bind = array(
 				$id,
 				$u_id
