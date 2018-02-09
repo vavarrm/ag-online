@@ -12,7 +12,6 @@
 		{
 			try 
 			{
-				$in_str = join("','", $ary);
 				$sql="SELECT * FROM big_banner  ORDER BY bb_id ASC";
 				$query = $this->db->query($sql);
 
