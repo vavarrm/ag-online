@@ -70,7 +70,7 @@
                     <li class="jq-nav-option">
                         <a href="Live-Entertainment.html">真人娱乐</a>
                     </li>
-                    <li class="jq-nav-option">
+                    <li class="jq-nav-option active">
                         <a href="Live-Electric.html">电子游戏</a>
                     </li>
                     <li class="jq-nav-option">
@@ -484,6 +484,17 @@
                                     alert('帐号或密码错误');
                             }
                         }
+                    }
+                });
+            });
+
+            // Privity
+            $(window).load(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getGameList?game_type=RNG&p=1&limit=9999&platform=html5&client_type=web",
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data)
                     }
                 });
             });

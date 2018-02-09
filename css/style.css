@@ -1955,7 +1955,7 @@ body main .sect-discount > .container {
   margin: 20px auto;
   background-color: #ffffff;
   border: 1px solid #848588;
-  padding: 50px;
+  padding: 50px 50px 30px;
   border-radius: 5px;
   margin-bottom: 20px;
 }
@@ -1963,6 +1963,10 @@ body main .sect-discount > .container {
 body main .sect-discount > .container .row {
   margin-bottom: 25px;
   border-bottom: 1px solid #848588;
+}
+
+body main .sect-discount > .container .row:last-child {
+  border-bottom: 0;
 }
 
 body main .sect-discount > .container .row .discount-group {
@@ -2016,13 +2020,22 @@ body main .sect-discount > .container .row .discount-group .discount-action {
   text-align: right;
 }
 
+body main .sect-discount .btn-action {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+body main .sect-discount .btn-action .btn {
+  padding: 10px 15px;
+}
+
 body main .sect-notice > .container {
   width: 100%;
   max-width: 1440px;
   margin: 20px auto;
   background-color: #ffffff;
   border: 1px solid #848588;
-  padding: 50px;
+  padding: 50px 50px 30px;
   border-radius: 5px;
   margin-bottom: 20px;
 }
@@ -2030,6 +2043,10 @@ body main .sect-notice > .container {
 body main .sect-notice > .container .row {
   margin-bottom: 25px;
   border-bottom: 1px solid #848588;
+}
+
+body main .sect-notice > .container .row:last-child {
+  border-bottom: 0;
 }
 
 body main .sect-notice > .container .row .notice-group .title {
@@ -2064,6 +2081,15 @@ body main .sect-notice > .container .row .notice-group .detail.open {
 body main .sect-notice > .container .row .notice-group .notice-action {
   margin-bottom: 30px;
   text-align: right;
+}
+
+body main .sect-notice .btn-action {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+body main .sect-notice .btn-action .btn {
+  padding: 10px 15px;
 }
 
 body main .sect-app .banner-container img {

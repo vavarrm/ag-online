@@ -913,12 +913,15 @@ body {
         margin: 20px auto;
         background-color: #ffffff;
         border: 1px solid #848588;
-        padding: 50px;
+        padding: 50px 50px 30px;
         border-radius: 5px;
         margin-bottom: 20px;
         .row {
           margin-bottom: 25px;
           border-bottom: 1px solid #848588;
+          &:last-child {
+            border-bottom: 0;
+          }
           .discount-group {
             padding-left: 330px;
             .img-container {
@@ -963,6 +966,13 @@ body {
           }
         }
       }
+      .btn-action {
+        margin-bottom: 20px;
+        text-align: center;
+        .btn {
+          padding: 10px 15px;
+        }
+      }
     }
     .sect-notice {
       >.container {
@@ -971,12 +981,15 @@ body {
         margin: 20px auto;
         background-color: #ffffff;
         border: 1px solid #848588;
-        padding: 50px;
+        padding: 50px 50px 30px;
         border-radius: 5px;
         margin-bottom: 20px;
         .row {
           margin-bottom: 25px;
           border-bottom: 1px solid #848588;
+          &:last-child {
+            border-bottom: 0;
+          }
           .notice-group {
             .title {
               color: #0080cb;
@@ -1007,6 +1020,13 @@ body {
               text-align: right;
             }
           }
+        }
+      }
+      .btn-action {
+        margin-bottom: 20px;
+        text-align: center;
+        .btn {
+          padding: 10px 15px;
         }
       }
     }

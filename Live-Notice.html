@@ -77,7 +77,7 @@
                     <li class="jq-nav-option">
                         <a href="Live-Discount.html">优惠讯息</a>
                     </li>
-                    <li class="jq-nav-option">
+                    <li class="jq-nav-option active">
                         <a href="Live-Notice.html">平台公告</a>
                     </li>
                     <li class="jq-nav-option">
@@ -89,6 +89,9 @@
         <main>
             <section class="sect-notice jq-sect-notice">
                 <div class="container"></div>
+                <div class="btn-action">
+                    <input class="btn btn-bg-blue jq-btn-more" type="button" value="MORE">
+                </div>
             </section>
         </main>
         <footer>
@@ -448,12 +451,16 @@
             });
 
             // Privity
+            var _more_key = 2;
+            var _page_total
+            var _result_length
+
             $(window).load(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getAnnouncemetList?sess=" + sessionStorage.session +
-                        "&p=1&limit=5",
+                    url: "http://ldyllive.com/api/Api/getAnnouncemetList?limit=5&p=1&type=public",
                     type: "GET",
                     success: function (data) {
+                        _page_total = data.body.pageinfo.total;
                         var _each = $(".jq-sect-notice").find('.container');
                         var _length = data.body.list.length;
                         if (data.status) {
@@ -478,6 +485,54 @@
                                             '</div>' +
                                             '</div>'
                                         )
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                });
+            });
+            $('.jq-btn-more').click(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getAnnouncemetList?limit=5&p=" + _more_key +
+                        "&type=action",
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data)
+                        var _each = $(".jq-sect-discount").find('.container');
+                        var _length = data.body.list.length;
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    _result_length = $('.jq-sect-notice').find('.row').length;
+                                    for (i = 0; i < _length; i++) {
+                                        _each.append(
+                                            '<div class="row">' +
+                                            '<div class="discount-group jq-notice-group">' +
+                                            '<div class="img-container">' +
+                                            '<img class="absolute-center-xs img" src="images/announcemet/' +
+                                            data.body.list[i].an_image + '" alt="">' +
+                                            '</div>' +
+                                            '<p class="title">' +
+                                            '<i class="icon-ic-broadcast1"></i>' +
+                                            '<span style="display: inline-block; margin-right: 20px;">' +
+                                            data.body.list[i].an_title + '</span>' +
+                                            '<span>' + data.body.list[i].an_datetime +
+                                            '</span>' +
+                                            '</p>' +
+                                            '<p class="detail jq-detail">' + data.body.list[i].an_content +
+                                            '</p>' +
+                                            '<div class="discount-action">' +
+                                            '<a class="jq-btn-notice-more" href="javascript:void(0)">更多内容 ></a>' +
+                                            '</div>' +
+                                            '</div>' +
+                                            '</div>'
+                                        )
+                                    }
+                                    if (_result_length == _page_total) {
+                                        $('.jq-btn-more').hide();
+                                    } else {
+                                        _more_key += 1;
                                     }
                                     break;
                             }
