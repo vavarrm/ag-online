@@ -110,6 +110,9 @@
                             <a href="Member-Withdrawal.html" class="btn btn-solid-blue">提款</a>
                         </li>
                         <li>
+                            <a href="Member-Transfer.html" class="btn btn-solid-blue">转帐</a>
+                        </li>
+                        <li>
                             <a href="Member-DailyRecord.html" class="btn btn-solid-blue">日常纪录</a>
                         </li>
                         <li>
@@ -126,6 +129,9 @@
                         </li>
                         <li>
                             <a href="Member-Message.html" class="btn btn-solid-blue">站内讯息</a>
+                        </li>
+                        <li>
+                            <a href="Member-Register.html" class="btn btn-solid-blue">邀请码管理</a>
                         </li>
                         <li>
                             <a href="Member-Password.html" class="btn btn-solid-blue">密码管理</a>
@@ -246,26 +252,27 @@
                 <form class="form-group">
                     <div class="row">
                         <i class="icon-ic-user3"></i>
-                        <input class="input" type="text" name="" placeholder="请输入姓名...">
-                        <p class="warning-text">警示文字警示文字警示文字</p>
+                        <input class="input" type="text" name="username" placeholder="请输入姓名...">
+                    </div>
+                    <div class="row">
+                        <i class="icon-key"></i>
+                        <input class="input" type="text" name="invitecode" placeholder="请输入邀请码...">
                     </div>
                     <div class="row">
                         <i class="icon-ic-user3"></i>
-                        <input class="input" type="text" name="" placeholder="帐号必须由4-9位数字或小写英文字母组合">
-                        <p class="warning-text">警示文字警示文字警示文字</p>
+                        <input class="input" type="text" name="account" placeholder="帐号必须由4-9位数字或小写英文字母组合">
                     </div>
                     <div class="row">
                         <i class="icon-ic-lock1"></i>
-                        <input class="input" type="password" name="" placeholder="密码必须由8至10个字符之间">
-                        <p class="warning-text">警示文字警示文字警示文字</p>
+                        <input class="input" type="password" name="password" placeholder="密码必须由8至10个字符之间">
                     </div>
                     <div class="row">
                         <i class="icon-ic-shield"></i>
-                        <input class="input" type="text" name="" placeholder="请输入验证码">
-                        <p class="warning-text">警示文字警示文字警示文字</p>
+                        <input class="input" type="text" name="captcha" placeholder="请输入验证码">
+                        <div class="captcha-container jq-captcha-container"></div>
                     </div>
                     <div class="form-action">
-                        <input class="btn btn-bg-blue" type="button" value="注册">
+                        <input class="btn btn-bg-blue ajax-btn-register" type="button" value="注册">
                         <input type="checkbox" name="" checked>
                         <span>我已经阅读并同意乐鼎國際</span>
                         <a href="">《客户协议》</a>
@@ -296,45 +303,33 @@
                 <form class="form-group">
                     <div class="row">
                         <p class="title">类型</p>
-                        <select class="select" name="" id="">
-                            <option value="">上級</option>
-                            <option value="">所有直接下級</option>
-                            <option value="">指定直接下級</option>
+                        <select class="select" name="message-type" id="">
+                            <option value="up">上級</option>
+                            <option value="all-down">所有直接下級</option>
+                            <option value="down">指定直接下級</option>
                         </select>
                     </div>
                     <div class="row">
                         <p class="title">收件人</p>
-                        <input class="input" type="password" name="" placeholder="请输入收件人资讯">
-                        <p class="warning-text">警示文字警示文字警示文字</p>
+                        <input class="input" type="text" name="message-name" placeholder="请输入收件人资讯">
+                    </div>
+                    <div class="row">
+                        <p class="title">标题</p>
+                        <input class="input" type="text" name="message-title" placeholder="请输入标题名称">
                     </div>
                     <div class="row">
                         <p class="title">讯息</p>
-                        <textarea class="textarea" name="" cols="30" rows="6"></textarea>
+                        <textarea class="textarea" name="message-content" cols="30" rows="6"></textarea>
                     </div>
                     <div class="form-action">
-                        <input class="btn btn-bg-blue" type="button" value="确认发送">
+                        <input class="btn btn-bg-blue ajax-btn-message-submit" type="button" value="确认发送">
                     </div>
                 </form>
             </div>
             <div class="pop-message-view jq-pop-message-view jq-cancelBubble absolute-center-xs">
                 <div class="pop-close jq-pop-close"></div>
                 <p class="title">站内信標題</p>
-                <form class="form-group">
-                    <div class="row">
-                        <p class="title">寄件人</p>
-                        <p class="detail">寄件人名称</p>
-                    </div>
-                    <div class="row">
-                        <p class="title">讯息</p>
-                        <p class="detail">
-                            信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容
-                            信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容
-                            信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容
-                            信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容 信件内容信件内容信件内容信件内容信件内容信件内容
-                            信件内容信件内容信件内容信件内容信件内容信件内容
-                        </p>
-                    </div>
-                </form>
+                <form class="form-group"></form>
             </div>
             <div class="pop-bankcard jq-pop-bankcard jq-cancelBubble absolute-center-xs">
                 <div class="pop-close jq-pop-close"></div>
@@ -466,7 +461,8 @@
                                     alert('登出成功');
                                     $('.jq-login-before').show();
                                     $('.jq-login-after').hide();
-                                    $('.jq-member-nam').empty()
+                                    $('.jq-member-nam').empty();
+                                    window.location.href = 'http://ldyllive.com/Home-Index.html';
                                     break;
                             }
                         }
@@ -498,11 +494,58 @@
                     });
                 }
             });
+            $('.jq-btn-pop-register').click(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getCaptcha",
+                    type: "GET",
+                    success: function (data) {
+                        $(".jq-pop-register").find('.jq-captcha-container').find('img').remove();
+                        var _each = $(".jq-pop-register").find('.jq-captcha-container');
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    _each.append(
+                                        data.body.image
+                                    )
+                                    break;
+                            }
+                        }
+                    }
+                });
+            });
+            $('.ajax-btn-register').click(function () {
+                var _username = $('.jq-pop-register').find('[name=username]').val();
+                var _invitecode = $('.jq-pop-register').find('[name=invitecode]').val();
+                var _account = $('.jq-pop-register').find('[name=account]').val();
+                var _password = $('.jq-pop-register').find('[name=password]').val();
+                var _captcha = $('.jq-pop-register').find('[name=captcha]').val();
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/registered" + _invitecode,
+                    type: "POST",
+                    data: JSON.stringify({
+                        name: _username,
+                        account: _account,
+                        passwd: _password,
+                        captcha: _captcha
+                    }),
+                    success: function (data) {
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    alert(data.message);
+                                    window.location.reload();
+                                    break;
+                                case '999':
+                                    alert('帐号或密码错误');
+                            }
+                        }
+                    }
+                });
+            });
 
             // Privity
             var _bank_id = 1
             var delete_key
-
             function bankInfor() {
                 $.ajax({
                     url: "http://ldyllive.com/api/Api/setUserBankInfoForm?sess=" + sessionStorage.session +
@@ -698,7 +741,6 @@
                 var cash_key = $('[name=cashpassword]').val();
                 cashpassword_check(cash_key);
             });
-            
         </script>
 </body>
 
