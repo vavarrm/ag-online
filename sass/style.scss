@@ -1314,6 +1314,14 @@ body {
           .captcha-container {
             margin-top: 10px;
           }
+          .captcha-reload {
+            position: absolute;
+            top: 50px;
+            left: 170px;
+            a {
+              text-decoration: underline;
+            }
+          }
         }
         .form-action {
           text-align: center;

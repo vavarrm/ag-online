@@ -405,7 +405,7 @@
                     success: function (data) {
                         if (data.status) {
                             switch (data.status) {
-                                case '100':
+                                case 100:
                                     $('.jq-login-before').hide();
                                     $('.jq-login-after').show();
                                     $('.jq-member-nam').text(data.body.user.u_name)
@@ -426,7 +426,7 @@
                         var _each_QQ = $('.jq-service-QQ')
                         if (data.status) {
                             switch (data.status) {
-                                case '100':
+                                case 100:
                                     _each_wechat.append(
                                         '<a href="javascript:void(0)" class="btn btn-bg-blue">微信客服</a>' +
                                         '<div class="img-container">' +
@@ -464,7 +464,7 @@
                     success: function (data) {
                         if (data.status) {
                             switch (data.status) {
-                                case '100':
+                                case 100:
                                     setCookie(data.body.sess);
                                     console.log(data.body.sess);
                                     alert('登入成功');
@@ -484,7 +484,7 @@
                     success: function (data) {
                         if (data.status) {
                             switch (data.status) {
-                                case '100':
+                                case 100:
                                     clearCookie();
                                     alert('登出成功');
                                     $('.jq-login-before').show();
@@ -512,7 +512,7 @@
                         success: function (data) {
                             if (data.status) {
                                 switch (data.status) {
-                                    case '100':
+                                    case 100:
                                         alert('问题已送出，后续将会有专人客服与您联系。');
                                         window.location.reload();
                                         break;
@@ -531,7 +531,7 @@
                         var _each = $(".jq-pop-register").find('.jq-captcha-container');
                         if (data.status) {
                             switch (data.status) {
-                                case '100':
+                                case 100:
                                     _each.append(
                                         data.body.image
                                     )
@@ -559,7 +559,7 @@
                     success: function (data) {
                         if (data.status) {
                             switch (data.status) {
-                                case '100':
+                                case 100:
                                     alert(data.message);
                                     window.location.reload();
                                     break;
@@ -580,7 +580,7 @@
                     success: function (data) {
                         if (data.status) {
                             switch (data.status) {
-                                case '100':
+                                case 100:
                                     var _each = $(".jq-row-account").find('.jq-balance-num');
                                     _each.html(data.body.balance);
                                     break;
@@ -594,7 +594,7 @@
                     success: function (data) {
                         if (data.status) {
                             switch (data.status) {
-                                case '100':
+                                case 100:
                                     var _each = $(".jq-row-game").find('.jq-balance-num');
                                     _each.html(data.body.balance);
                                     break;
@@ -625,7 +625,7 @@
                         success: function (data) {
                             if (data.status) {
                                 switch (data.status) {
-                                    case '100':
+                                    case 100:
                                         alert('转帐完成');
                                         window.location.reload();
                                         break;
@@ -642,7 +642,7 @@
                         success: function (data) {
                             if (data.status) {
                                 switch (data.status) {
-                                    case '100':
+                                    case 100:
                                         alert('转帐完成');
                                         window.location.reload();
                                         break;

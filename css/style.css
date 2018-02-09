@@ -2426,6 +2426,16 @@ body .pop-window .pop-register .form-group .row .captcha-container {
   margin-top: 10px;
 }
 
+body .pop-window .pop-register .form-group .row .captcha-reload {
+  position: absolute;
+  top: 50px;
+  left: 170px;
+}
+
+body .pop-window .pop-register .form-group .row .captcha-reload a {
+  text-decoration: underline;
+}
+
 body .pop-window .pop-register .form-group .form-action {
   text-align: center;
 }
