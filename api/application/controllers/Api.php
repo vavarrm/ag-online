@@ -21,7 +21,7 @@ class Api extends CI_Controller {
 		$this->load->model('UserAccount_Model', 'account');
 		$this->load->model('PhoneCallBack_Model', 'callback');
 		$this->load->model('Discount_Model', 'discount');
-		$this->load->model('webConfig_Model', 'webConfig');
+		$this->load->model('WebConfig_Model', 'webConfig');
 		$this->request = json_decode(trim(file_get_contents('php://input'), 'r'), true);
 		
 		$output['status'] = 100;
@@ -36,7 +36,8 @@ class Api extends CI_Controller {
 			'addPhonecCallBack',
 			'getAnnouncemetList',
 			'getGameList',
-			'getFooterInfo'
+			'getFooterInfo',
+			'reserve'
 		);		
 		try 
 		{
@@ -148,6 +149,70 @@ class Api extends CI_Controller {
 		}
 		
 		$this->response($output);
+	}
+	
+	public function reserve()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+			$output['title'] ='储值';
+			$output['message'] = '成功';
+		try 
+		{
+	
+			$url = "https://payment.skillfully.com.tw/telepay/pay.aspx";
+			$scode = 'CID05101';
+			$orderid = '0001';
+			$orderno = date('Ymd').sprintf('%06d',rand(1,999));
+			$paytype = 'wechat2';
+			$amount = '1';
+			$productname = 'test';
+			$currcode = 'CNY';
+			$userid = 'tryion';
+			$memo = '测试';
+			$callbackurl = 'test';
+			$key ='/i36Lov/i';
+			$sign =$scode."|";
+			$sign .=$orderid."&";
+			$sign .=$amount."&";
+			$sign .=$currcode."|";
+			$sign .=$callbackurl."&";
+			$sign .=$key ;
+			$post_ary = array(
+				'scode'			=>$scode ,
+				'orderid'		=>$orderid,
+				'paytype'		=>$paytype ,
+				'amount'		=>$amount,
+				'productname'	=>$productname ,
+				'currcode'		=>$currcode,
+				'userid'		=>$userid,
+				'memo'			=>$memo,
+				'callbackurl'	=>$callbackurl,
+				'sign'			=>md5($sign),
+			);
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_ary)); 
+			echo curl_exec($ch); 
+		
+			echo curl_error($ch);
+				curl_close($ch);
+			// echo $sign;
+			// echo $output;
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		// $this->response($output);
 	}
 	
 	public function getFooterInfo()
