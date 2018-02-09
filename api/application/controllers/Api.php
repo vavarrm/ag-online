@@ -37,7 +37,8 @@ class Api extends CI_Controller {
 			'getAnnouncemetList',
 			'getGameList',
 			'getFooterInfo',
-			'reserve'
+			'reserve',
+			'getBanner'
 		);		
 		try 
 		{
@@ -151,6 +152,31 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
+	public function getBanner()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+			$output['title'] ='取得banner资料';
+			$output['message'] = '成功';
+		try 
+		{
+			$rows= $this->webConfig->getBanner();
+			$output['body']['list']=$rows;
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
 	public function reserve()
 	{
 		$output['status'] = 100;
@@ -163,15 +189,14 @@ class Api extends CI_Controller {
 	
 			$url = "https://payment.skillfully.com.tw/telepay/pay.aspx";
 			$scode = 'CID05101';
-			$orderid = '0001';
-			$orderno = date('Ymd').sprintf('%06d',rand(1,999));
-			$paytype = 'wechat2';
+			$orderid = '20180209002';
+			$paytype = 'unionpay2';
 			$amount = '1';
 			$productname = 'test';
 			$currcode = 'CNY';
 			$userid = 'tryion';
 			$memo = '测试';
-			$callbackurl = 'test';
+			$callbackurl = 'https://ldyl.co/';
 			$key ='/i36Lov/i';
 			$sign =$scode."|";
 			$sign .=$orderid."&";
@@ -179,26 +204,29 @@ class Api extends CI_Controller {
 			$sign .=$currcode."|";
 			$sign .=$callbackurl."&";
 			$sign .=$key ;
-			$post_ary = array(
-				'scode'			=>$scode ,
-				'orderid'		=>$orderid,
-				'paytype'		=>$paytype ,
-				'amount'		=>$amount,
-				'productname'	=>$productname ,
-				'currcode'		=>$currcode,
-				'userid'		=>$userid,
-				'memo'			=>$memo,
-				'callbackurl'	=>$callbackurl,
-				'sign'			=>md5($sign),
-			);
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_ary)); 
-			echo curl_exec($ch); 
+			echo $sign ;
+			echo "<br>";
+			echo md5($sign);
+			// $post_ary = array(
+				// 'scode'			=>$scode ,
+				// 'orderid'		=>$orderid,
+				// 'paytype'		=>$paytype ,
+				// 'amount'		=>$amount,
+				// 'productname'	=>$productname ,
+				// 'currcode'		=>$currcode,
+				// 'userid'		=>$userid,
+				// 'memo'			=>$memo,
+				// 'callbackurl'	=>$callbackurl,
+				// 'sign'			=>md5($sign),
+			// );
+			// $ch = curl_init();
+			// curl_setopt($ch, CURLOPT_URL, $url);
+			// curl_setopt($ch, CURLOPT_POST, true);
+			// curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_ary)); 
+			// echo curl_exec($ch); 
 		
-			echo curl_error($ch);
-				curl_close($ch);
+			// echo curl_error($ch);
+				// curl_close($ch);
 			// echo $sign;
 			// echo $output;
 			
