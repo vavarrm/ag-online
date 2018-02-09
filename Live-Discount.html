@@ -110,17 +110,11 @@
                         </li>
                     </ul>
                     <ul class="service">
-                        <li>
-                            <a href="javascript:void(0)" class="btn btn-bg-blue">微信客服</a>
-                            <div class="img-container">
-                                <img class="img absolute-center-xs" src="img/qrcode.png" alt="">
-                            </div>
+                        <li class="jq-service-wechat">
+                            
                         </li>
-                        <li>
-                            <a href="javascript:void(0)" class="btn btn-bg-blue">QQ客服</a>
-                            <div class="img-container">
-                                <img class="img absolute-center-xs" src="img/qrcode.png" alt="">
-                            </div>
+                        <li class="jq-service-QQ">
+                            
                         </li>
                     </ul>
                     <p class="copyright">2018 乐鼎国际 版权所有.All Rights Reserved</p>
@@ -326,6 +320,32 @@
             }
 
             $(window).load(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getFooterInfo",
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data)
+                        var _each_wechat = $('.jq-service-wechat');
+                        var _each_QQ = $('.jq-service-QQ')
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    _each_wechat.append(
+                                        '<a href="javascript:void(0)" class="btn btn-bg-blue">微信客服</a>' +
+                                        '<div class="img-container">' +
+                                            '<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.wechat_qr_image.wc_value + '" alt="">' +
+                                        '</div>'
+                                    )
+                                    _each_QQ.append(
+                                        '<a href="javascript:void(0)" class="btn btn-bg-blue">QQ客服</a>' +
+                                        '<div class="img-container">' +
+                                            '<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.qq_qr_image.wc_value + '" alt="">' +
+                                        '</div>'
+                                    )
+                            }
+                        }
+                    }
+                });
                 if (sessionStorage.session == undefined || sessionStorage.session == '') {
                     $('.jq-login-before').show();
                     $('.jq-login-after').hide();

@@ -144,15 +144,15 @@
                     <div class="member-detail">
                         <div class="container" action="">
                             <div class="row" style="border-bottom: none;">
-                                <div class="confirm-group-container clear">
+                                <div class="confirm-group-container jq-row-game clear">
                                     <p class="title">游戏厅总额度</p>
-                                    <p class="detail">50000</p>
+                                    <p class="detail jq-balance-num"></p>
                                 </div>
-                                <div class="confirm-group-container clear">
+                                <div class="confirm-group-container jq-row-account clear">
                                     <p class="title">本地额度</p>
-                                    <p class="detail">50000</p>
+                                    <p class="detail jq-balance-num"></p>
                                 </div>
-                                <div class="member-table">
+                                <!-- <div class="member-table">
                                     <div class="thead">
                                         <div class="tr">
                                             <div class="th">游戏名称</div>
@@ -181,10 +181,11 @@
                                             <div class="td" data-title="余额">50000</div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="row btn-action">
-                                <input class="btn btn-bg-blue" type="button" value="额度转回本地">
+                                <a class="btn btn-bg-blue" href="http://ldyllive.com/Member-Deposit.html">前往充值</a>
+                                <a class="btn btn-bg-blue" href="http://ldyllive.com/Member-Transfer.html">前往转帐</a>
                             </div>
                         </div>
                     </div>
@@ -207,17 +208,11 @@
                         </li>
                     </ul>
                     <ul class="service">
-                        <li>
-                            <a href="javascript:void(0)" class="btn btn-bg-blue">微信客服</a>
-                            <div class="img-container">
-                                <img class="img absolute-center-xs" src="img/qrcode.png" alt="">
-                            </div>
+                        <li class="jq-service-wechat">
+                            
                         </li>
-                        <li>
-                            <a href="javascript:void(0)" class="btn btn-bg-blue">QQ客服</a>
-                            <div class="img-container">
-                                <img class="img absolute-center-xs" src="img/qrcode.png" alt="">
-                            </div>
+                        <li class="jq-service-QQ">
+                            
                         </li>
                     </ul>
                     <p class="copyright">2018 乐鼎国际 版权所有.All Rights Reserved</p>
@@ -419,6 +414,32 @@
             }
 
             $(window).load(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getFooterInfo",
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data)
+                        var _each_wechat = $('.jq-service-wechat');
+                        var _each_QQ = $('.jq-service-QQ')
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    _each_wechat.append(
+                                        '<a href="javascript:void(0)" class="btn btn-bg-blue">微信客服</a>' +
+                                        '<div class="img-container">' +
+                                            '<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.wechat_qr_image.wc_value + '" alt="">' +
+                                        '</div>'
+                                    )
+                                    _each_QQ.append(
+                                        '<a href="javascript:void(0)" class="btn btn-bg-blue">QQ客服</a>' +
+                                        '<div class="img-container">' +
+                                            '<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.qq_qr_image.wc_value + '" alt="">' +
+                                        '</div>'
+                                    )
+                            }
+                        }
+                    }
+                });
                 if (sessionStorage.session == undefined || sessionStorage.session == '') {
                     $('.jq-login-before').show();
                     $('.jq-login-after').hide();
@@ -541,6 +562,39 @@
                                     break;
                                 case '999':
                                     alert('帐号或密码错误');
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Privity
+
+            $(window).load(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/withdrawalForm?sess=" + sessionStorage.session,
+                    type: "GET",
+                    success: function (data) {
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    var _each = $(".jq-row-account").find('.jq-balance-num');
+                                    _each.html(data.body.balance);
+                                    break;
+                            }
+                        }
+                    }
+                });
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getThirdBlance?sess=" + sessionStorage.session,
+                    type: "GET",
+                    success: function (data) {
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    var _each = $(".jq-row-game").find('.jq-balance-num');
+                                    _each.html(data.body.balance);
+                                    break;
                             }
                         }
                     }

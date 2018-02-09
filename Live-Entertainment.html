@@ -102,49 +102,8 @@
                 <div class="container">
                     <p class="title">AG旗舰好路推荐</p>
                     <div class="list-group clear">
-                        <div class="col-xs-7">
-                            <div class="row">
-                                <div class="information-group">
-                                    <p class="table-title">
-                                        <span class="table-num">B004桌</span>
-                                        <span class="table-status">距本局结束</span>
-                                    </p>
-                                    <p class="table-time">01:01</p>
-                                    <p class="table-rank">
-                                        第
-                                        <span class="rank-num">59</span>届
-                                    </p>
-                                    <p class="table-status">
-                                        <span class="status1">庄 22</span>
-                                        <span class="status2">和 8</span>
-                                        <span class="status3">闲 29</span>
-                                    </p>
-                                    <a class="btn btn-bg-orange" href="javascript:void(0)">
-                                        <span>立即试玩</span>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="information-group">
-                                    <p class="table-title">
-                                        <span class="table-num">B004桌</span>
-                                        <span class="table-status">距本局结束</span>
-                                    </p>
-                                    <p class="table-time">01:01</p>
-                                    <p class="table-rank">
-                                        第
-                                        <span class="rank-num">59</span>届
-                                    </p>
-                                    <p class="table-status">
-                                        <span class="status1">庄 22</span>
-                                        <span class="status2">和 8</span>
-                                        <span class="status3">闲 29</span>
-                                    </p>
-                                    <a class="btn btn-bg-orange" href="javascript:void(0)">
-                                        <span>立即试玩</span>
-                                    </a>
-                                </div>
-                            </div>
+                        <div class="col-xs-7 jq-entertainment-list">
+                            
                         </div>
                         <div class="col-xs-5">
                             <div class="row" style="background-image: url(img/live-bg2.png);">
@@ -208,17 +167,11 @@
                         </li>
                     </ul>
                     <ul class="service">
-                        <li>
-                            <a href="javascript:void(0)" class="btn btn-bg-blue">微信客服</a>
-                            <div class="img-container">
-                                <img class="img absolute-center-xs" src="img/qrcode.png" alt="">
-                            </div>
+                        <li class="jq-service-wechat">
+                            
                         </li>
-                        <li>
-                            <a href="javascript:void(0)" class="btn btn-bg-blue">QQ客服</a>
-                            <div class="img-container">
-                                <img class="img absolute-center-xs" src="img/qrcode.png" alt="">
-                            </div>
+                        <li class="jq-service-QQ">
+                            
                         </li>
                     </ul>
                     <p class="copyright">2018 乐鼎国际 版权所有.All Rights Reserved</p>
@@ -417,6 +370,32 @@
             }
 
             $(window).load(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getFooterInfo",
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data)
+                        var _each_wechat = $('.jq-service-wechat');
+                        var _each_QQ = $('.jq-service-QQ')
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    _each_wechat.append(
+                                        '<a href="javascript:void(0)" class="btn btn-bg-blue">微信客服</a>' +
+                                        '<div class="img-container">' +
+                                            '<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.wechat_qr_image.wc_value + '" alt="">' +
+                                        '</div>'
+                                    )
+                                    _each_QQ.append(
+                                        '<a href="javascript:void(0)" class="btn btn-bg-blue">QQ客服</a>' +
+                                        '<div class="img-container">' +
+                                            '<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.qq_qr_image.wc_value + '" alt="">' +
+                                        '</div>'
+                                    )
+                            }
+                        }
+                    }
+                });
                 if (sessionStorage.session == undefined || sessionStorage.session == '') {
                     $('.jq-login-before').show();
                     $('.jq-login-after').hide();
@@ -543,6 +522,55 @@
                         }
                     }
                 });
+            });
+
+            // Privity
+            $(window).load(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getGameList?game_type=LIVE&p=1&limit=9999&platform=html5&client_type=web",
+                    type: "GET",
+                    success: function (data) {
+                        var _each = $(".jq-entertainment-list");
+                        var _length = data.body.list.length;
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    for (i = 0; i < _length; i++) {
+                                        _each.append(
+                                            '<div class="col-xs-4">' +
+                                                '<a href="javascript:void(0)" class="ajax-game-link" data-game-code="' + data.body.list[i].tcgGameCode + '">' +
+                                                    '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' + data.body.list[i].productCode + '/' + data.body.list[i].tcgGameCode + '.png" alt="">' +
+                                                    '<p class="title">' + data.body.list[i].gameName + '</p>' +
+                                                '</a>' +
+                                            '</div>'
+                                        )
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                });
+            });
+
+            $(document).on('click', '.ajax-game-link', function () {
+                var _key = $(this).attr('data-game-code');
+                if (sessionStorage.session == undefined || sessionStorage.session == '') {
+                    alert('请先登入会员');
+                } else {
+                    $.ajax({
+                    url: "http://ldyllive.com/api/Api/getGameUrl?sess=" + sessionStorage.session + "&game_code=" + _key + "&platform=html5",
+                    type: "GET",
+                    success: function (data) {
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    window.location.href = data.body.game_url;
+                                    break;
+                            }
+                        }
+                    }
+                });
+                }
             });
             
         </script>

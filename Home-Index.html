@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
     <title>乐鼎国际</title>
     <link rel="stylesheet" href="css/style.min.css">
     <link rel="stylesheet" href="font/style.css">
@@ -98,41 +97,10 @@
                     <img src="img/banner1.png" alt="">
                 </div>
             </section>
-            <section class="sect-game-list">
+            <section class="sect-game-list jq-sect-game-list">
                 <div class="container">
                     <p class="title">热门游戏推荐</p>
-                    <div class="list-group clear">
-                        <div class="col-xs-4">
-                            <a href="javascript:void(0)">
-                                <img class="img" src="img/game-img1.png" alt="" title="建議尺寸400*250">
-                            </a>
-                        </div>
-                        <div class="col-xs-4">
-                            <a href="javascript:void(0)">
-                                <img class="img" src="img/game-img2.png" alt="" title="建議尺寸400*250">
-                            </a>
-                        </div>
-                        <div class="col-xs-4">
-                            <a href="javascript:void(0)">
-                                <img class="img" src="img/game-img3.png" alt="" title="建議尺寸400*250">
-                            </a>
-                        </div>
-                        <div class="col-xs-4">
-                            <a href="javascript:void(0)">
-                                <img class="img" src="img/game-img1.png" alt="" title="建議尺寸400*250">
-                            </a>
-                        </div>
-                        <div class="col-xs-4">
-                            <a href="javascript:void(0)">
-                                <img class="img" src="img/game-img2.png" alt="" title="建議尺寸400*250">
-                            </a>
-                        </div>
-                        <div class="col-xs-4">
-                            <a href="javascript:void(0)">
-                                <img class="img" src="img/game-img3.png" alt="" title="建議尺寸400*250">
-                            </a>
-                        </div>
-                    </div>
+                    <div class="list-group clear"></div>
                 </div>
             </section>
         </main>
@@ -152,17 +120,11 @@
                         </li>
                     </ul>
                     <ul class="service">
-                        <li>
-                            <a href="javascript:void(0)" class="btn btn-bg-blue">微信客服</a>
-                            <div class="img-container">
-                                <img class="img absolute-center-xs" src="img/qrcode.png" alt="">
-                            </div>
+                        <li class="jq-service-wechat">
+                            
                         </li>
-                        <li>
-                            <a href="javascript:void(0)" class="btn btn-bg-blue">QQ客服</a>
-                            <div class="img-container">
-                                <img class="img absolute-center-xs" src="img/qrcode.png" alt="">
-                            </div>
+                        <li class="jq-service-QQ">
+                            
                         </li>
                     </ul>
                     <p class="copyright">2018 乐鼎国际 版权所有.All Rights Reserved</p>
@@ -319,7 +281,6 @@
         <script src="js/jquery.min.js"></script>
         <script src="js/script.js"></script>
         <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-        <script src="js/jquery.unobtrusive-ajax.min.js"></script>
         <script>
             Live.Global.intital();
             Live.Global.owl_banner();
@@ -362,6 +323,32 @@
             }
 
             $(window).load(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getFooterInfo",
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data)
+                        var _each_wechat = $('.jq-service-wechat');
+                        var _each_QQ = $('.jq-service-QQ')
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    _each_wechat.append(
+                                        '<a href="javascript:void(0)" class="btn btn-bg-blue">微信客服</a>' +
+                                        '<div class="img-container">' +
+                                            '<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.wechat_qr_image.wc_value + '" alt="">' +
+                                        '</div>'
+                                    )
+                                    _each_QQ.append(
+                                        '<a href="javascript:void(0)" class="btn btn-bg-blue">QQ客服</a>' +
+                                        '<div class="img-container">' +
+                                            '<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.qq_qr_image.wc_value + '" alt="">' +
+                                        '</div>'
+                                    )
+                            }
+                        }
+                    }
+                });
                 if (sessionStorage.session == undefined || sessionStorage.session == '') {
                     $('.jq-login-before').show();
                     $('.jq-login-after').hide();
@@ -489,7 +476,55 @@
                     }
                 });
             });
+
+            // Privity
+            $(window).load(function () {
+                $.ajax({
+                    url: "http://ldyllive.com/api/Api/getGameList?game_type=RNG&p=1&limit=9999&platform=html5&client_type=web",
+                    type: "GET",
+                    success: function (data) {
+                        var _each = $(".jq-sect-game-list").find('.list-group');
+                        var _length = data.body.list.length;
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    for (i = 0; i < _length; i++) {
+                                        _each.append(
+                                            '<div class="col-xs-2">' +
+                                                '<a href="javascript:void(0)" class="ajax-game-link" data-game-code="' + data.body.list[i].tcgGameCode + '">' +
+                                                    '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' + data.body.list[i].productCode + '/' + data.body.list[i].tcgGameCode + '.png" alt="">' +
+                                                    '<p class="title">' + data.body.list[i].gameName + '</p>' +
+                                                '</a>' +
+                                            '</div>'
+                                        )
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                });
+            });
             
+            $(document).on('click', '.ajax-game-link', function () {
+                var _key = $(this).attr('data-game-code');
+                if (sessionStorage.session == undefined || sessionStorage.session == '') {
+                    alert('请先登入会员');
+                } else {
+                    $.ajax({
+                    url: "http://ldyllive.com/api/Api/getGameUrl?sess=" + sessionStorage.session + "&game_code=" + _key + "&platform=html5",
+                    type: "GET",
+                    success: function (data) {
+                        if (data.status) {
+                            switch (data.status) {
+                                case 100:
+                                    window.location.href = data.body.game_url;
+                                    break;
+                            }
+                        }
+                    }
+                });
+                }
+            });
         </script>
     </div>
 </body>

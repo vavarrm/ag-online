@@ -228,7 +228,7 @@ body {
         max-width: 1440px;
         margin: auto;
         padding: 0px 50px;
-        .title {
+        >.title {
           display: inline-block;
           font-size: 20px;
           color: #0081cc;
@@ -261,9 +261,13 @@ body {
           [class^="col-"],
           [class*="col-"] {
             margin-bottom: 20px;
+            border: 0;
           }
           a {
             display: block;
+            background-color: #eee;
+            border-radius: 5px;
+            padding: 20px;
             box-shadow: 4px 4px 12px -2px rgba(20%, 20%, 40%, 0.5);
             &:active {
               top: 1px;
@@ -273,6 +277,12 @@ body {
           }
           .img {
             width: 100%;
+            min-height: 163px;
+          }
+          .title {
+            text-align: center;
+            min-height: 42px;
+            margin-top: 10px;
           }
         }
       }
@@ -316,70 +326,32 @@ body {
         .list-group {
           >div {
             &:first-child {
-              .row {
-                background-image: url(../img/live-bg1.jpg);
-                background-size: 100% 100%;
-                background-repeat: no-repeat;
-                padding: 15px 30px;
-                margin-bottom: 10px;
-                text-align: center;
-                >.information-group {
-                  width: 100%;
-                  max-width: 250px;
-                  text-align: center;
-                  >.table-title {
-                    border-bottom: 1px solid #ffffff;
-                    padding-bottom: 10px;
-                    margin-bottom: 15px;
-                    .table-num {
-                      color: #f39e15;
-                      font-size: 24px;
-                    }
-                    .table-status {
-                      color: #ffffff;
-                      font-size: 24px;
-                    }
-                  }
-                  >.table-time {
-                    border-bottom: 1px solid #ffffff;
-                    padding-bottom: 10px;
-                    margin-bottom: 15px;
-                    color: #ffffff;
-                    font-size: 40px;
-                  }
-                  >.table-rank {
-                    color: #ffffff;
-                    font-size: 24px;
-                    margin-bottom: 15px;
-                    .rank-num {
-                      display: inline-block;
-                      color: #ffffff;
-                      font-size: 40px;
-                      padding: 0px 5px;
-                    }
-                  }
-                  >.table-status {
-                    background-color: rgba(255, 255, 255, 0.3);
-                    padding: 10px;
-                    font-size: 18px;
-                    margin-bottom: 15px;
-                    .status1 {
-                      color: #ea7d7d;
-                      margin-right: 10px;
-                    }
-                    .status2 {
-                      color: #4eb471;
-                      margin-right: 10px;
-                    }
-                    .status3 {
-                      color: #7dccf3;
-                    }
-                  }
-                  .btn {
-                    padding: 5px 15px;
-                    font-size: 20px;
-                  }
+              [class^="col-"],
+              [class*="col-"] {
+                margin-bottom: 20px;
+                border: 0;
+              }
+              a {
+                display: block;
+                background-color: #eee;
+                border-radius: 5px;
+                padding: 20px;
+                box-shadow: 4px 4px 12px -2px rgba(20%, 20%, 40%, 0.5);
+                &:active {
+                  top: 1px;
+                  left: 1px;
+                  box-shadow: none;
                 }
+              }
+              .img {
+                width: 100%;
+                min-height: 163px;
+              }
+              .title {
+                text-align: center;
+                margin-top: 10px;
+                font-size: 14px;
+                min-height: 38px;
               }
             }
             &:nth-child(2) {
@@ -568,14 +540,19 @@ body {
             background-color: #ffffff;
             border: 1px solid #848588;
             border-radius: 5px;
-            border-top: 0;
-            border-top-left-radius: 0px;
-            border-top-right-radius: 0px;
-            padding: 50px;
+            padding: 50px 50px 30px;
             margin-bottom: 20px;
+            &.password {
+              border-top: 0;
+              border-top-left-radius: 0px;
+              border-top-right-radius: 0px;
+            }
             .row {
-              margin-bottom: 25px;
+              margin-bottom: 20px;
               border-bottom: 1px solid #848588;
+              &:last-child {
+                border-bottom: 0;
+              }
               &.btn-action {
                 border-bottom: none;
                 text-align: center;
@@ -905,6 +882,13 @@ body {
           }
         }
       }
+      .btn-action {
+        margin-bottom: 20px;
+        text-align: center;
+        .btn {
+          padding: 10px 15px;
+        }
+      }
     }
     .sect-discount {
       >.container {
@@ -1138,8 +1122,8 @@ body {
             height: 100px;
             margin: auto;
             .img {
-              max-width: 100%;
-              max-height: 100%;
+              max-width: 80%;
+              max-height: 80%;
             }
           }
         }

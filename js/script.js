@@ -125,16 +125,16 @@ var Live = {
         daily_key = $(this).attr('data-daily-option');
         $('.jq-member-option').removeClass('active');
         $(this).addClass('active');
-        if (daily_key == 1.2) {
+        if (daily_key == '1,2') {
           $('[data-daily-table]').hide();
           $('[data-daily-table=1]').show();
-        } else if (daily_key == 3) {
+        } else if (daily_key == '3') {
           $('[data-daily-table]').hide();
           $('[data-daily-table=2]').show();
-        } else if (daily_key == 6) {
+        } else if (daily_key == '6') {
           $('[data-daily-table]').hide();
           $('[data-daily-table=3]').show();
-        } else if (daily_key == 4.5) {
+        } else if (daily_key == '4,5') {
           $('[data-daily-table]').hide();
           $('[data-daily-table=4]').show();
         }
