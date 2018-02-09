@@ -156,7 +156,8 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 		issearch : 0,
 		setting :{},
 		init:{},
-		click_search:0
+		click_search:0,
+		input:{}
 	}
 	
 	$scope.search_click = function()
@@ -166,6 +167,58 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 		$scope.search();
 	}
 	
+	$scope.submit = function()
+	{
+			var promise = apiService.adminApi($scope.data.setting.do_api,$scope.data.input);
+			promise.then
+			(
+				function(r) 
+				{
+					if(r.data.status =="100")
+					{
+						var obj =
+						{
+							'message':'送出成功',
+							buttons: 
+							[
+								{
+									text: "close",
+									click: function() 
+									{
+										$( this ).dialog( "close" );
+										history.go(-1);
+									}
+								}
+							]
+						};
+						dialog(obj);
+					}else
+					{
+						var obj =
+						{
+							'message' :r.data.message,
+							buttons: 
+							[
+								{
+									text: "close",
+									click: function() 
+									{
+										$( this ).dialog( "close" );
+									}
+								}
+							]
+						};
+						dialog(obj);
+					}
+				},
+				function() {
+					var obj ={
+						'message' :'系统错误'
+					};
+					 dialog(obj);
+				}
+			)
+	}
 	
 	$scope.init = function()
 	{
@@ -310,6 +363,8 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 			$scope.data.p=1;
 			$scope.search();
 		}
+		
+		
 	}
 }
 agApp.controller('bankCtrl',  ['$scope', '$http' ,'apiService', '$cookies', '$routeParams', '$rootScope', bankCtrl]);

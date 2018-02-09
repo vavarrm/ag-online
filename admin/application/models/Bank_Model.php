@@ -115,109 +115,159 @@
 			return $output;
 		}
 		
+		public function addBankBlack($ary)
+		{
+			try {
+				
+				
+				$sql ="INSERT INTO bank_black_list(bbl_account, bbl_ad_id, 	bbl_add_datetime)
+					  VALUES(?,?,NOW())"; 
+				$bind =array(
+					$ary['account'],
+					$ary['ad_id'],
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw  $MyException;
+				}
+				return $this->db->affected_rows();
+			}
+			catch (Exception $e) {
+				throw $e;
+			}
+		}
+		
 		public function getBlackList($ary = array())
 		{
-			$where =" WHERE 1=1 ";
-			$order="";
-			$gitignore = array(
-				'limit',
-				'p',
-				'order'
-			);
-			$limit = sprintf(" LIMIT %d, %d",abs($ary['p']-1)*$ary['limit'],$ary['limit']);
-			if(is_array($ary))
-			{
-				foreach($ary as $key =>$row)
+			try {
+				$where =" WHERE 1=1 ";
+				$order="";
+				$gitignore = array(
+					'limit',
+					'p',
+					'order'
+				);
+				$limit = sprintf(" LIMIT %d, %d",abs($ary['p']-1)*$ary['limit'],$ary['limit']);
+				if(is_array($ary))
 				{
-				
-					if(in_array($key, $gitignore) || $row['value']==='' )	
+					foreach($ary as $key =>$row)
 					{
-						continue;
-					}
+					
+						if(in_array($key, $gitignore) || $row['value']==='' )	
+						{
+							continue;
+						}
 
-					
-					if($row['logic'] =="")
-					{
-						$logic =" AND "; 
-					}else{
-						$logic = $row['logic'];
-					}
-					
-					if($key =="start_time" || $key=="end_time"  )
-					{
-						$where .=sprintf(" %s DATE_FORMAT(`ub_add_datetime`, '%s') %s ?",$logic  ,'%Y-%m-%d', $row['operator']);					
-						$bind[] = $row['value'];
-					}else if($row['operator'] =='in')
-					{
-						$where .=sprintf(" AND %s IN (%s) ", $logic, $key, $row['value']);
-					}
-					else{
-						$where .=sprintf(" %s %s %s ?", $logic, $key, $row['operator']);					
-						$bind[] = $row['value'];
+						
+						if($row['logic'] =="")
+						{
+							$logic =" AND "; 
+						}else{
+							$logic = $row['logic'];
+						}
+						
+						if($key =="start_time" || $key=="end_time"  )
+						{
+							$where .=sprintf(" %s DATE_FORMAT(`ub_add_datetime`, '%s') %s ?",$logic  ,'%Y-%m-%d', $row['operator']);					
+							$bind[] = $row['value'];
+						}else if($row['operator'] =='in')
+						{
+							$where .=sprintf(" AND %s IN (%s) ", $logic, $key, $row['value']);
+						}
+						else{
+							$where .=sprintf(" %s %s %s ?", $logic, $key, $row['operator']);					
+							$bind[] = $row['value'];
+						}
 					}
 				}
-			}
-			
-			if(is_array($ary['order']) && !empty($ary['order']))
-			{
-				$order =" ORDER BY ";
-				foreach($ary['order'] AS $key =>$value)
+				
+				if(is_array($ary['order']) && !empty($ary['order']))
 				{
-					$order_ary[]=sprintf( '%s %s ', $key, $value);
+					$order =" ORDER BY ";
+					foreach($ary['order'] AS $key =>$value)
+					{
+						$order_ary[]=sprintf( '%s %s ', $key, $value);
+					}
+					$order.=join(',',$order_ary);
 				}
-				$order.=join(',',$order_ary);
-			}
-			
-			$sql = "SELECT 
-						* 
-					FROM  
-						bank_black_list
-					";
-			$search_sql = $sql.$where.$order.$limit ;
-			$query = $this->db->query($search_sql, $bind);
-			$error = $this->db->error();
-			if($error['message'] !="")
-			{
-				$MyException = new MyException();
-				$array = array(
-					'message' 	=>$error['message'] ,
-					'type' 		=>'db' ,
-					'status'	=>'001'
-				);
 				
-				$MyException->setParams($array);
-				throw  $MyException;
-			}
-			$rows = $query->result_array();
-			
-			
-			$total_sql = sprintf("SELECT COUNT(*) AS total FROM(%s) AS t",$sql.$where) ;
-			$query = $this->db->query($total_sql, $bind);
-			$row = $query->row_array();
-			
-			$query->free_result();
-			
-			
-			
-			$output['list'] = $rows;
-			$output['pageinfo']  = array(
-				'total'	=>$row['total'],
-				'pages'	=>ceil($row['total']/$ary['limit'])
-			);
-			$error = $this->db->error();
-			if($error['message'] !="")
-			{
-				$MyException = new MyException();
-				$array = array(
-					'message' 	=>$error['message'] ,
-					'type' 		=>'db' ,
-					'status'	=>'001'
-				);
+				$sql = "SELECT 
+							* 
+						FROM  
+							bank_black_list AS  bbl LEFT JOIN admin AS ad ON bbl.bbl_ad_id = ad.ad_id
+						";
+				$search_sql = $sql.$where.$order.$limit ;
+				$query = $this->db->query($search_sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw  $MyException;
+				}
+				$rows = $query->result_array();
 				
-				$MyException->setParams($array);
-				throw  $MyException;
+				
+				$total_sql = sprintf("SELECT COUNT(*) AS total FROM(%s) AS t",$sql.$where) ;
+				$query = $this->db->query($total_sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw  $MyException;
+				}
+				$row = $query->row_array();
+				
+				$query->free_result();
+				
+				
+				
+				$output['list'] = $rows;
+				$output['pageinfo']  = array(
+					'total'	=>$row['total'],
+					'pages'	=>ceil($row['total']/$ary['limit'])
+				);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw  $MyException;
+				}
+				return $output;
 			}
-			return $output;
+			catch (Exception $e) {
+				throw $e;
+			}
 		}
 	}
 ?>

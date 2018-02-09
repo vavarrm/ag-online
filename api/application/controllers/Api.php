@@ -1213,7 +1213,7 @@ class Api extends CI_Controller {
 			);
 
 			$cap = create_captcha($vals);
-			
+			var_dump($cap);
 			$output['body'] = $cap;
 		}catch(MyException $e)
 		{
@@ -1616,7 +1616,7 @@ class Api extends CI_Controller {
 	
 	public function test()
 	{
-			$get= $this->input->get();
+		$get= $this->input->get();
 		$output['status'] = 100;
 		$output['body'] =array();
 		$output['title'] ='測試用';

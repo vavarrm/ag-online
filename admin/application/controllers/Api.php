@@ -93,6 +93,56 @@ class Api extends CI_Controller {
 		}
     }
 	
+	public function addBankBlack()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='解锁使用者银行卡绑定';
+		$output['message'] = '执行成功';
+		$post = $this->input->post();
+		try
+		{
+			if(
+				$this->request['account'] ==""
+			){
+				$array = array(
+					'message' 	=>'必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ary = array(
+				'ad_id' =>$this->admin_data['ad_id'],
+				'account' =>$this->request['account'],
+			);
+			$affected_rows = $this->bank->addBankBlack($ary);
+			if($affected_rows ==0)
+			{
+				$array = array(
+					'message' 	=>'新增新败' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		$this->response($output);
+	}
+	
 	public function unlockUserBankCard()
 	{
 		$output['status'] = 100;
