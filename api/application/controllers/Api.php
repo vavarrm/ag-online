@@ -38,7 +38,8 @@ class Api extends CI_Controller {
 			'getGameList',
 			'getFooterInfo',
 			'reserve',
-			'getBanner'
+			'getBanner',
+			'payCallBack'
 		);		
 		try 
 		{
@@ -2065,6 +2066,149 @@ class Api extends CI_Controller {
 			}
 			
 			$output['body']['game_url'] =$result_ary['game_url'];
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	
+	public function payCallBack()
+	{
+		$post= $this->input->post();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='付费成功后呼叫';
+		$output['message'] = '成功';
+		try 
+		{
+			$scode = ($post['scode'] !="")?$post['scode'] :'';
+			$orderid = ($post['orderid'] !="")?$post['orderid'] :'';
+			$orderno = ($post['orderno'] !="")?$post['orderno'] :'';
+			$paytype = ($post['paytype'] !="")?$post['paytype'] :'';
+			$amount = ($post['amount'] !="")?$post['amount'] :0;
+			$productname = ($post['productname'] !="")?$post['productname'] :'';
+			$currcode = ($post['currcode'] !="")?$post['currcode'] :'';
+			$memo = ($post['memo'] !="")?$post['memo'] :'';
+			$resptime = ($post['resptime'] !="")?$post['resptime'] :'';
+			$status = ($post['status'] !="")?$post['status'] :'';
+			$respcode = ($post['respcode'] !="")?$post['respcode'] :'';
+			$sign = ($post['sign'] !="")?$post['sign'] :'';
+			
+			if(
+				$scode ==""||
+				$orderid ==""||
+				$orderno ==""||
+				$paytype ==""||
+				intval($amount) ==0||
+				$productname ==""||
+				$currcode ==""||
+				$status ==""||
+				$respcode ==""
+			)
+			{
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+
+			$this->account->recharge($post);
+			
+			$check_sign=$scode+"|";
+			$check_sign.=$orderno+"&";
+			$check_sign.=$orderid+"&";
+			$check_sign.=$amount+"|";
+			$check_sign.=$currcode +"&";
+			$check_sign.=$status+"&";
+			$check_sign.=$respcode+"|";
+			$check_sign.=$_SERVER['RECHARGE_PAY_KEY'];
+			$check_sign = md5($check_sign);
+			
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function getRechargeOrder()
+	{
+		$get= $this->input->get();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='取得充值资料';
+		$output['message'] = '成功';
+
+		try 
+		{
+			if(
+				$this->request['paytype']	==""|| 
+				$this->request['amount']	==""
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ary = array(
+				'u_id'=>$this->_user['u_id'],
+				'paytype'=>$this->request['paytype'],
+				'amount'=>$this->request['amount'],
+			);
+			
+			$orderid  = $this->account->getUserRechargeOrder($ary);
+			
+			$currcode = 'CNY';
+			$callbackurl =$_SERVER['HTTP_ORIGIN'].'/api/Api/payCallBack';
+			
+			$sign =$_SERVER['RECHARGE_PAY_SCODE']."|";
+			$sign .=$orderid."&";
+			$sign .=$this->request['amount']."&";
+			$sign .=$currcode."|";
+			$sign .=$callbackurl."&";
+			$sign .=$_SERVER['RECHARGE_PAY_KEY'] ;
+			
+			$ary = array(
+				'pay_url'		 =>$_SERVER['RECHARGE_PAY_URL'],
+				'scode' 		 =>$_SERVER['RECHARGE_PAY_SCODE'],
+				'orderid' 		 =>$orderid,
+				'paytype' 		 =>$this->request['paytype'],
+				'amount' 		 =>$this->request['amount'],
+				'productname' 	 =>'使用者充值',
+				'currcode '		 =>$currcode ,
+				'userid'		 =>$this->_user['u_id'],
+				'memo'		     =>'',
+				'callbackurl'	 => $callbackurl,
+				'sign'	 		 => md5($sign),
+				'u_account'		 =>$this->_user['u_account']
+			);
+			$output['body'] = $ary;
+	
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();

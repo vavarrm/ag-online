@@ -11,6 +11,309 @@
 		}
 		
 		
+		public function getUserRechargeOrder($ary)
+		{
+			try
+			{
+				
+				
+				$orderid = date('Ymd').md5(time().rand(1,999));
+				
+				$sql ="INSERT INTO user_recharge_order(uro_orderid, uro_u_id, 	uro_paytype, uro_amount, uro_add_datetime)
+						VALUES(?,?,?,?,NOW())";
+				$bind = array(
+					$orderid,
+					$ary['u_id'],
+					$ary['paytype'],
+					$ary['amount'],
+				);
+				
+				$query = $this->db->query($sql, 	$bind );
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				return 	$orderid ;
+			}catch(MyException $e)
+			{
+				throw $e;
+			}
+		}
+		
+		public function recharge($ary)
+		{
+			try
+			{
+				$sql = "SELECT COUNT(*) AS total FROM user_recharge_lock WHERE url_u_id =? ";
+				$bind = array(
+					$ary['u_id']
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$row =  $query->row_array();
+				$query->free_result();
+				if($row['total'] >0)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'充值交易遭鎖定' ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				
+				
+				
+				
+				$sql ="SELECT * FROM user_recharge_order WHERE uro_orderid =?";
+				$bind=array(
+					$ary['orderid']
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$row =  $query->row_array();
+				$query->free_result();
+				if(empty($row))
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'查无此订单' ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$sql="SELECT COUNT(*) AS  total FROM user_account WHERE ua_uro_id =?";
+				$bind=array(
+					$row['uro_id']
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$isRecharge =  $query->row_array();
+				$query->free_result();
+				if($isRecharge['total'] >0)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'此订单已入帐' ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$sql="INSERT INTO user_recharge_lock (url_u_id,url_add_datetime) VALUES(?,NOW())";
+				$bind=array(
+					$row['uro_u_id']
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'无法执行锁定' ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				
+				$check_sign=$_SERVER['RECHARGE_PAY_SCODE']+"|";
+				$check_sign.=$ary['orderno']+"&";
+				$check_sign.=$row['uro_orderid']+"&";
+				$check_sign.=$row['uro_amount']+"|";
+				$check_sign.=+"CNY&";
+				$check_sign.=$ary['status']+"&";
+				$check_sign.=$ary['respcode']+"|";
+				$check_sign.=$_SERVER['RECHARGE_PAY_KEY'];
+				$check_sign = md5($check_sign);
+	
+				if(	$check_sign !=$ary['sign'])
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'资料验证失败' ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$post_ary = array(
+					'scode'			=>$_SERVER['RECHARGE_PAY_SCODE'] ,
+					'orderid'		=>$row['uro_orderid'],
+					'sign'			=>md5($_SERVER['RECHARGE_PAY_SCODE']."|".$row['uro_orderid'].'&'.$_SERVER['RECHARGE_PAY_KEY']),
+				);
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, $_SERVER['RECHARGE_CHECKORDER_URL']);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER , true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_ary)); 
+				$json = curl_exec($ch); 
+		
+				if($json  === false)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>curl_error($ch) ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				curl_close($ch);
+				
+				$json_ary = json_decode($json,true);
+				
+				if($json_ary['status'] !='1' || $ary['status'] !='1')
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'交易查询失败' ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				
+				
+				
+				$this->db->trans_begin();
+				
+				$sql="	UPDATE  user_recharge_order 
+						SET 
+							uro_orderno=? ,
+							uro_status =?,	
+							uro_respcode =?,
+							uro_reply =1,
+							uro_resptime =?
+						WHERE uro_orderid=?";
+				$bind= array(
+					$ary['orderno'],
+					$ary['status'],
+					$ary['respcode'],
+					$ary['resptime'],
+					$ary['orderid'],
+				);
+				
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$sql="INSERT INTO user_account (ua_value,ua_type,ua_add_datetime,ua_u_id,ua_uro_id,ua_status)
+					  VALUES(?,2,NOW(),?,?,'received')";
+				$bind= array(
+					$ary['amount'],
+					$row['uro_u_id'],
+					$row['uro_id'],
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$this->db->trans_commit();
+			}catch(MyException $e)
+			{
+				$this->db->trans_rollback();
+				$sql="DELETE  FROM user_recharge_lock WHERE url_u_id =?";
+				$bind=array(
+					$row['uro_u_id']
+				);
+				$query = $this->db->query($sql, $bind);
+				throw $e;
+			}
+		}
+		
 		public function getTransferreferenceNo($fund_type)
 		{
 			try
