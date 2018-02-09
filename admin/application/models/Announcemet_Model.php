@@ -196,6 +196,7 @@
 		{
 			try
 			{
+				$this->db->trans_begin();
 				$sql="INSERT INTO announcemet (an_title, an_content, an_datetime, an_type)
 					  values(?, ?, NOW(),?)";
 				$bind = array(
@@ -240,6 +241,18 @@
 				$config['max_height']  = '175';
 				$config['overwrite']  = true;
 
+				if ($_FILES["image"]["name"] =="")
+				{
+					$array = array(
+						'message' 	=> '请选择要上传图片',
+						'type' 		=>'api' ,
+						'status'	=>'002'
+					);
+					$MyException = new MyException();
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
 				if ($_FILES["image"]["error"] > 0)
 				{
 					$array = array(
@@ -285,7 +298,8 @@
 					$MyException->setParams($array);
 					throw $MyException;
 				}
-				if($this->db->affected_rows()   == 0)
+				$affected_rows = $this->db->affected_rows();
+				if($affected_rows   == 0)
 				{
 					$MyException = new MyException();
 					$array = array(
@@ -298,12 +312,15 @@
 					throw $MyException;
 				}
 				// exit;
+				$this->db->trans_commit();
+				return $affected_rows;
 				
 			}catch(MyException $e)
 			{
+				 $this->db->trans_rollback();
 				throw $MyException;
 			}
-			return $this->db->affected_rows();
+			
 		}
 		
 		public function getList($ary = array())

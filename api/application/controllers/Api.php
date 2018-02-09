@@ -21,6 +21,7 @@ class Api extends CI_Controller {
 		$this->load->model('UserAccount_Model', 'account');
 		$this->load->model('PhoneCallBack_Model', 'callback');
 		$this->load->model('Discount_Model', 'discount');
+		$this->load->model('webConfig_Model', 'webConfig');
 		$this->request = json_decode(trim(file_get_contents('php://input'), 'r'), true);
 		
 		$output['status'] = 100;
@@ -32,7 +33,10 @@ class Api extends CI_Controller {
 			'registered',
 			'test',
 			'getCaptcha',
-			'addPhonecCallBack'
+			'addPhonecCallBack',
+			'getAnnouncemetList',
+			'getGameList',
+			'getFooterInfo'
 		);		
 		try 
 		{
@@ -132,6 +136,39 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function getFooterInfo()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+			$output['title'] ='取得footer资料';
+			$output['message'] = '成功';
+		try 
+		{
+			$ary = array(
+				1,2,3,4
+			);
+			$rows= $this->webConfig->getList($ary);
+			foreach($rows as $value)
+			{
+				$list[$value['wc_key']] = $value;
+			}
+			$output['body']['list']=$list;
+			
 			
 		}catch(MyException $e)
 		{
@@ -702,6 +739,11 @@ class Api extends CI_Controller {
 		$output['message'] = '成功取得';
 		$ary['limit'] = (isset($get['limit']))?$get['limit']:5;
 		$ary['p'] = (isset($get['p']))?$get['p']:1;
+		$an_type = (isset($get['type']))?$get['type']:'public';
+		$ary['an_type']  = array(
+			'operator'	=>'=',
+			'value'	=>$an_type ,
+		);
 		try 
 		{
 			$output['body'] = $this->announcemet->getList($ary);

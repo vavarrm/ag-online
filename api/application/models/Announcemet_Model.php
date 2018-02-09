@@ -19,16 +19,16 @@
 				'order'
 			);
 			$limit = sprintf(" LIMIT %d, %d",abs($ary['p']-1)*$ary['limit'],$ary['limit']);
-
 			if(is_array($ary))
 			{
 				foreach($ary as $key => $value)
 				{
+					
 					if(in_array($key, $gitignore) ||  $value ==='' || $value['value'] ==="")	
 					{
 						continue;
 					}
-					$where.=sprintf( " AND %s%s?", $key,  $value['operator']);
+					$where.=sprintf( " AND %s %s ?", $key,  $value['operator']);
 					$bind[] = $value['value'];
 				}
 			}

@@ -1355,7 +1355,7 @@ class Api extends CI_Controller {
 			if($affected_rows == 0)
 			{
 				$array = array(
-					'message' 	=>'新增公告失败' ,
+					'message' 	=>'修改公告失败' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
