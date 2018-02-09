@@ -503,7 +503,7 @@
                 var _password = $('.jq-pop-register').find('[name=password]').val();
                 var _captcha = $('.jq-pop-register').find('[name=captcha]').val();
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/registered" + _invitecode,
+                    url: "http://ldyllive.com/api/Api/registered/" + _invitecode,
                     type: "POST",
                     data: JSON.stringify({
                         name: _username,

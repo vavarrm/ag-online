@@ -2104,6 +2104,8 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
+			// var_dump($_COOKIE);
+			
 			if($_COOKIE['captcha'] != $this->request['captcha'])
 			{
 				$array = array(

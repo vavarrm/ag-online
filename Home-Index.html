@@ -463,16 +463,20 @@
                         captcha: _captcha
                     }),
                     success: function (data) {
+                        console.log(data)
                         if (data.status) {
                             switch (data.status) {
                                 case 100:
-                                    alert(data.message);
+                                    alert('註冊成功');
                                     window.location.reload();
                                     break;
                                 case '999':
                                     alert(data.message);
                             }
                         }
+                    },
+                    error: function (data) {
+                        console.log(data)
                     }
                 });
             });

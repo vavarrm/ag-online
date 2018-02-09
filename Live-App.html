@@ -460,7 +460,7 @@
                 var _password = $('.jq-pop-register').find('[name=password]').val();
                 var _captcha = $('.jq-pop-register').find('[name=captcha]').val();
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/registered" + _invitecode,
+                    url: "http://ldyllive.com/api/Api/registered/" + _invitecode,
                     type: "POST",
                     data: JSON.stringify({
                         name: _username,
@@ -469,16 +469,20 @@
                         captcha: _captcha
                     }),
                     success: function (data) {
+                        console.log(data)
                         if (data.status) {
                             switch (data.status) {
                                 case 100:
-                                    alert(data.message);
+                                    alert('註冊成功');
                                     window.location.reload();
                                     break;
                                 case '999':
-                                    alert('帐号或密码错误');
+                                    alert(data.message);
                             }
                         }
+                    },
+                    error: function (data) {
+                        console.log(data)
                     }
                 });
             });
