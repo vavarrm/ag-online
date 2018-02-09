@@ -1348,7 +1348,6 @@ class Api extends CI_Controller {
 			);
 
 			$cap = create_captcha($vals);
-			var_dump($cap);
 			$output['body'] = $cap;
 		}catch(MyException $e)
 		{
