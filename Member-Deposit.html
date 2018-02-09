@@ -141,63 +141,23 @@
                         </li>
                     </ul>
                     <div class="member-detail">
-                        <form class="container" action="">
-                            <div class="row">
+                        <form class="container step1" action="">
+                            <div class="row ">
                                 <div class="radio-group-container">
-                                    <p class="title">请选择充值银行：网银（充提中心）</p>
+                                    <p class="title">请选择充值渠道</p>
                                     <div class="radio-group clear">
                                         <label class="col-xs-3">
-                                            <input class="jq-input-radio" type="radio" name="cash-option">
-                                            <span>微信（充提中心）</span>
-                                        </label>
-                                        <label class="col-xs-3">
-                                            <input class="jq-input-radio" type="radio" name="cash-option">
-                                            <span>网银（充提中心）</span>
-                                        </label>
-                                        <label class="col-xs-3">
-                                            <input class="jq-input-radio" type="radio" name="cash-option">
-                                            <span>旺付通网银</span>
-                                        </label>
-                                        <label class="col-xs-3">
-                                            <input class="jq-input-radio" type="radio" name="cash-option">
-                                            <span>旺付通QQ</span>
-                                        </label>
-                                        <label class="col-xs-3">
-                                            <input class="jq-input-radio" type="radio" name="cash-option">
-                                            <span>QQ钱包（充提中心）</span>
-                                        </label>
-                                        <label class="col-xs-3">
-                                            <input class="jq-input-radio" type="radio" name="cash-option">
-                                            <span>跨行转帐</span>
-                                        </label>
-                                        <label class="col-xs-3">
-                                            <input class="jq-input-radio" type="radio" name="cash-option">
-                                            <span>在线充值J</span>
-                                        </label>
-                                        <label class="col-xs-3">
-                                            <input class="jq-input-radio" type="radio" name="cash-option">
-                                            <span>聚鑫微信2</span>
-                                        </label>
-                                        <label class="col-xs-3">
-                                            <input class="jq-input-radio" type="radio" name="cash-option">
-                                            <span>支付宝转帐</span>
-                                        </label>
+                                            <input class="jq-input-radio" value="unionpay2" type="radio" name="paytype-1">
+                                            <span>快捷支付</span>
+                                        </label>																				<label class="col-xs-3">                                            <input class="jq-input-radio" value="unionpay3" type="radio" name="paytype-1">                                            <span>网银支付</span>                                        </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="select-group-container clear">
-                                    <p class="title">请选择银行卡</p>
-                                    <div class="select-group">
-                                        <select class="select" name="" id="">
-                                            <option value="">充提中心网银</option>
-                                        </select>
-                                    </div>
-                                </div>
+                            <div class="row " >
                                 <div class="input-group-container clear">
                                     <p class="title">充值金额</p>
                                     <div class="input-group">
-                                        <input type="text" placeholder="请输入充值金额">
+                                        <input type="number" name="amount-1" min="1" placeholder="请输入充值金额">
                                         <span>* 單筆充值限額：最低
                                             <span style="color:red;">50.00</span> 元，最高
                                             <span style="color:red;">20000.00</span> 元 *
@@ -206,11 +166,11 @@
                                 </div>
                             </div>
                             <div class="row btn-action">
-                                <input class="btn btn-bg-blue" type="button" value="下一步">
+                                <input class="btn btn-bg-blue step-btn1" type="button" value="下一步">
                             </div>
-                        </form>
-                        <div class="container" action="">
-                            <div class="row">
+                        </form>						<form class="container payform" action="">
+                        <div class="container check-order" action=""style="display:none;">
+                            <div class="row" >
                                 <div class="confirm-group-container clear">
                                     <p class="title">用户名</p>
                                     <p class="detail">monsters</p>
@@ -220,7 +180,7 @@
                                     <p class="detail">ct_bank2018116153339fe535a5fda8</p>
                                 </div>
                                 <div class="confirm-group-container clear">
-                                    <p class="title">支付银行</p>
+                                    <p class="title">支付渠道</p>
                                     <p class="detail">充提中心网银</p>
                                 </div>
                                 <div class="confirm-group-container clear">
@@ -233,7 +193,7 @@
                             <div class="row btn-action">
                                 <input class="btn btn-bg-blue" type="button" value="确认支付">
                             </div>
-                        </div>
+                        </div>						<input type="text" name="scode" value="CID05101">						<input type="text" name="orderid" value="20180209001">						<input type="text" name="paytype" value="wechat2">						<input type="text" name="amount" value="1">						<input type="text" name="productname" value="test">						<input type="text" name="currcode" value="CNY">						<input type="text" name="userid" value="tryion">						<input type="text" name="memo" value="测试">						<input type="text" name="callbackurl" value="https://ldyl.co/">						<input type="text" name="sign" value="">		<input type="submit" value="送出">						</form>
                     </div>
                 </div>
             </section>
@@ -441,7 +401,7 @@
             }
             function userInformation() {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getUser?sess=" + sessionStorage.session,
+                    url: "/api/Api/getUser?sess=" + sessionStorage.session,
                     type: "GET",
                     success: function (data) {
                         if (data.status) {
@@ -459,7 +419,7 @@
 
             $(window).load(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getFooterInfo",
+                    url: "/api/Api/getFooterInfo",
                     type: "GET",
                     success: function (data) {
                         console.log(data)
@@ -496,7 +456,7 @@
                 var _account = _parent.find('[name=account]').val();
                 var _passwd = _parent.find('[name=passwd]').val();
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/login",
+                    url: "/api/Api/login",
                     type: "POST",
                     data: JSON.stringify({
                         account: _account,
@@ -520,7 +480,7 @@
             });
             $('.ajax-btn-logout').click(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/logout",
+                    url: "/api/Api/logout",
                     type: "GET",
                     success: function (data) {
                         if (data.status) {
@@ -531,7 +491,7 @@
                                     $('.jq-login-before').show();
                                     $('.jq-login-after').hide();
                                     $('.jq-member-nam').empty();
-                                    window.location.href = 'http://ldyllive.com/Home-Index.html';
+                                    window.location.href = '/Home-Index.html';
                                     break;
                             }
                         }
@@ -544,7 +504,7 @@
                 checkPhone(_pcb_phone);
                 if (_phone_key == true) {
                     $.ajax({
-                        url: "http://ldyllive.com/api/Api/addPhonecCallBack?sess=" + sessionStorage.session,
+                        url: "/api/Api/addPhonecCallBack?sess=" + sessionStorage.session,
                         type: "POST",
                         data: JSON.stringify({
                             pcb_phone: _pcb_phone,
@@ -565,7 +525,7 @@
             });
             $('.jq-btn-pop-register').click(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getCaptcha",
+                    url: "/api/Api/getCaptcha",
                     type: "GET",
                     success: function (data) {
                         $(".jq-pop-register").find('.jq-captcha-container').find('img').remove();
@@ -589,7 +549,7 @@
                 var _password = $('.jq-pop-register').find('[name=password]').val();
                 var _captcha = $('.jq-pop-register').find('[name=captcha]').val();
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/registered/" + _invitecode,
+                    url: "/api/Api/registered/" + _invitecode,
                     type: "POST",
                     data: JSON.stringify({
                         name: _username,
@@ -610,7 +570,7 @@
                         }
                     }
                 });
-            });
+            });						$('.step-btn1').click(function () {				if($('.jq-input-radio:checked').length ==0)				{					alert('请选择充值渠道');					return false;				}				if($('input[name=amount-1]').val() <50)				{					alert('單筆充值限額最低 50.00元');					return false;				}				if($('input[name=amount-1]').val() >20000)				{					alert('單筆充值限額最高 20000元');					return false;				}								<!-- $( -->				$('.step1').hide();				$('.check-order').show();							})
             
         </script>
     </div>

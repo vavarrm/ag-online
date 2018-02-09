@@ -306,7 +306,7 @@
             }
             function userInformation() {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getUser?sess=" + sessionStorage.session,
+                    url: "/api/Api/getUser?sess=" + sessionStorage.session,
                     type: "GET",
                     success: function (data) {
                         if (data.status) {
@@ -324,7 +324,7 @@
 
             $(window).load(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getFooterInfo",
+                    url: "/api/Api/getFooterInfo",
                     type: "GET",
                     success: function (data) {
                         console.log(data)
@@ -361,7 +361,7 @@
                 var _account = _parent.find('[name=account]').val();
                 var _passwd = _parent.find('[name=passwd]').val();
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/login",
+                    url: "/api/Api/login",
                     type: "POST",
                     data: JSON.stringify({
                         account: _account,
@@ -385,7 +385,7 @@
             });
             $('.ajax-btn-logout').click(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/logout",
+                    url: "/api/Api/logout",
                     type: "GET",
                     success: function (data) {
                         if (data.status) {
@@ -396,7 +396,7 @@
                                     $('.jq-login-before').show();
                                     $('.jq-login-after').hide();
                                     $('.jq-member-nam').empty();
-                                    window.location.href = 'http://ldyllive.com/Home-Index.html';
+                                    window.location.href = '/Home-Index.html';
                                     break;
                             }
                         }
@@ -409,7 +409,7 @@
                 checkPhone(_pcb_phone);
                 if (_phone_key == true) {
                     $.ajax({
-                        url: "http://ldyllive.com/api/Api/addPhonecCallBack?sess=" + sessionStorage.session,
+                        url: "/api/Api/addPhonecCallBack?sess=" + sessionStorage.session,
                         type: "POST",
                         data: JSON.stringify({
                             pcb_phone: _pcb_phone,
@@ -430,7 +430,7 @@
             });
             $('.jq-btn-pop-register').click(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getCaptcha",
+                    url: "/api/Api/getCaptcha",
                     type: "GET",
                     success: function (data) {
                         $(".jq-pop-register").find('.jq-captcha-container').find('img').remove();
@@ -454,7 +454,7 @@
                 var _password = $('.jq-pop-register').find('[name=password]').val();
                 var _captcha = $('.jq-pop-register').find('[name=captcha]').val();
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/registered/" + _invitecode,
+                    url: "/api/Api/registered/" + _invitecode,
                     type: "POST",
                     data: JSON.stringify({
                         name: _username,
@@ -462,11 +462,10 @@
                         passwd: _password,
                         captcha: _captcha
                     }),
-                    success: function (data) {
-                        console.log(data)
+                    success: function (data) {
                         if (data.status) {
                             switch (data.status) {
-                                case 100:
+                                case '100':
                                     alert('註冊成功');
                                     window.location.reload();
                                     break;
@@ -484,7 +483,7 @@
             // Privity
             $(window).load(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getGameList?game_type=RNG&p=1&limit=9999&platform=html5&client_type=web",
+                    url: "/api/Api/getGameList?game_type=RNG&p=1&limit=9999&platform=html5&client_type=web",
                     type: "GET",
                     success: function (data) {
                         var _each = $(".jq-sect-game-list").find('.list-group');
@@ -515,7 +514,7 @@
                     alert('请先登入会员');
                 } else {
                     $.ajax({
-                    url: "http://ldyllive.com/api/Api/getGameUrl?sess=" + sessionStorage.session + "&game_code=" + _key + "&platform=html5",
+                    url: "/api/Api/getGameUrl?sess=" + sessionStorage.session + "&game_code=" + _key + "&platform=html5",
                     type: "GET",
                     success: function (data) {
                         if (data.status) {

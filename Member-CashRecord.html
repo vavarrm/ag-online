@@ -384,7 +384,7 @@
             }
             function userInformation() {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getUser?sess=" + sessionStorage.session,
+                    url: "/api/Api/getUser?sess=" + sessionStorage.session,
                     type: "GET",
                     success: function (data) {
                         if (data.status) {
@@ -402,7 +402,7 @@
 
             $(window).load(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getFooterInfo",
+                    url: "/api/Api/getFooterInfo",
                     type: "GET",
                     success: function (data) {
                         console.log(data)
@@ -439,7 +439,7 @@
                 var _account = _parent.find('[name=account]').val();
                 var _passwd = _parent.find('[name=passwd]').val();
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/login",
+                    url: "/api/Api/login",
                     type: "POST",
                     data: JSON.stringify({
                         account: _account,
@@ -463,7 +463,7 @@
             });
             $('.ajax-btn-logout').click(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/logout",
+                    url: "/api/Api/logout",
                     type: "GET",
                     success: function (data) {
                         if (data.status) {
@@ -474,7 +474,7 @@
                                     $('.jq-login-before').show();
                                     $('.jq-login-after').hide();
                                     $('.jq-member-nam').empty();
-                                    window.location.href = 'http://ldyllive.com/Home-Index.html';
+                                    window.location.href = '/Home-Index.html';
                                     break;
                             }
                         }
@@ -487,7 +487,7 @@
                 checkPhone(_pcb_phone);
                 if (_phone_key == true) {
                     $.ajax({
-                        url: "http://ldyllive.com/api/Api/addPhonecCallBack?sess=" + sessionStorage.session,
+                        url: "/api/Api/addPhonecCallBack?sess=" + sessionStorage.session,
                         type: "POST",
                         data: JSON.stringify({
                             pcb_phone: _pcb_phone,
@@ -508,7 +508,7 @@
             });
             $('.jq-btn-pop-register').click(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getCaptcha",
+                    url: "/api/Api/getCaptcha",
                     type: "GET",
                     success: function (data) {
                         $(".jq-pop-register").find('.jq-captcha-container').find('img').remove();
@@ -532,7 +532,7 @@
                 var _password = $('.jq-pop-register').find('[name=password]').val();
                 var _captcha = $('.jq-pop-register').find('[name=captcha]').val();
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/registered/" + _invitecode,
+                    url: "/api/Api/registered/" + _invitecode,
                     type: "POST",
                     data: JSON.stringify({
                         name: _username,
@@ -561,7 +561,7 @@
 
                 if (_start_type == undefined || _end_type == undefined) {
                     $.ajax({
-                        url: "http://ldyllive.com/api/Api/getThirdBetByUser?sess=" + sessionStorage.session,
+                        url: "/api/Api/getThirdBetByUser?sess=" + sessionStorage.session,
                         type: "GET",
                         success: function (data) {
                             var _each = $("[data-daily-table=1]").find('.tbody');
@@ -586,7 +586,7 @@
                     });
                 } else {
                     $.ajax({
-                        url: "http://ldyllive.com/api/Api/getThirdBetByUser?sess=" + sessionStorage.session +
+                        url: "/api/Api/getThirdBetByUser?sess=" + sessionStorage.session +
                             "&start_date=" + _start_type + "&end_date=" + _end_type,
                         type: "GET",
                         success: function (data) {
