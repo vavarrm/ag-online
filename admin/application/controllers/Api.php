@@ -120,7 +120,7 @@ class Api extends CI_Controller {
 			if($uro_respcode =='1')
 			{
 				$ary['uro_respcode'] =array('value' =>'00' , 'operator' =>'=');
-			}else{
+			}elseif($uro_respcode=='0'){
 				$ary['uro_respcode'] =array('value' =>'00' , 'operator' =>'!=');
 			}
 

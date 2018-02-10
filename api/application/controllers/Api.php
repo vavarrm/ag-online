@@ -1757,7 +1757,7 @@ class Api extends CI_Controller {
 	
 	public function test()
 	{
-		$str='a:13:{s:5:"scode";s:8:"CID05101";s:7:"orderno";s:16:"2018021000002371";s:7:"orderid";s:40:"201802107b5dc3fe3a23b1014282ca2bac30ebc5";s:6:"amount";s:1:"1";s:8:"currcode";s:3:"CNY";s:4:"memo";s:0:"";s:8:"resptime";s:19:"2018-02-10 15:04:19";s:6:"status";s:1:"1";s:8:"respcode";s:2:"00";s:7:"paytype";s:9:"unionpay3";s:11:"productname";s:15:"使用者充值";s:7:"rmbrate";s:6:"4.7180";s:4:"sign";s:32:"15c35d9de0b8c2294918aca62f880194";}';
+		$str='a:13:{s:5:"scode";s:8:"CID05101";s:7:"orderno";s:16:"2018021000002879";s:7:"orderid";s:40:"20180210febb87147b49ee4e7ec4bbae6bc90c48";s:6:"amount";s:1:"1";s:8:"currcode";s:3:"CNY";s:4:"memo";s:0:"";s:8:"resptime";s:19:"2018-02-10 17:57:51";s:6:"status";s:1:"1";s:8:"respcode";s:2:"00";s:7:"paytype";s:9:"unionpay3";s:11:"productname";s:15:"使用者充值";s:7:"rmbrate";s:6:"4.7180";s:4:"sign";s:32:"2faeb115dcb3080f2eb513b53b061742";}';
 		var_dump(unserialize($str));
 		exit;
 		$get= $this->input->get();
