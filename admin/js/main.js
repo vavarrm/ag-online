@@ -1031,7 +1031,8 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 		router:'',
 		order:{},
 		input :{},
-		user_level_ary :[]
+		user_level_ary :[],
+		searchSubordinateAccount :""
 	};
 	
 	$scope.unlockUserBankCard = function(row)
@@ -1777,12 +1778,13 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 	
 	$scope.searchSubordinate = function(row)
 	{
+		$scope.data.p=1;
 		$scope.data.search.superior_id = row.u_id;
-		$scope.data.user_level_ary.push({
-			u_account : row.u_account
-		});
+		$scope.data.searchSubordinateAccount=row.u_account;
 		$scope.search();
+
 	}
+	
 	
 	$scope.actionClick = function($event,action, row)
 	{
@@ -2270,6 +2272,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			})
 		}
 		$scope.data.user_level_ary =[];
+		$scope.data.searchSubordinateAccount ="";
 		$scope.data.p =1;
 		$scope.search();
 		
@@ -2320,6 +2323,30 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 					$scope.data.list = r.data.body.list;
 					$scope.pageinfo = r.data.body.pageinfo;
 					$scope.data.actions = r.data.body.actions;
+					
+					if($scope.data.list.length >0)
+					{
+						
+						$scope.data.user_level_ary.push({
+							u_account : $scope.data.searchSubordinateAccount
+						});
+					}else{
+						var obj =
+						{
+							'message' :'查无资料',
+							buttons: 
+							[
+								{
+									text: "close",
+									click: function() 
+									{
+										$( this ).dialog( "close" );
+									}
+								}
+							]
+						};
+						dialog(obj);
+					}
 				}else
 				{
 					var obj =

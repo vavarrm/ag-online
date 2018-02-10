@@ -20,7 +20,7 @@
 		<div class="clearfix"> </div>
 		<div class="but_list">
 			<div class="col-md-12 page_1">
-				<span ng-repeat="row in data.user_level_ary" ng-bind="'/'+row.u_account"></span>
+				<span ng-repeat="row in data.user_level_ary" ng-show="row.u_account!=''" ng-bind="'/'+row.u_account"></span>
 			</div>
 			<div class="col-md-12 page_1">
 				<table class="table table-bordered">

@@ -398,17 +398,17 @@
                     _phone_key = true;
                 }
             }
-            function userInformation() {
+            function userInformation() {				
                 $.ajax({
                     url: "/api/Api/getUser?sess=" + sessionStorage.session,
                     type: "GET",
-                    success: function (data) {
-                        if (data.status) {
+                    success: function (data) {					
+                        if (data.status) {
                             switch (data.status) {
-                                case '100':
+                                case 100:									
                                     $('.jq-login-before').hide();
                                     $('.jq-login-after').show();
-                                    $('.jq-member-nam').text(data.body.user.u_name)
+                                    $('.jq-member-nam').text(data.body.user.u_name);	
                                     break;
                             }
                         }
@@ -446,8 +446,8 @@
                 if (sessionStorage.session == undefined || sessionStorage.session == '') {
                     $('.jq-login-before').show();
                     $('.jq-login-after').hide();
-                } else {
-                    userInformation()
+                } else {				
+                    userInformation();
                 }
             });
             $('.ajax-btn-login').click(function () {
@@ -468,7 +468,7 @@
                                     setCookie(data.body.sess);
                                     console.log(data.body.sess);
                                     alert('登入成功');
-                                    userInformation()
+                                    userInformation();
                                     break;
                                 case '999':
                                     alert('帐号或密码错误');
@@ -569,7 +569,7 @@
                         }
                     }
                 });
-            });						$('.step-btn1').click(function () {				if($('.jq-input-radio:checked').length ==0)				{					alert('请选择充值渠道');					return false;				}				if($('input[name=amount-1]').val() <50)				{					alert('單筆充值限額最低 50.00元');					return false;				}				if($('input[name=amount-1]').val() >20000)				{					alert('單筆充值限額最高 20000元');					return false;				}								$.ajax({                    url: "/api/Api/getRechargeOrder?sess=" + sessionStorage.session,                    type: "POST",										data: JSON.stringify({                        paytype: $('.jq-input-radio:checked').val(),                        amount: $('input[name=amount-1]').val()                    }),					                    success: function (data) {                        if (data.status == '100') {															$('#_u_account').html(data.body.u_account);							$('#_order_id').html(data.body.orderid);							$('#_paytype').html($('.jq-input-radio:checked').data('title'));							$('#_amount').html(data.body.amount);							$('.step1').hide();							$('.checkpay').show();							$.each(data.body, function(i,e){								$('input[type=hidden][name='+i+']').val(e);							})							$('#payfrm').attr('action',data.body.pay_url);                        }else						{							alert(data.message);						}                    }                });				;							})            
+            });						$('.step-btn1').click(function () {				if($('.jq-input-radio:checked').length ==0)				{					alert('请选择充值渠道');					return false;				}								if($('input[name=amount-1]').val() >20000)				{					alert('單筆充值限額最高 200010元');					return false;				}												$.ajax({                    url: "/api/Api/getRechargeOrder?sess=" + sessionStorage.session,                    type: "POST",										data: JSON.stringify({                        paytype: $('.jq-input-radio:checked').val(),                        amount: $('input[name=amount-1]').val()                    }),					                    success: function (data) {                        if (data.status == '100') {								console.log(data);							$('#_u_account').html(data.body.u_account);							$('#_order_id').html(data.body.orderid);							$('#_paytype').html($('.jq-input-radio:checked').data('title'));							$('#_amount').html(data.body.amount);							$('.step1').hide();							$('.checkpay').show();							$.each(data.body, function(i,e){								$('input[type=hidden][name='+i+']').val(e);							});							$('#payfrm').attr('action',data.body.pay_url);                        }else						{							alert(data.message);						}                    }                });							})            
         </script>
     </div>
 </body>
