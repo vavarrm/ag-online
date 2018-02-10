@@ -33,7 +33,7 @@
 			{
 				
 				$sql =" SELECT
-							timestampdiff(second,pcb_add_datetime,NOW()) AS diff
+							timestampdiff(second,NOW(),pcb_add_datetime) AS diff
 						FROM 
 							phone_call_back WHERE pcb_ip=? 
 						ORDER BY pcb_add_datetime DESC LIMIT 1";
@@ -54,7 +54,7 @@
 				}
 				$row =  $query->row_array();
 				$query->free_result();
-				if($row['diff']<=3)
+				if($row['diff']<=3 && !empty($row))
 				{
 					$MyException = new MyException();
 					$array = array(

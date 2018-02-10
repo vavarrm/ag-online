@@ -772,7 +772,7 @@
 
                 $.ajax({
 
-                    url: "/api/Api/withdrawalForm?sess=" + sessionStorage.session,
+                    url: "/api/Api/withdrawalForm?sess=" + localStorage.session,
 
                     type: "GET",
 
@@ -800,7 +800,7 @@
 
                 $.ajax({
 
-                    url: "/api/Api/getThirdBlance?sess=" + sessionStorage.session,
+                    url: "/api/Api/getThirdBlance?sess=" + localStorage.session,
 
                     type: "GET",
 
@@ -862,7 +862,7 @@
 
                     $.ajax({
 
-                        url: "/api/Api/transferToThird?sess=" + sessionStorage.session + "&amount=" + _cash_nam1,
+                        url: "/api/Api/transferToThird?sess=" + localStorage.session + "&amount=" + _cash_nam1,
 
                         type: "GET",
 
@@ -896,7 +896,7 @@
 
                     $.ajax({
 
-                        url: "/api/Api/transferToLdyl?sess=" + sessionStorage.session + "&amount=" + _cash_nam1,
+                        url: "/api/Api/transferToLdyl?sess=" + localStorage.session + "&amount=" + _cash_nam1,
 
                         type: "GET",
 

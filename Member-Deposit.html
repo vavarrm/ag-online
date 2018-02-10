@@ -317,7 +317,7 @@
 
                             </div>
 
-                            <div class="row" >
+                            <div class="row step2"  style="display:none;">
 
                                 <div class="input-group-container clear">
 
@@ -331,7 +331,7 @@
 
                                             <span style="color:red;">50.00</span> 元，最高
 
-                                            <span style="color:red;">20000.00</span> 元 *
+                                            <span style="color:red;">50000.00</span> 元 *
 
                                         </span>
 
@@ -788,7 +788,7 @@
         <script>
 
             // Privity
-			
+						$('.jq-input-radio').click(function(){				$('.step2').show();			})			
 			$('.step-btn1').click(function () {
 				if($('.jq-input-radio:checked').length ==0)
 				{
@@ -796,16 +796,16 @@
 					return false;
 				}
 				
-				if($('input[name=amount-1]').val() >20000)
+				if($('input[name=amount-1]').val() >50000)
 				{
-					alert('單筆充值限額最高 200010元');
+					alert('單筆充值限額最高 50000元');
 					return false;
 				}
 				
 				
 				$.ajax({
 
-                    url: "/api/Api/getRechargeOrder?sess=" + sessionStorage.session,
+                    url: "/api/Api/getRechargeOrder?sess=" + localStorage.session,
 
                     type: "POST",
 					

@@ -743,7 +743,7 @@
 
                     $.ajax({
 
-                        url: "/api/Api/getThirdBetByUser?sess=" + sessionStorage.session,
+                        url: "/api/Api/getThirdBetByUser?sess=" + localStorage.session,
 
                         type: "GET",
 
@@ -793,7 +793,7 @@
 
                     $.ajax({
 
-                        url: "/api/Api/getThirdBetByUser?sess=" + sessionStorage.session +
+                        url: "/api/Api/getThirdBetByUser?sess=" + localStorage.session +
 
                             "&start_date=" + _start_type + "&end_date=" + _end_type,
 

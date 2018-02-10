@@ -695,7 +695,7 @@
 
                 $.ajax({
 
-                    url: "/api/Api/getRegisteredLink?sess=" + sessionStorage.session,
+                    url: "/api/Api/getRegisteredLink?sess=" + localStorage.session,
 
                     type: "POST",
 
@@ -743,7 +743,7 @@
 
                 $.ajax({
 
-                    url: "/api/Api/addRegisteredLink?sess=" + sessionStorage.session,
+                    url: "/api/Api/addRegisteredLink?sess=" + localStorage.session,
 
                     type: "POST",
 

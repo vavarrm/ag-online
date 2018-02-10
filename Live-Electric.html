@@ -634,7 +634,7 @@
 
                 var _key = $(this).attr('data-game-code');
 
-                if (sessionStorage.session == undefined || sessionStorage.session == '') {
+                if (localStorage.session == undefined || localStorage.session == '') {
 
                     alert('请先登入会员');
 
@@ -642,7 +642,7 @@
 
                     $.ajax({
 
-                    url: "/api/Api/getGameUrl?sess=" + sessionStorage.session + "&game_code=" + _key + "&platform=html5",
+                    url: "/api/Api/getGameUrl?sess=" + localStorage.session + "&game_code=" + _key + "&platform=html5",
 
                     type: "GET",
 
