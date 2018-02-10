@@ -22,6 +22,8 @@
 
     <link rel="stylesheet" href="lib/owlcarousel/assets/owl.theme.default.min.css">
 
+    <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.min.css">
+
 
 
     <!--iphone+ 736(560)-->
@@ -132,35 +134,13 @@
 
         <main>
 
-            <section class="owl-carousel owl-theme owl-banner">
+            <section class="sect-discount jq-sect-discount">
 
-                <div class="item">
+                <div class="container"></div>
 
-                    <img src="img/banner1.png" alt="">
+                <div class="btn-action">
 
-                </div>
-
-                <div class="item">
-
-                    <img src="img/banner1.png" alt="">
-
-                </div>
-
-                <div class="item">
-
-                    <img src="img/banner1.png" alt="">
-
-                </div>
-
-            </section>
-
-            <section class="sect-game-list jq-sect-game-list">
-
-                <div class="container">
-
-                    <p class="title">热门游戏推荐</p>
-
-                    <div class="list-group clear"></div>
+                    <input class="btn btn-bg-blue jq-btn-more" type="button" value="MORE">
 
                 </div>
 
@@ -546,28 +526,42 @@
 
         <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
+        <script src="lib/jquery-ui/jquery-ui.min.js"></script>
+
         <script src="/js/main.js"></script>
 
         <script>
             Live.Global.intital();
 
+            Live.Global.notice_event();
+
             Live.Global.owl_banner();
+
+            Live.Global.datepicker();
         </script>
 
         <script>
             // Privity
 
+            var _more_key = 2;
+
+            var _page_total
+
+            var _result_length
+
             $(window).load(function () {
 
                 $.ajax({
 
-                    url: "/api/Api/getGameList?game_type=RNG&p=1&limit=9999&platform=html5&client_type=web",
+                    url: "/api/Api/getAnnouncemetList?limit=5&p=1&type=action",
 
                     type: "GET",
 
                     success: function (data) {
 
-                        var _each = $(".jq-sect-game-list").find('.list-group');
+                        _page_total = data.body.pageinfo.total;
+
+                        var _each = $(".jq-sect-discount").find('.container');
 
                         var _length = data.body.list.length;
 
@@ -581,19 +575,43 @@
 
                                         _each.append(
 
-                                            '<div class="col-xs-12">' +
+                                            '<div class="row">' +
 
-                                            '<a href="javascript:void(0)" class="ajax-game-link" data-game-code="' +
-                                            data.body.list[i].tcgGameCode + '">' +
+                                            '<div class="discount-group jq-notice-group">' +
 
-                                            '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' +
-                                            data.body.list[i].productCode + '/' + data.body.list[
-                                                i].tcgGameCode + '.png" alt="">' +
+                                            '<div class="img-container">' +
 
-                                            '<p class="title">' + data.body.list[i].gameName +
+                                            '<img class="absolute-center-xs img" src="images/announcemet/' +
+
+                                            data.body.list[i].an_image + '" alt="">' +
+
+                                            '</div>' +
+
+                                            '<p class="title">' +
+
+                                            '<i class="icon-ic-broadcast1"></i>' +
+
+                                            '<span style="display: inline-block; margin-right: 20px;">' +
+
+                                            data.body.list[i].an_title + '</span>' +
+
+                                            '<span>' + data.body.list[i].an_datetime +
+
+                                            '</span>' +
+
                                             '</p>' +
 
-                                            '</a>' +
+                                            '<p class="detail jq-detail">' + data.body.list[i].an_content +
+
+                                            '</p>' +
+
+                                            '<div class="discount-action">' +
+
+                                            '<a class="jq-btn-notice-more" href="javascript:void(0)">更多内容 ></a>' +
+
+                                            '</div>' +
+
+                                            '</div>' +
 
                                             '</div>'
 
@@ -615,44 +633,99 @@
 
 
 
-            $(document).on('click', '.ajax-game-link', function () {
+            $('.jq-btn-more').click(function () {
 
-                var _key = $(this).attr('data-game-code');
+                $.ajax({
 
-                if (sessionStorage.session == undefined || sessionStorage.session == '') {
+                    url: "/api/Api/getAnnouncemetList?limit=5&p=" + _more_key +
 
-                    alert('请先登入会员');
+                        "&type=action",
 
-                } else {
+                    type: "GET",
 
-                    $.ajax({
+                    success: function (data) {
 
-                        url: "/api/Api/getGameUrl?sess=" + sessionStorage.session + "&game_code=" +
-                            _key + "&platform=html5",
+                        console.log(data)
 
-                        type: "GET",
+                        var _each = $(".jq-sect-discount").find('.container');
 
-                        success: function (data) {
+                        var _length = data.body.list.length;
 
-                            if (data.status) {
+                        if (data.status) {
 
-                                switch (data.status) {
+                            switch (data.status) {
 
-                                    case 100:
+                                case 100:
 
-                                        window.location.href = data.body.game_url;
+                                    _result_length = $('.jq-sect-discount').find('.row').length;
 
-                                        break;
+                                    for (i = 0; i < _length; i++) {
 
-                                }
+                                        _each.append(
+
+                                            '<div class="row">' +
+
+                                            '<div class="discount-group jq-notice-group">' +
+
+                                            '<div class="img-container">' +
+
+                                            '<img class="absolute-center-xs img" src="images/announcemet/' +
+
+                                            data.body.list[i].an_image + '" alt="">' +
+
+                                            '</div>' +
+
+                                            '<p class="title">' +
+
+                                            '<i class="icon-ic-broadcast1"></i>' +
+
+                                            '<span style="display: inline-block; margin-right: 20px;">' +
+
+                                            data.body.list[i].an_title + '</span>' +
+
+                                            '<span>' + data.body.list[i].an_datetime +
+
+                                            '</span>' +
+
+                                            '</p>' +
+
+                                            '<p class="detail jq-detail">' + data.body.list[i].an_content +
+
+                                            '</p>' +
+
+                                            '<div class="discount-action">' +
+
+                                            '<a class="jq-btn-notice-more" href="javascript:void(0)">更多内容 ></a>' +
+
+                                            '</div>' +
+
+                                            '</div>' +
+
+                                            '</div>'
+
+                                        )
+
+                                    }
+
+                                    if (_result_length == _page_total) {
+
+                                        $('.jq-btn-more').hide();
+
+                                    } else {
+
+                                        _more_key += 1;
+
+                                    }
+
+                                    break;
 
                             }
 
                         }
 
-                    });
+                    }
 
-                }
+                });
 
             });
         </script>

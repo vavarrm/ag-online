@@ -22,6 +22,8 @@
 
     <link rel="stylesheet" href="lib/owlcarousel/assets/owl.theme.default.min.css">
 
+    <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.min.css">
+
 
 
     <!--iphone+ 736(560)-->
@@ -132,35 +134,39 @@
 
         <main>
 
-            <section class="owl-carousel owl-theme owl-banner">
+            <section class="sect-app">
 
-                <div class="item">
+                <div class="banner-container">
 
-                    <img src="img/banner1.png" alt="">
-
-                </div>
-
-                <div class="item">
-
-                    <img src="img/banner1.png" alt="">
+                    <img src="img/banner2.png" alt="">
 
                 </div>
 
-                <div class="item">
+                <p class="title">手机游戏下载</p>
 
-                    <img src="img/banner1.png" alt="">
+                <div class="download-container clear">
 
-                </div>
+                    <div class="col-xs-12 col-sm-6">
 
-            </section>
+                        <img src="img/app-download-android.png" alt="">
 
-            <section class="sect-game-list jq-sect-game-list">
+                        <p class="type android">Android 6.5 以上</p>
 
-                <div class="container">
+                        <img class="badge" src="img/google-play-badge.png" alt="">
 
-                    <p class="title">热门游戏推荐</p>
+                    </div>
 
-                    <div class="list-group clear"></div>
+                    <div class="col-xs-12 col-sm-6">
+
+                        <img src="img/app-download-ios.png" alt="">
+
+                        <p class="type">iphone 6s 以上
+
+                            <br>以及 IOS 8.0 以上</p>
+
+                        <img class="badge" src="img/app-store-badge.png" alt="">
+
+                    </div>
 
                 </div>
 
@@ -546,115 +552,18 @@
 
         <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
+        <script src="lib/jquery-ui/jquery-ui.min.js"></script>
+
         <script src="/js/main.js"></script>
 
         <script>
             Live.Global.intital();
 
+            Live.Global.notice_event();
+
             Live.Global.owl_banner();
-        </script>
 
-        <script>
-            // Privity
-
-            $(window).load(function () {
-
-                $.ajax({
-
-                    url: "/api/Api/getGameList?game_type=RNG&p=1&limit=9999&platform=html5&client_type=web",
-
-                    type: "GET",
-
-                    success: function (data) {
-
-                        var _each = $(".jq-sect-game-list").find('.list-group');
-
-                        var _length = data.body.list.length;
-
-                        if (data.status) {
-
-                            switch (data.status) {
-
-                                case 100:
-
-                                    for (i = 0; i < _length; i++) {
-
-                                        _each.append(
-
-                                            '<div class="col-xs-12">' +
-
-                                            '<a href="javascript:void(0)" class="ajax-game-link" data-game-code="' +
-                                            data.body.list[i].tcgGameCode + '">' +
-
-                                            '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' +
-                                            data.body.list[i].productCode + '/' + data.body.list[
-                                                i].tcgGameCode + '.png" alt="">' +
-
-                                            '<p class="title">' + data.body.list[i].gameName +
-                                            '</p>' +
-
-                                            '</a>' +
-
-                                            '</div>'
-
-                                        )
-
-                                    }
-
-                                    break;
-
-                            }
-
-                        }
-
-                    }
-
-                });
-
-            });
-
-
-
-            $(document).on('click', '.ajax-game-link', function () {
-
-                var _key = $(this).attr('data-game-code');
-
-                if (sessionStorage.session == undefined || sessionStorage.session == '') {
-
-                    alert('请先登入会员');
-
-                } else {
-
-                    $.ajax({
-
-                        url: "/api/Api/getGameUrl?sess=" + sessionStorage.session + "&game_code=" +
-                            _key + "&platform=html5",
-
-                        type: "GET",
-
-                        success: function (data) {
-
-                            if (data.status) {
-
-                                switch (data.status) {
-
-                                    case 100:
-
-                                        window.location.href = data.body.game_url;
-
-                                        break;
-
-                                }
-
-                            }
-
-                        }
-
-                    });
-
-                }
-
-            });
+            Live.Global.datepicker();
         </script>
 
     </div>

@@ -132,35 +132,221 @@
 
         <main>
 
-            <section class="owl-carousel owl-theme owl-banner">
+            <section class="sect-nav">
 
-                <div class="item">
+                <div class="container clear">
 
-                    <img src="img/banner1.png" alt="">
+                    <div class="row">
 
-                </div>
+                        <i class="icon-ic-home"></i>
 
-                <div class="item">
+                    </div>
 
-                    <img src="img/banner1.png" alt="">
+                    <div class="row">
 
-                </div>
+                        <p>会员中心</p>
 
-                <div class="item">
+                    </div>
 
-                    <img src="img/banner1.png" alt="">
+                    <div class="row">
+
+                        <p>充值</p>
+
+                    </div>
 
                 </div>
 
             </section>
 
-            <section class="sect-game-list jq-sect-game-list">
+            <section class="sect-member-detail">
 
                 <div class="container">
 
-                    <p class="title">热门游戏推荐</p>
+                    <ul class="member-action-list jq-member-action-list clear">
 
-                    <div class="list-group clear"></div>
+                        <li>会员中心</li>
+
+                        <li>
+
+                            <a href="Member-Deposit.html" class="btn btn-solid-blue">充值</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-Withdrawal.html" class="btn btn-solid-blue">提款</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-Transfer.html" class="btn btn-solid-blue active">转帐</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-DailyRecord.html" class="btn btn-solid-blue">日常纪录</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-CashRecord.html" class="btn btn-solid-blue">投注纪录</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-Balance.html" class="btn btn-solid-blue">余额查询</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-Discount.html" class="btn btn-solid-blue">优惠讯息</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-Apply-Discount.html" class="btn btn-solid-blue">申请优惠</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-Message.html" class="btn btn-solid-blue">站内讯息</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-Register.html" class="btn btn-solid-blue">邀请码管理</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-Password.html" class="btn btn-solid-blue">密码管理</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="Member-CardManagement.html" class="btn btn-solid-blue">银行卡管理</a>
+
+                        </li>
+
+                    </ul>
+
+                    <div class="member-detail">
+
+                        <div class="container">
+
+                            <div class="row">
+
+                                <div class="radio-group-container">
+
+                                    <p class="title">转帐方式</p>
+
+                                    <div class="radio-group clear">
+
+                                        <label class="col-xs-12 checked">
+
+                                            <input class="jq-input-radio" type="radio" name="transfer-option" value="1" checked='checked'>
+
+                                            <span>从平台转出</span>
+
+                                        </label>
+
+                                        <label class="col-xs-12">
+
+                                            <input class="jq-input-radio" type="radio" name="transfer-option" value="2">
+
+                                            <span>转回平台</span>
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row jq-row-account">
+
+                                <div class="confirm-group-container clear">
+
+                                    <p class="title">帐户金额</p>
+
+                                    <p class="detail jq-balance-num"></p>
+
+                                </div>
+
+                                <div class="select-group-container clear">
+
+                                    <p class="title">选择平台</p>
+
+                                    <div class="select-group">
+
+                                        <select class="select" name="" >
+
+                                            <option value="">AG</option>
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="input-group-container clear">
+
+                                    <p class="title">输入金额</p>
+
+                                    <div class="input-group">
+
+                                        <input type="text" class="jq-cash-nam" placeholder="请输入转帐金额">
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row jq-row-game" style="display: none;">
+
+                                <div class="confirm-group-container clear">
+
+                                    <p class="title">平台金额</p>
+
+                                    <p class="detail jq-balance-num"></p>
+
+                                </div>
+
+                                <div class="input-group-container clear">
+
+                                    <p class="title">输入金额</p>
+
+                                    <div class="input-group">
+
+                                        <input type="text" class="jq-cash-nam" placeholder="请输入转帐金额">
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row btn-action">
+
+                                <input class="btn btn-bg-blue ajax-btn-transfer-submit" type="button" value="确认转帐">
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -551,25 +737,25 @@
         <script>
             Live.Global.intital();
 
+            Live.Global.member();
+
             Live.Global.owl_banner();
         </script>
 
         <script>
             // Privity
 
+            var _transfer_key = 1;
+
             $(window).load(function () {
 
                 $.ajax({
 
-                    url: "/api/Api/getGameList?game_type=RNG&p=1&limit=9999&platform=html5&client_type=web",
+                    url: "/api/Api/withdrawalForm?sess=" + sessionStorage.session,
 
                     type: "GET",
 
                     success: function (data) {
-
-                        var _each = $(".jq-sect-game-list").find('.list-group');
-
-                        var _length = data.body.list.length;
 
                         if (data.status) {
 
@@ -577,29 +763,37 @@
 
                                 case 100:
 
-                                    for (i = 0; i < _length; i++) {
+                                    var _each = $(".jq-row-account").find('.jq-balance-num');
 
-                                        _each.append(
+                                    _each.html(data.body.balance);
 
-                                            '<div class="col-xs-12">' +
+                                    break;
 
-                                            '<a href="javascript:void(0)" class="ajax-game-link" data-game-code="' +
-                                            data.body.list[i].tcgGameCode + '">' +
+                            }
 
-                                            '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' +
-                                            data.body.list[i].productCode + '/' + data.body.list[
-                                                i].tcgGameCode + '.png" alt="">' +
+                        }
 
-                                            '<p class="title">' + data.body.list[i].gameName +
-                                            '</p>' +
+                    }
 
-                                            '</a>' +
+                });
 
-                                            '</div>'
+                $.ajax({
 
-                                        )
+                    url: "/api/Api/getThirdBlance?sess=" + sessionStorage.session,
 
-                                    }
+                    type: "GET",
+
+                    success: function (data) {
+
+                        if (data.status) {
+
+                            switch (data.status) {
+
+                                case 100:
+
+                                    var _each = $(".jq-row-game").find('.jq-balance-num');
+
+                                    _each.html(data.body.balance);
 
                                     break;
 
@@ -613,22 +807,42 @@
 
             });
 
+            $('[name=transfer-option]').change(function () {
 
+                _transfer_key = $(this).val();
 
-            $(document).on('click', '.ajax-game-link', function () {
+                if (_transfer_key == 1) {
 
-                var _key = $(this).attr('data-game-code');
+                    $('.jq-row-account').show();
 
-                if (sessionStorage.session == undefined || sessionStorage.session == '') {
+                    $('.jq-row-game').hide();
 
-                    alert('请先登入会员');
+                    $('.jq-row-game').find('.jq-cash-nam').val('');
 
-                } else {
+                } else if (_transfer_key == 2) {
+
+                    $('.jq-row-account').hide();
+
+                    $('.jq-row-game').show();
+
+                    $('.jq-row-account').find('.jq-cash-nam').val('');
+
+                }
+
+            });
+
+            $('.ajax-btn-transfer-submit').click(function () {
+
+                var _cash_nam1 = $('.jq-row-account').find('.jq-cash-nam').val();
+
+                var _cash_nam2 = $('.jq-row-game').find('.jq-cash-nam').val();
+
+                if (_transfer_key == 1) {
 
                     $.ajax({
 
-                        url: "/api/Api/getGameUrl?sess=" + sessionStorage.session + "&game_code=" +
-                            _key + "&platform=html5",
+                        url: "/api/Api/transferToThird?sess=" + sessionStorage.session + "&amount=" +
+                            _cash_nam1,
 
                         type: "GET",
 
@@ -640,9 +854,50 @@
 
                                     case 100:
 
-                                        window.location.href = data.body.game_url;
+                                        alert('转帐完成');
+
+                                        window.location.reload();
 
                                         break;
+
+                                    case '999':
+
+                                        alert(data.message);
+
+                                }
+
+                            }
+
+                        }
+
+                    });
+
+                } else if (_transfer_key == 2) {
+
+                    $.ajax({
+
+                        url: "/api/Api/transferToLdyl?sess=" + sessionStorage.session + "&amount=" +
+                            _cash_nam1,
+
+                        type: "GET",
+
+                        success: function (data) {
+
+                            if (data.status) {
+
+                                switch (data.status) {
+
+                                    case 100:
+
+                                        alert('转帐完成');
+
+                                        window.location.reload();
+
+                                        break;
+
+                                    case '999':
+
+                                        alert(data.message);
 
                                 }
 
