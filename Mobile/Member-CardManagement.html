@@ -737,7 +737,7 @@
 
                 $.ajax({
 
-                    url: "/api/Api/setUserBankInfoForm?sess=" + sessionStorage.session +
+                    url: "/api/Api/setUserBankInfoForm?sess=" + localStorage.session +
 
                         "&p=1&limit=5",
 
@@ -813,7 +813,7 @@
 
                         $.ajax({
 
-                            url: "/api/Api/lockUserBankCard?sess=" + sessionStorage
+                            url: "/api/Api/lockUserBankCard?sess=" + localStorage
 
                                 .session,
 
@@ -867,7 +867,7 @@
 
                         $.ajax({
 
-                            url: "/api/Api/delUserBankCard?sess=" + sessionStorage
+                            url: "/api/Api/delUserBankCard?sess=" + localStorage
 
                                 .session,
 
@@ -943,7 +943,7 @@
 
                     $.ajax({
 
-                        url: "/api/Api/setUserBankInfo?sess=" + sessionStorage.session,
+                        url: "/api/Api/setUserBankInfo?sess=" + localStorage.session,
 
                         type: "POST",
 
@@ -1047,7 +1047,7 @@
 
                 $.ajax({
 
-                    url: "/api/Api/checkMoneyPasswd?sess=" + sessionStorage.session,
+                    url: "/api/Api/checkMoneyPasswd?sess=" + localStorage.session,
 
                     type: "POST",
 
@@ -1095,7 +1095,7 @@
 
                 $.ajax({
 
-                    url: "/api/Api/UserMoneyPasswd?sess=" + sessionStorage.session,
+                    url: "/api/Api/UserMoneyPasswd?sess=" + localStorage.session,
 
                     type: "GET",
 

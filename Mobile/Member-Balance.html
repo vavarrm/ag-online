@@ -741,7 +741,7 @@
 
             $(window).load(function () {
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/withdrawalForm?sess=" + sessionStorage.session,
+                    url: "http://ldyllive.com/api/Api/withdrawalForm?sess=" + localStorage.session,
                     type: "GET",
                     success: function (data) {
                         if (data.status) {
@@ -755,7 +755,7 @@
                     }
                 });
                 $.ajax({
-                    url: "http://ldyllive.com/api/Api/getThirdBlance?sess=" + sessionStorage.session,
+                    url: "http://ldyllive.com/api/Api/getThirdBlance?sess=" + localStorage.session,
                     type: "GET",
                     success: function (data) {
                         if (data.status) {

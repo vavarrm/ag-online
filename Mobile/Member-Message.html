@@ -703,7 +703,7 @@
 
                 $.ajax({
 
-                    url: "/api/Api/getUserMessageList?sess=" + sessionStorage.session +
+                    url: "/api/Api/getUserMessageList?sess=" + localStorage.session +
 
                         "&p=1$limit=5",
 
@@ -767,7 +767,7 @@
 
                 $.ajax({
 
-                    url: "/api/Api/getUserMessage?sess=" + sessionStorage.session,
+                    url: "/api/Api/getUserMessage?sess=" + localStorage.session,
 
                     type: "POST",
 
@@ -837,7 +837,7 @@
 
                         url: "/api/Api/sendSuperiorUserMessage?sess=" +
 
-                            sessionStorage.session,
+                            localStorage.session,
 
                         type: "POST",
 
@@ -879,7 +879,7 @@
 
                         url: "/api/Api/sendSubordinateUserMessage?sess=" +
 
-                            sessionStorage.session,
+                            localStorage.session,
 
                         type: "POST",
 
@@ -923,7 +923,7 @@
 
                         url: "/api/Api/sendSubordinateUserMessage?sess=" +
 
-                            sessionStorage.session,
+                            localStorage.session,
 
                         type: "POST",
 
