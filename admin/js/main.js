@@ -1780,6 +1780,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 	{
 		$scope.data.p=1;
 		$scope.data.search.superior_id = row.u_id;
+		$scope.data.search.u_account = '';
 		$scope.data.searchSubordinateAccount=row.u_account;
 		$scope.search();
 
@@ -2249,6 +2250,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 		{
 			return ;
 		}
+		$scope.data.searchSubordinateAccount ='';
 		$scope.data.p = p;
 		$scope.search();
 	}
@@ -2276,6 +2278,12 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 		$scope.data.p =1;
 		$scope.search();
 		
+	}
+	
+	$scope.click_search = function()
+	{
+		$scope.data.searchSubordinateAccount ="";
+		$scope.search();
 	}
 	
 	$scope.search = function()
@@ -2326,10 +2334,13 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 					
 					if($scope.data.list.length >0)
 					{
-						
-						$scope.data.user_level_ary.push({
-							u_account : $scope.data.searchSubordinateAccount
-						});
+						if(	$scope.data.searchSubordinateAccount!="")
+						{
+							$scope.data.user_level_ary.push({
+								u_account : $scope.data.searchSubordinateAccount
+							});
+							$scope.data.searchSubordinateAccount ="";
+						}
 					}else{
 						var obj =
 						{
