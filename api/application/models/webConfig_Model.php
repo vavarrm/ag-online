@@ -6,6 +6,7 @@
 			
 			parent::__construct();
 			$this->load->database();
+			$this->db->query("SET time_zone='+8:00'");
 		}
 		
 		public function getBanner()

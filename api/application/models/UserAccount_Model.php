@@ -8,6 +8,8 @@
 			parent::__construct();
 			$this->load->database();
 			$this->CI =& get_instance();
+			$this->db->query("SET time_zone='+8:00'");
+			$this->db->query("SET time_zone='+8:00'");
 		}
 		
 		
@@ -19,13 +21,14 @@
 				
 				$orderid = date('Ymd').md5(time().rand(1,999));
 				
-				$sql ="INSERT INTO user_recharge_order(uro_orderid, uro_u_id, 	uro_paytype, uro_amount, uro_add_datetime)
-						VALUES(?,?,?,?,NOW())";
+				$sql ="INSERT INTO user_recharge_order(uro_orderid, uro_u_id, 	uro_paytype, uro_amount, uro_add_datetime, uro_callbackurl)
+						VALUES(?,?,?,?,NOW(),?)";
 				$bind = array(
 					$orderid,
 					$ary['u_id'],
 					$ary['paytype'],
 					$ary['amount'],
+					$ary['callbackurl'],
 				);
 				
 				$query = $this->db->query($sql, 	$bind );
@@ -43,6 +46,37 @@
 					throw $MyException;
 				}
 				return 	$orderid ;
+			}catch(MyException $e)
+			{
+				throw $e;
+			}
+		}
+		
+		public function rechargeCallBackLog($ary)
+		{
+			try
+			{
+				
+				$sql ="INSERT INTO user_recharge_callback_log(urcl_post_str,urcl_add_datetime)
+						VALUES(?,NOW())";
+				$bind = array(
+					serialize($ary),
+				);
+				
+				$query = $this->db->query($sql, 	$bind );
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
 			}catch(MyException $e)
 			{
 				throw $e;
@@ -167,6 +201,7 @@
 				$error = $this->db->error();
 				if($error['message'] !="")
 				{
+					$query = $this->db->query($sql, $bind);
 					$MyException = new MyException();
 					$array = array(
 						'message' 	=>'无法执行锁定' ,
@@ -178,14 +213,13 @@
 					throw $MyException;
 				}
 				
-				
-				$check_sign=$_SERVER['RECHARGE_PAY_SCODE']+"|";
-				$check_sign.=$ary['orderno']+"&";
-				$check_sign.=$row['uro_orderid']+"&";
-				$check_sign.=$row['uro_amount']+"|";
-				$check_sign.=+"CNY&";
-				$check_sign.=$ary['status']+"&";
-				$check_sign.=$ary['respcode']+"|";
+				$check_sign=$_SERVER['RECHARGE_PAY_SCODE']."|";
+				$check_sign.=$ary['orderno']."&";
+				$check_sign.=$row['uro_orderid']."&";
+				$check_sign.=$ary['amount']."|";
+				$check_sign.="CNY&";
+				$check_sign.=$ary['status']."&";
+				$check_sign.=sprintf("%02d",$ary['respcode'])."|";
 				$check_sign.=$_SERVER['RECHARGE_PAY_KEY'];
 				$check_sign = md5($check_sign);
 	
@@ -600,6 +634,7 @@
 					$u_id,
 				);
 				$query = $this->db->query($sql, $bind);
+				// echo $this->db->last_query();
 				$error = $this->db->error();
 				if($error['message'] !="")
 				{

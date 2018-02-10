@@ -1290,6 +1290,7 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
+	
 	public function getuserBalance()
 	{
 		$output['status'] = 100;
@@ -1301,6 +1302,7 @@ class Api extends CI_Controller {
 		{
 			
 			$row = $this->account->getBalance($this->_user['u_id']);
+			// var_dump($row);
 			$output['body']= $row;
 		}catch(MyException $e)
 		{
@@ -1397,6 +1399,10 @@ class Api extends CI_Controller {
 			
 			$decrypt_user_data= $this->decryptUser($get['sess'], $encrypt_user_data);
 			unset($this->_user['u_passwd']);
+			$row = $this->account->getBalance($this->_user['u_id']);
+			$this->_user['balance'] = $row['balance'];
+			$noReadMessageTotal = $this->user->getNoReadMessageTotal($this->_user['u_id']);
+			$this->_user['no_read_message_total'] =$noReadMessageTotal['total'];
 			$output['body']['user'] = $this->_user ;
 			
 		}catch(MyException $e)
@@ -1751,6 +1757,9 @@ class Api extends CI_Controller {
 	
 	public function test()
 	{
+		$str='a:13:{s:5:"scode";s:8:"CID05101";s:7:"orderno";s:16:"2018021000002371";s:7:"orderid";s:40:"201802107b5dc3fe3a23b1014282ca2bac30ebc5";s:6:"amount";s:1:"1";s:8:"currcode";s:3:"CNY";s:4:"memo";s:0:"";s:8:"resptime";s:19:"2018-02-10 15:04:19";s:6:"status";s:1:"1";s:8:"respcode";s:2:"00";s:7:"paytype";s:9:"unionpay3";s:11:"productname";s:15:"使用者充值";s:7:"rmbrate";s:6:"4.7180";s:4:"sign";s:32:"15c35d9de0b8c2294918aca62f880194";}';
+		var_dump(unserialize($str));
+		exit;
 		$get= $this->input->get();
 		$output['status'] = 100;
 		$output['body'] =array();
@@ -2124,18 +2133,9 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-
+			$this->account->rechargeCallBackLog($post);
 			$this->account->recharge($post);
 			
-			$check_sign=$scode+"|";
-			$check_sign.=$orderno+"&";
-			$check_sign.=$orderid+"&";
-			$check_sign.=$amount+"|";
-			$check_sign.=$currcode +"&";
-			$check_sign.=$status+"&";
-			$check_sign.=$respcode+"|";
-			$check_sign.=$_SERVER['RECHARGE_PAY_KEY'];
-			$check_sign = md5($check_sign);
 			
 			
 		}catch(MyException $e)
@@ -2175,16 +2175,20 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
+			$callbackurl =$_SERVER['HTTP_ORIGIN'].'/api/Api/payCallBack';
+			
 			$ary = array(
-				'u_id'=>$this->_user['u_id'],
-				'paytype'=>$this->request['paytype'],
-				'amount'=>$this->request['amount'],
+				'u_id'			=>$this->_user['u_id'],
+				'paytype'		=>$this->request['paytype'],
+				'amount'		=>$this->request['amount'],
+				'callbackurl'	=>$callbackurl 
 			);
+			
+			
 			
 			$orderid  = $this->account->getUserRechargeOrder($ary);
 			
 			$currcode = 'CNY';
-			$callbackurl =$_SERVER['HTTP_ORIGIN'].'/api/Api/payCallBack';
 			
 			$sign =$_SERVER['RECHARGE_PAY_SCODE']."|";
 			$sign .=$orderid."&";

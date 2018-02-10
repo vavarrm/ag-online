@@ -400,7 +400,7 @@
         <script src="js/jquery.min.js"></script>
         <script src="js/script.js"></script>
         <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-        <script src="lib/jquery-ui/jquery-ui.min.js"></script>
+        <script src="lib/jquery-ui/jquery-ui.min.js"></script>				<script src="js/main.js"></script>
         <script>
             Live.Global.intital();
             Live.Global.member();
@@ -426,58 +426,9 @@
                     _phone_key = true;
                 }
             }
-            function userInformation() {
-                $.ajax({
-                    url: "/api/Api/getUser?sess=" + sessionStorage.session,
-                    type: "GET",
-                    success: function (data) {
-                        if (data.status) {
-                            switch (data.status) {
-                                case 100:
-                                    $('.jq-login-before').hide();
-                                    $('.jq-login-after').show();
-                                    $('.jq-member-nam').text(data.body.user.u_name)
-                                    break;
-                            }
-                        }
-                    }
-                });
-            }
 
-            $(window).load(function () {
-                $.ajax({
-                    url: "/api/Api/getFooterInfo",
-                    type: "GET",
-                    success: function (data) {
-                        console.log(data)
-                        var _each_wechat = $('.jq-service-wechat');
-                        var _each_QQ = $('.jq-service-QQ')
-                        if (data.status) {
-                            switch (data.status) {
-                                case 100:
-                                    _each_wechat.append(
-                                        '<a href="javascript:void(0)" class="btn btn-bg-blue">微信客服</a>' +
-                                        '<div class="img-container">' +
-                                            '<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.wechat_qr_image.wc_value + '" alt="">' +
-                                        '</div>'
-                                    )
-                                    _each_QQ.append(
-                                        '<a href="javascript:void(0)" class="btn btn-bg-blue">QQ客服</a>' +
-                                        '<div class="img-container">' +
-                                            '<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.qq_qr_image.wc_value + '" alt="">' +
-                                        '</div>'
-                                    )
-                            }
-                        }
-                    }
-                });
-                if (sessionStorage.session == undefined || sessionStorage.session == '') {
-                    $('.jq-login-before').show();
-                    $('.jq-login-after').hide();
-                } else {
-                    userInformation()
-                }
-            });
+
+            
             $('.ajax-btn-login').click(function () {
                 var _parent = $(this).parents('.ajax-login-form');
                 var _account = _parent.find('[name=account]').val();

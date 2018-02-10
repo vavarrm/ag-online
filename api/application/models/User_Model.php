@@ -6,10 +6,13 @@
 			
 			parent::__construct();
 			$this->load->database();
+			$this->db->query("SET time_zone='+8:00'");
 		}
 		
 		public function addLoginLog($u_id)
 		{
+			$this->db->query("set time_zone = '+8:00';");
+			$query = $this->db->query("SELECT NOW()");
 			$sql ="INSERT user_login_log (	ull_ip, ull_add_datetime, ull_u_id) VALUES(?,NOW(),?)";
 			$bind = array(
 				$this->getIP(),
@@ -537,6 +540,37 @@
 			$rows =  $query->result_array();
 			$query->free_result();
 			return $rows;
+		}
+		
+		public function getNoReadMessageTotal($uid)
+		{
+			try{
+				$sql ="SELECT COUNT(*) AS total FROM user_message WHERE um_u_id =? AND um_is_read='0' ";
+				$bind = array(
+					$uid
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$row =  $query->row_array();
+				$query->free_result();
+				return $row;
+				
+			}catch(MyException $e)
+			{
+				throw $e;
+			}
 		}
 		
 		public function getBalance($uid)
