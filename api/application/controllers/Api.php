@@ -553,7 +553,6 @@ class Api extends CI_Controller {
 		try 
 		{
 			if(
-				$this->request['account']	=="" ||
 				$this->request['send_all_subordinate']	==="" ||  
 				$this->request['title']	==""  ||
 				$this->request['content']	==""  
@@ -591,6 +590,7 @@ class Api extends CI_Controller {
 					$account_ary[] = $row['u_account'];
 				}
 			}
+			
 			
 			$affected_rows = $this->user->addSubordinateUserMmessage($this->_user['u_id'], $account_ary ,htmlentities($this->request['title']) , htmlentities($this->request['content']));
 			$output['body']['affected_rows']=$affected_rows;
@@ -840,6 +840,9 @@ class Api extends CI_Controller {
 		);
 		try 
 		{
+			$ary['order'] = array(
+				'an_id' =>'DESC'
+			);
 			$output['body'] = $this->announcemet->getList($ary);
 		}catch(MyException $e)
 		{
@@ -864,6 +867,9 @@ class Api extends CI_Controller {
 		$ary['limit'] = (isset($get['limit']))?$get['limit']:5;
 		$ary['p'] = (isset($get['p']))?$get['p']:1;
 		$ary['um_u_id'] = array('value'=>$this->_user['u_id'], 'operator' =>'=');
+		$ary['order'] =array(
+			'um_id'	=>'DESC'
+		);
 		try 
 		{
 			$output['body'] = $this->user->getMessageList($ary);
@@ -1246,6 +1252,10 @@ class Api extends CI_Controller {
 			$ary['end_date'] = array(
 				'value'	=>$end_date,
 				'operator' =>'<='
+			);
+			
+			$ary['order'] =array(
+				'ua_id'	=>'DESC'
 			);
 			
 			$output['body'] = $this->account->getReportList($ary);

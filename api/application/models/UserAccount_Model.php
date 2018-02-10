@@ -468,7 +468,7 @@
 					$array = array(
 						'message' 	=>'平台馀额不足' ,
 						'type' 		=>'db' ,
-						'status'	=>'001'
+						'status'	=>'999'
 					);
 					
 					$MyException->setParams($array);
@@ -481,7 +481,7 @@
 					$array = array(
 						'message' 	=>'第三方馀额不足' ,
 						'type' 		=>'db' ,
-						'status'	=>'001'
+						'status'	=>'999'
 					);
 					
 					$MyException->setParams($array);
@@ -507,7 +507,7 @@
 					$array = array(
 						'message' 	=>'交易失败' ,
 						'type' 		=>'db' ,
-						'status'	=>'001'
+						'status'	=>'999'
 					);
 					
 					$MyException->setParams($array);

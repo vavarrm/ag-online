@@ -1485,6 +1485,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 	{
 		$scope.data.am_id =$('input[name=am_id]', parent.document).val();
 		$scope.data.posturl="/admin/Api/addAnnouncemet?sess="+$cookies.get('sess');
+		initSample();
 	}
 	
 	$scope.setMoneyPasswdInit = function()
@@ -1647,7 +1648,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 				if(r.data.status =="100")
 				{
 					$scope.data.row = r.data.body.row;
-
+					initSample();
 				}else{
 					var obj =
 					{
@@ -1664,6 +1665,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 						]
 					};
 					dialog(obj);
+					
 				}
 			},
 			function() {

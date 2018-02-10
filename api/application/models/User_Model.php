@@ -814,7 +814,7 @@
 				
 				
 				$sql =" INSERT INTO user_message(um_u_id, um_title, um_content, um_add_datetime, um_from_u_id)
-				        VALUES(?,?,NOW(),?,?)";
+				        VALUES(?,?,?,NOW(),?)";
 				
 				$bind = array(
 					$user['u_superior_id'],
@@ -879,6 +879,7 @@
 				}
 				
 				$this->db->trans_start();
+
 				foreach( $subordinateUser as $value)
 				{
 					$sql ="INSERT INTO user_message (um_u_id, um_title, um_content ,um_from_u_id, um_add_datetime)
@@ -890,6 +891,7 @@
 						$u_superior_id
 					);
 
+;
 					$query = $this->db->query($sql, $bind);
 					$error = $this->db->error();
 					if($error['message'] !="")

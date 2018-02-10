@@ -556,13 +556,12 @@
             function daily_change(_type, _start_type, _end_type) {
                 $("[data-daily-table]").find('.tbody').find('.tr').remove();
                 $.ajax({
-                    url: "/api/Api/report?sess=" + sessionStorage.session +
-                        "&type=3&p=1&limt=5",
+                    url: "/api/Api/report?sess=" + sessionStorage.session ,
                     type: "POST",
                     data: JSON.stringify({
                         type: _type,
                         start_date: _start_type,
-                        end_date: _end_type,
+                        end_date: _end_type,												limit:'999999999999999'
                     }),
                     success: function (data) {
                         if (_type == '1,2') {
@@ -668,11 +667,10 @@
 
             $(window).load(function () {
                 $.ajax({
-                    url: "/api/Api/report?sess=" + sessionStorage.session +
-                        "&type=3&p=1&limt=5",
+                    url: "/api/Api/report?sess=" + sessionStorage.session ,
                     type: "POST",
                     data: JSON.stringify({
-                        type: '1,2',
+                        type: '1,2',						limit :'99999999999999'
                     }),
                     success: function (data) {
                         var _each = $("[data-daily-table=1]").find('.tbody');

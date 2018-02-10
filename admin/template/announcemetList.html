@@ -8,7 +8,7 @@
 				时间：<input type="text" ng-model="data.search.start_time" class="form-control datepicker" >~<input type="text" ng-model="data.search.end_time" class="form-control datepicker" >
 			</div><p>
 			<div class="form-group">
-				活动：<input type="radio" name="an_type" ng-click="search_click();" ng-model="data.search.type" value="action">
+				优汇：<input type="radio" name="an_type" ng-click="search_click();" ng-model="data.search.type" value="action">
 				平台：<input type="radio" name="an_type" ng-click="search_click();" ng-model="data.search.type" value="public">
 			</div><p>
 			<div class="form-group">
@@ -20,7 +20,7 @@
 	</div>
 	<div class="grid_3 grid_4">
 		<div class="col-md-12 page_1">
-			<a href="/admin/index.php?/Admin/renterTemplates#!/user/announcemetList{{action.router}}" ng-click="actionClick($event, action.func)" ng-repeat-start="action in data.actions" ng-if="action.type =='head_button' " type="button" class="btn btn-lg btn-default" ng-bind="action.title"></a>
+			<a href="/admin/index.php?/Admin/renterTemplates#!/user/announcemetList{{action.router}}" ng-click="actionClick($event, action)" ng-repeat-start="action in data.actions" ng-if="action.type =='head_button' " type="button" class="btn btn-lg btn-default" ng-bind="action.title"></a>
 			<span ng-repeat-end></span>
 		</div>
 		<div class="clearfix"> </div>

@@ -8,7 +8,8 @@
 <script type="text/javascript" src="/admin/js/angular/angular-cookies.min.js"></script>
 
 
-  
+<script src="/admin/js/ckeditor.js"></script>
+<script src="/admin/js/sample.js?<{$randseed}>"></script>
 <!-- Mainly scripts -->
 <script src="/admin/js/jquery.metisMenu.js"></script>
 <script src="/admin/js/jquery.slimscroll.min.js"></script>
