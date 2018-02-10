@@ -1,3 +1,4 @@
 /images
 /api/captcha
 /*.htaccess
+/Mobile/*.htaccess
