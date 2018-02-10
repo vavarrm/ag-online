@@ -1,0 +1,111 @@
+<dd ng-model="data.search_api" ng-init="data.search_api='/userRechargeList'"></dd>
+<div  ng-init="auditListInit()">
+	<div class="grid_3 grid_4">
+		<div class="grid-form1">
+			<form class="form-inline">
+			  <div class="form-group">
+				<label class="sr-only" for="exampleInputPassword3"></label>
+				时间起：<input type="text" ng-model="data.search.start_time" class="form-control datepicker" >
+				~<input type="text" ng-model="data.search.end_time" class="form-control datepicker" >
+			  </div>
+			  <div class="form-group">
+				<label class="sr-only" for="exampleInputPassword3"></label>
+				用户名：<input type="text" ng-model="data.search.u_account" class="form-control" >
+			  </div>
+			  <div class="form-group">
+				<label class="sr-only" for="exampleInputPassword3"></label>
+				充值渠道：
+				<select ng-model="data.search.uro_paytype" ng-change="search()" ng-init="data.search.uro_paytype=''">
+					<option value="">全部</option>
+					<option value="unionpay2">银联</option>
+					<option value="unionpay3">网银</option>
+				</select>
+			  </div>
+				<div class="form-group">
+					<label class="sr-only" for="exampleInputPassword3"></label>
+					是否回应：
+					<select ng-model="data.search.uro_reply" ng-change="search()" ng-init="data.search.uro_reply=''">
+						<option value="">全部</option>
+						<option value="1">已回應</option>
+						<option value="0">無回應</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label class="sr-only" for="exampleInputPassword3"></label>
+					回应状态：
+					<select ng-model="data.search.uro_respcode" ng-change="search()" ng-init="data.search.uro_respcode=''">
+						<option value="">全部</option>
+						<option value="1">成功</option>
+						<option value="0">失敗</option>
+					</select>
+				</div>
+			  <button type="submit" class="btn btn-default" ng-click="search()">搜寻</button>
+			  <button  class="btn btn-default" ng-click="reset()">清除搜寻条件</button>
+			</form>
+		</div>
+	</div>
+	<div class="grid_3 grid_4">
+		<!--
+		<div class="col-md-12 page_1">
+			<a ng-click="click('/checkAudit');$event.preventDefault();"  type="button" class="btn btn-lg btn-default" >审核</a>
+		</div>
+		-->
+		<div class="clearfix"> </div>
+		<div class="but_list">
+			<div class="col-md-12 page_1">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th  style="text-align:center">
+								用户名
+							</th>
+							<th  style="text-align:center">
+								充值金额
+							</th>
+							<th style="text-align:center">
+								充值渠道
+							</th>
+							<th style="text-align:center">订单号</th>
+							<th  style="text-align:center">
+								<a href="" ng-click="orderClick('uro_add_datetime');$event.preventDefault();">发起时间</a> 
+								<i  ng-show="data.order.uro_add_datetime=='DESC'" class="fa fa-chevron-down" aria-hidden="true"></i>
+								<i  ng-show="data.order.uro_add_datetime=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
+							</th>
+							<th  style="text-align:center">
+								是否收到回应
+							</th>
+							<th  style="text-align:center">
+								回应状态
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="row in data.list">
+							<td valign="middle" width="5%"  ng-bind="row.u_account"></td>
+							<td valign="middle" width="10%" ng-bind="row.uro_amount"></td>
+							<td valign="middle" width="5%"  ng-bind="row.uro_paytype_str"></td>
+							<td valign="middle" width="20%" ng-bind="row.uro_orderid"></td>
+							<td valign="middle" width="10%"  ng-bind="row.uro_add_datetime"></td>
+							<td valign="middle" width="5%"  ng-bind="row.uro_reply_str"></td>
+							<td valign="middle" width="5%"  ng-bind="row.uro_respcode_str"></td>
+						</tr>
+					</tbody>
+				</table>  
+				<div>
+					<ul class="pagination pagination-sm">
+						<li  ng-class="data.p=='1'?'disabled':''">
+							<a ng-click="clickpage(data.p -1);$event.preventDefault();" href="#"><i class="fa fa-angle-left"></i></a>
+						</li>
+						<li  ng-class="($index +1)==data.p?'active':''" ng-repeat="n in [] | range:data.pages">
+							<a ng-click="clickpage($index +1);$event.preventDefault();" href="#" ng-bind="$index +1"></a>
+						</li>
+						<li ng-class="data.p==pageinfo.pages?'disabled':''">
+							<a ng-click="clickpage(data.p +1);$event.preventDefault();" href="#"><i class="fa fa-angle-right"></i></a>
+						</li>
+					</ul>	
+				</div>
+			</div>
+			<div class="clearfix"> </div>
+		</div>
+	</div>
+</div>

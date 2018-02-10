@@ -8,6 +8,7 @@
 			parent::__construct();
 			$this->CI =&get_instance();
 			$this->load->database();
+			$this->db->query("SET time_zone='+8:00'");
 		}
 		
 		public function changePhoneCallBackStatus($ary =array())

@@ -6,7 +6,7 @@
 			
 			parent::__construct();
 			$this->load->database();
-			
+			$this->db->query("SET time_zone='+8:00'");
 		}
 		
 		public function getAccountLimit($ua_id)
@@ -272,6 +272,113 @@
 				return $affected_rows;
 			}
 			catch (Exception $e) {
+				$this->db->trans_rollback();
+				throw $e;
+			}
+		}
+		
+		public function getUserRechargeOrderList($ary)
+		{
+			try {
+				$where =" WHERE 1=1 ";
+				$order="";
+				$gitignore = array(
+					'limit',
+					'p',
+					'order'
+				);
+				$limit = sprintf(" LIMIT %d, %d",abs($ary['p']-1)*$ary['limit'],$ary['limit']);
+				if(is_array($ary))
+				{
+					foreach($ary as $key =>$row)
+					{
+					
+						if(in_array($key, $gitignore) || $row['value']==='' )	
+						{
+							continue;
+						}
+
+						
+						if($key =="start_time" || $key=="end_time"  )
+						{
+							// echo $key;
+							if($row['value']!='')
+							{
+								if($row['logic'] =="")
+								{
+									$logic =" AND "; 
+								}else{
+									$logic = $row['logic'];
+								}
+								$where .=sprintf(" %s DATE_FORMAT(`uro_add_datetime`, '%s') %s ?",$logic  ,'%Y-%m-%d', $row['operator']);					
+								$bind[] = $row['value'];
+							}
+						}else if($row['operator'] =='in')
+						{
+							$where .=sprintf(" AND %s IN (%s) ", $key, $row['value']);
+						}
+						else{
+							$where .=sprintf(" AND %s %s ?", $key, $row['operator']);					
+							$bind[] = $row['value'];
+						}
+					}
+				}
+				
+				if(is_array($ary['order']) && !empty($ary['order']))
+				{
+					$order =" ORDER BY ";
+					foreach($ary['order'] AS $key =>$value)
+					{
+						$order_ary[]=sprintf( '%s %s ', $key, $value);
+					}
+					$order.=join(',',$order_ary);
+				}
+				
+				$sql = "SELECT 
+							uro.*,
+							u.*,
+							CASE
+								WHEN  uro_paytype = 'unionpay2' THEN '银联'
+								WHEN  uro_paytype = 'unionpay3' THEN '网银'
+							END AS 	uro_paytype_str,
+							CASE
+								WHEN  	uro_reply = '0' THEN '无回应'
+								WHEN  	uro_reply = '1ˇ' THEN '已回应'
+							END AS 	uro_reply_str,
+							CASE
+								WHEN  uro_respcode = '00' THEN '交易成功'
+							END AS 	uro_respcode_str
+						FROM 
+							user_recharge_order AS uro LEFT JOIN user AS u ON uro.uro_u_id =u.u_id ";
+				$search_sql = $sql.$where.$order.$limit ;
+				$query = $this->db->query($search_sql, $bind);
+				$rows = $query->result_array();
+				
+				$total_sql = sprintf("SELECT COUNT(*) AS total FROM(%s) AS t",$sql.$where) ;
+				$query = $this->db->query($total_sql, $bind);
+				$row = $query->row_array();
+				
+				$query->free_result();
+				$output['list'] = $rows;
+				$output['pageinfo']  = array(
+					'total'	=>$row['total'],
+					'pages'	=>ceil($row['total']/$ary['limit'])
+				);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw  $MyException;
+				}
+				return $output;
+			}catch (Exception $e) {
 				$this->db->trans_rollback();
 				throw $e;
 			}
