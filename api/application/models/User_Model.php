@@ -819,7 +819,7 @@
 				$bind = array(
 					$user['u_superior_id'],
 					$ary['title'],
-					$ary['content'],
+					nl2br($ary['content']),
 					$ary['u_id'],
 				);
 				$query = $this->db->query($sql, $bind);
@@ -887,7 +887,7 @@
 					$bind = array(
 						$value['u_id'],
 						$title,
-						$content,
+						nl2br($content),
 						$u_superior_id
 					);
 
