@@ -352,9 +352,9 @@
 
                                         <span>单笔最低提现金额：
 
-                                            <span style="color:red;">100</span> 元，最高
+                                            <span style="color:red;">100</span> 元
 
-                                            <span style="color:red;">50000</span> 元
+                                     
 
                                         </span>
 
@@ -600,7 +600,7 @@
 
                         <p class="title">类型</p>
 
-                        <select class="select" name="message-type" id="">
+                        <select class="select" name="message-type" >
 
                             <option value="up">上級</option>
 
@@ -862,9 +862,9 @@
 
                 var _cash_key = $(".jq-container-step2").find('.jq-cash-num').val();
 
-                console.log(_cash_key);
+                
 
-                if (_cash_key >= 100 && _cash_key <= 50000) {
+                if (_cash_key >= 100 ) {
 
                     if (_cash_key <= _balance_key) {
 
@@ -908,7 +908,7 @@
 
                         });
 
-                    }
+                    }else{						alert('餘額不足');					}
 
                 } else {
 

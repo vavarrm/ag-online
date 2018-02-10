@@ -77,9 +77,9 @@ $('.ajax-btn-login').click(function () {
 
 	var _parent = $(this).parents('.ajax-login-form');
 
-	var _account = _parent.find('[name=account]').val();
+	var _account = $('input[name=account]').val();
 
-	var _passwd = _parent.find('[name=passwd]').val();
+	var _passwd = $('input[name=passwd]').val();
 
 	$.ajax({
 

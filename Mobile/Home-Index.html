@@ -50,11 +50,11 @@
 
                 </a>
 
-                <a href="Home-Index.html" class="img-container">
-
-                    <img src="img/logo.png" alt="乐鼎国际">
-
-                </a>
+                <div class="img-container">
+                    <a href="Home-Index.html">
+                        <img src="img/logo.png" alt="乐鼎国际">
+                    </a>
+                </div>
 
                 <div class="login-information">
 
@@ -202,13 +202,13 @@
 
                         <li class="jq-service-wechat">
 
-                            
+
 
                         </li>
 
                         <li class="jq-service-QQ">
 
-                            
+
 
                         </li>
 
@@ -280,11 +280,11 @@
                 <form class="form-group">
                     <div class="row">
                         <i class="icon-ic-user3"></i>
-                        <input class="input" type="text" name="account" id="" placeholder="请输入帐号...">
+                        <input class="input" type="text" name="account"  placeholder="请输入帐号...">
                     </div>
                     <div class="row">
                         <i class="icon-ic-lock1"></i>
-                        <input class="input" type="password" name="passwd" id="" placeholder="请输入密码...">
+                        <input class="input" type="password" name="passwd"  placeholder="请输入密码...">
                     </div>
                     <div class="form-action">
                         <input class="btn btn-bg-blue ajax-btn-login" type="button" value="登入">
@@ -333,10 +333,19 @@
                     </div>
 
                     <div class="row">
+
                         <i class="icon-ic-shield"></i>
+
                         <input class="input" type="text" name="captcha" placeholder="请输入验证码">
+
                         <div class="captcha-container jq-captcha-container"></div>
-                        <p class="captcha-reload">看不清楚？<a href="">重新取得验证码</a></p>
+
+                        <p class="captcha-reload">看不清楚？
+
+                            <a class="ajax-btn-captcha-reload" href="javascript:void(0)">重新取得验证码</a>
+
+                        </p>
+
                     </div>
 
                     <div class="form-action">
@@ -403,7 +412,7 @@
 
                         <p class="title">类型</p>
 
-                        <select class="select" name="message-type" id="">
+                        <select class="select" name="message-type" >
 
                             <option value="up">上級</option>
 
@@ -536,19 +545,16 @@
         <script src="js/script.js"></script>
 
         <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-		
-		<script src="js/main.js"></script>
+
+        <script src="js/main.js"></script>
 
         <script>
-
             Live.Global.intital();
 
             Live.Global.owl_banner();
-
         </script>
 
         <script>
-
             // Privity
 
             $(window).load(function () {
@@ -577,13 +583,17 @@
 
                                             '<div class="col-xs-12">' +
 
-                                                '<a href="javascript:void(0)" class="ajax-game-link" data-game-code="' + data.body.list[i].tcgGameCode + '">' +
+                                            '<a href="javascript:void(0)" class="ajax-game-link" data-game-code="' +
+                                            data.body.list[i].tcgGameCode + '">' +
 
-                                                    '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' + data.body.list[i].productCode + '/' + data.body.list[i].tcgGameCode + '.png" alt="">' +
+                                            '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' +
+                                            data.body.list[i].productCode + '/' + data.body.list[
+                                                i].tcgGameCode + '.png" alt="">' +
 
-                                                    '<p class="title">' + data.body.list[i].gameName + '</p>' +
+                                            '<p class="title">' + data.body.list[i].gameName +
+                                            '</p>' +
 
-                                                '</a>' +
+                                            '</a>' +
 
                                             '</div>'
 
@@ -603,7 +613,7 @@
 
             });
 
-            
+
 
             $(document).on('click', '.ajax-game-link', function () {
 
@@ -617,34 +627,34 @@
 
                     $.ajax({
 
-                    url: "/api/Api/getGameUrl?sess=" + sessionStorage.session + "&game_code=" + _key + "&platform=html5",
+                        url: "/api/Api/getGameUrl?sess=" + sessionStorage.session + "&game_code=" +
+                            _key + "&platform=html5",
 
-                    type: "GET",
+                        type: "GET",
 
-                    success: function (data) {
+                        success: function (data) {
 
-                        if (data.status) {
+                            if (data.status) {
 
-                            switch (data.status) {
+                                switch (data.status) {
 
-                                case 100:
+                                    case 100:
 
-                                    window.location.href = data.body.game_url;
+                                        window.location.href = data.body.game_url;
 
-                                    break;
+                                        break;
+
+                                }
 
                             }
 
                         }
 
-                    }
-
-                });
+                    });
 
                 }
 
             });
-
         </script>
 
     </div>

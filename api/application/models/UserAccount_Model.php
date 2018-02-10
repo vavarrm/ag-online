@@ -622,6 +622,8 @@
 							UNION
 							SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'payment'
 							UNION
+							SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'audit' AND ua_type = 3
+							UNION
 								SELECT 
 									ua.ua_id , IFNULL(ua.ua_value,0)*-1 AS Balance FROM user_account AS ua INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
 								WHERE 
@@ -630,6 +632,7 @@
 								SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'chargeback'
 						) AS t";
 				$bind = array(
+					$u_id,
 					$u_id,
 					$u_id,
 					$u_id,
@@ -850,31 +853,31 @@
 				$withdrawal= $this->getWithdrawal($ary['u_id']);
 				$accountLimit =$this->getAccountLimit();
 				
-				if( $withdrawal['today_audit_number']  >= $accountLimit['withdrawal_time_max']['wc_value'])
-				{
-					$MyException = new MyException();
-					$array = array(
-						'message' 	=>'每日提款次数上限为'.$accountLimit['withdrawal_time_max']['wc_value'] ,
-						'type' 		=>'system' ,
-						'status'	=>'999'
-					);
+				// if( $withdrawal['today_audit_number']  >= $accountLimit['withdrawal_time_max']['wc_value'])
+				// {
+					// $MyException = new MyException();
+					// $array = array(
+						// 'message' 	=>'每日提款次数上限为'.$accountLimit['withdrawal_time_max']['wc_value'] ,
+						// 'type' 		=>'system' ,
+						// 'status'	=>'999'
+					// );
 					
-					$MyException->setParams($array);
-					throw $MyException;
-				}
+					// $MyException->setParams($array);
+					// throw $MyException;
+				// }
 				
-				if( $withdrawal['today_payment_number']  >= $accountLimit['withdrawal_time_max']['wc_value'])
-				{
-					$MyException = new MyException();
-					$array = array(
-						'message' 	=>'每日提款次数上限为'.$accountLimit['withdrawal_time_max']['wc_value'] ,
-						'type' 		=>'system' ,
-						'status'	=>'999'
-					);
+				// if( $withdrawal['today_payment_number']  >= $accountLimit['withdrawal_time_max']['wc_value'])
+				// {
+					// $MyException = new MyException();
+					// $array = array(
+						// 'message' 	=>'每日提款次数上限为'.$accountLimit['withdrawal_time_max']['wc_value'] ,
+						// 'type' 		=>'system' ,
+						// 'status'	=>'999'
+					// );
 					
-					$MyException->setParams($array);
-					throw $MyException;
-				}
+					// $MyException->setParams($array);
+					// throw $MyException;
+				// }
 				
 				if( $withdrawal['today_payment_value']  >= $accountLimit['withdrawal_value_max']['wc_value'])
 				{
@@ -969,7 +972,18 @@
 				}
 				
 				$sql =" SELECT 
-							*
+							*,
+							CASE
+								WHEN  ua_status = 'audit' THEN '审核中'
+								WHEN  ua_status = 'payment' THEN '已出款'
+								WHEN  ua_status = 'received' THEN '已到帐'
+								WHEN  ua_status = 'stopPayment' THEN '拒绝出款'
+								WHEN  ua_status = 'noAllowed' THEN '拒绝'
+								WHEN  ua_status = 'transfer_out' THEN '转出'
+								WHEN  ua_status = 'transfer_in' THEN '转入'
+								WHEN  ua_status = 'chargeback' THEN '系统扣款'
+								ELSE ua_status 
+							END   AS ua_status_str
 						FROM 
 							user_account AS ua 
 								LEFT JOIN  user_account_type AS uat ON uat.uat_id = ua.ua_type

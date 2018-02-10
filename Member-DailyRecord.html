@@ -340,7 +340,7 @@
 
                                         <div class="tr">
 
-                                            <div class="th">充值时间</div>
+                                            <div class="th">充值时间</div>																						                                            <div class="th">充值时间</div>
 
                                             <div class="th">充值金额</div>
 
@@ -668,7 +668,7 @@
 
                         <p class="title">类型</p>
 
-                        <select class="select" name="message-type" id="">
+                        <select class="select" name="message-type" >
 
                             <option value="up">上級</option>
 
@@ -830,9 +830,7 @@
 
                 $.ajax({
 
-                    url: "/api/Api/report?sess=" + sessionStorage.session +
-
-                        "&type=3&p=1&limt=5",
+                    url: "/api/Api/report?sess=" + sessionStorage.session ,
 
                     type: "POST",
 
@@ -842,7 +840,7 @@
 
                         start_date: _start_type,
 
-                        end_date: _end_type,
+                        end_date: _end_type,												limit :'99999'
 
                     }),
 
@@ -878,7 +876,7 @@
 
                                                 // '</div>' +
 
-                                                '<div class="td" data-title="状态">' + data.body.list[i].ua_status +
+                                                '<div class="td" data-title="状态">' + data.body.list[i].ua_status_str +
 
                                                 '</div>'
 
@@ -922,7 +920,7 @@
 
                                                 .ua_value + '</div>' +
 
-                                                '<div class="td" data-title="状态">' + data.body.list[i].ua_status +
+                                                '<div class="td" data-title="状态">' + data.body.list[i].ua_status_str +
 
                                                 '</div>'
 
@@ -974,7 +972,7 @@
 
                                                 .ua_value + '</div>' +
 
-                                                '<div class="td" data-title="状态">' + data.body.list[i].ua_status +
+                                                '<div class="td" data-title="状态">' + data.body.list[i].ua_status_str +
 
                                                 '</div>'
 
@@ -1022,7 +1020,7 @@
 
                                                 .ua_value + '</div>' +
 
-                                                '<div class="td" data-title="状态">' + data.body.list[i].ua_status +
+                                                '<div class="td" data-title="状态">' + data.body.list[i].ua_status_str +
 
                                                 '</div>'
 
@@ -1054,15 +1052,13 @@
 
                 $.ajax({
 
-                    url: "/api/Api/report?sess=" + sessionStorage.session +
-
-                        "&type=3&p=1&limt=5",
+                    url: "/api/Api/report?sess=" + sessionStorage.session ,
 
                     type: "POST",
 
                     data: JSON.stringify({
 
-                        type: '1,2',
+                        type: '1,2',						limit :'99999'
 
                     }),
 
@@ -1102,7 +1098,7 @@
 
                                             '<div class="td" data-title="状态">' + data.body.list[
 
-                                                i].ua_status +
+                                                i].ua_status_str +
 
                                             '</div>' +
 

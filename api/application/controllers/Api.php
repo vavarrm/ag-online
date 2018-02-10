@@ -1145,9 +1145,8 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}
-			
 			if(
-				$this->request['oldpasswd']	==""  
+				$this->request['oldpasswd']	==""  && $passwd['u_money_passwd'] !=""
 			){
 				$array = array(
 					'message' 	=>'reponse 必传参数为空' ,

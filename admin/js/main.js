@@ -63,6 +63,10 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"userRechargeList.html"+"?"+ Math.random(),
 		controller: "accountCtrl",
 		cache: false,
+	}).when("/account/withdrawalAuditList",{
+		templateUrl: templatePath+"withdrawalAuditList.html"+"?"+ Math.random(),
+		controller: "accountCtrl",
+		cache: false,
 	}).when("/account/chargebackAuditList/",{
 		templateUrl: templatePath+"chargebackAuditList.html"+"?"+ Math.random(),
 		controller: "accountCtrl",

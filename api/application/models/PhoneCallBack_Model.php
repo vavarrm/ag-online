@@ -60,7 +60,7 @@
 					$array = array(
 						'message' 	=>'请勿重覆发送' ,
 						'type' 		=>'db' ,
-						'status'	=>'001'
+						'status'	=>'999'
 					);
 					
 					$MyException->setParams($array);

@@ -53,6 +53,44 @@ function userInformation() {
 
 };
 
+function captcha_get() {
+
+	$.ajax({
+
+			url: "/api/Api/getCaptcha",
+
+			type: "GET",
+
+			success: function (data) {
+
+					$(".jq-pop-register").find('.jq-captcha-container').find('img').remove();
+
+					var _each = $(".jq-pop-register").find('.jq-captcha-container');
+
+					if (data.status) {
+
+							switch (data.status) {
+
+									case 100:
+
+											_each.append(
+
+													data.body.image
+
+											)
+
+											break;
+
+							}
+
+					}
+
+			}
+
+	});
+
+}
+
 function checkPhone(namber) {
 
 	var phone = namber
@@ -109,6 +147,10 @@ $('.ajax-btn-login').click(function () {
 
 						alert('登入成功');
 
+						$('.jq-pop-window').removeClass('active');
+
+						$('.jq-pop-window').find('.jq-pop-login').removeClass('active');
+
 						userInformation()
 
 						break;
@@ -153,7 +195,7 @@ $('.ajax-btn-logout').click(function () {
 
 						$('.jq-member-nam').empty();
 
-						window.location.href = '/Home-Index.html';
+						window.location.href = '/Mobile/Home-Index.html';
 
 						break;
 
@@ -219,39 +261,7 @@ $('.ajax-btn-pcb').click(function () {
 
 $('.jq-btn-pop-register').click(function () {
 
-	$.ajax({
-
-		url: "/api/Api/getCaptcha",
-
-		type: "GET",
-
-		success: function (data) {
-
-			$(".jq-pop-register").find('.jq-captcha-container').find('img').remove();
-
-			var _each = $(".jq-pop-register").find('.jq-captcha-container');
-
-			if (data.status) {
-
-				switch (data.status) {
-
-					case 100:
-
-						_each.append(
-
-							data.body.image
-
-						)
-
-						break;
-
-				}
-
-			}
-
-		}
-
-	});
+	captcha_get();
 
 });
 
@@ -317,6 +327,12 @@ $('.ajax-btn-register').click(function () {
 		}
 
 	});
+
+});
+
+$('.ajax-btn-captcha-reload').click(function () {
+
+	captcha_get();
 
 });
 
