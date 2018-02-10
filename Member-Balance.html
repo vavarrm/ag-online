@@ -252,11 +252,7 @@
 
                         </li>
 
-                        <li>
-
-                            <a href="Member-Apply-Discount.html" class="btn btn-solid-blue">申请优惠</a>
-
-                        </li>
+                        <li style="display:none;">
 
                         <li>
 
@@ -292,7 +288,7 @@
 
                                 <div class="confirm-group-container jq-row-game clear">
 
-                                    <p class="title">游戏厅总额度</p>
+                                    <p class="title">AG额度</p>
 
                                     <p class="detail jq-balance-num"></p>
 
@@ -300,7 +296,7 @@
 
                                 <div class="confirm-group-container jq-row-account clear">
 
-                                    <p class="title">本地额度</p>
+                                    <p class="title">平台额度</p>
 
                                     <p class="detail jq-balance-num"></p>
 
@@ -752,7 +748,7 @@
             Live.Global.member();
 
             Live.Global.datepicker();
-
+			 $(window).load(function () {                $.ajax({                    url: "/api/Api/withdrawalForm?sess=" + localStorage.session,                    type: "GET",                    success: function (data) {                        if (data.status) {                            switch (data.status) {                                case 100:                                    var _each = $(".jq-row-account").find('.jq-balance-num');                                    _each.html(data.body.balance);                                    break;                            }                        }                    }                });                $.ajax({                    url: "/api/Api/getThirdBlance?sess=" + localStorage.session,                    type: "GET",                    success: function (data) {                        if (data.status) {                            switch (data.status) {                                case 100:                                    var _each = $(".jq-row-game").find('.jq-balance-num');                                    _each.html(data.body.balance);                                    break;                            }                        }                    }                });            });
         </script>
 
     </div>
