@@ -361,7 +361,7 @@ $(function () {
 
 							'<div class="img-container">' +
 
-							'<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.wechat_qr_image.wc_value + '" alt="">' +
+							'<img class="img absolute-center-xs" src="/images/webconfig/' + data.body.list.wechat_qr_image.wc_value + '" alt="">' +
 
 							'</div>'
 
@@ -373,7 +373,7 @@ $(function () {
 
 							'<div class="img-container">' +
 
-							'<img class="img absolute-center-xs" src="images/webconfig/' + data.body.list.qq_qr_image.wc_value + '" alt="">' +
+							'<img class="img absolute-center-xs" src="/images/webconfig/' + data.body.list.qq_qr_image.wc_value + '" alt="">' +
 
 							'</div>'
 

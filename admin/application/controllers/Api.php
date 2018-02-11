@@ -93,6 +93,134 @@ class Api extends CI_Controller {
 		}
     }
 	
+	public function doEditReceivingBankCard()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='收款银行卡编辑';
+		$output['message'] = '成功';
+		try 
+		{
+			if(
+				$this->request['rbc_id'] ==""
+			){
+				$array = array(
+					'message' 	=>'必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$this->bank->editReceivingBankCard($this->request);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function editReceivingBankCardInit()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='收款银行卡编辑表单';
+		$output['message'] = '成功';
+		try 
+		{
+			if(
+				$this->request['rbc_id'] ==""
+			){
+				$array = array(
+					'message' 	=>'必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			$row = $this->bank->getReceivingBankCardByID($this->request['rbc_id']);
+			if(!empty($row))
+			{
+				foreach($row as $key =>$value)
+				{
+					$output['body'][$key] = $value;
+				}
+			}
+			// $output['body']['rbc_bank_name'] =1;
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function receivingBankCardInit()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='黑名单列表初始化';
+		$output['message'] = '成功';
+		
+		try 
+		{
+			$output['body']['actions'] = $this->admin->getActionlist($this->request['am_id']);
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function receivingBankCardList()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='用互充值列表';
+		$output['message'] = '成功';
+	
+		try 
+		{
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
+			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
+			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
+			
+			$output['body'] = $this->bank->receivingBankCardList($ary);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
 	
 	public function userRechargeList()
 	{

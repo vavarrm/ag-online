@@ -145,6 +145,14 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"bankBlackList.html"+"?"+ Math.random(),
 		controller: "bankCtrl",
 		cache: false,
+	}).when("/bank/receiving_bank_card_list/",{
+		templateUrl: templatePath+"receivingBankCardList.html"+"?"+ Math.random(),
+		controller: "bankCtrl",
+		cache: false,
+	}).when("/bank/editReceivingBankCardForm/:rbc_id",{
+		templateUrl: templatePath+"editReceivingBankCardForm.html"+"?"+ Math.random(),
+		controller: "bankCtrl",
+		cache: false,
 	})
 });
 
@@ -168,6 +176,24 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 		input:{}
 	}
 	
+	$scope.actionClick = function($event,action, row)
+	{
+		if( action.func !=null && action.func !="")
+		{
+			$event.preventDefault();
+			if(typeof $scope[action.func] =='function')
+			{
+				$scope[action.func](row,action);
+			}
+		}else
+		{
+			$('input[name=am_id]', parent.document).val(action.id);
+		}
+		
+	}
+	
+
+	
 	$scope.search_click = function()
 	{
 		$scope.data.p= 1;
@@ -177,63 +203,90 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 	
 	$scope.submit = function()
 	{
-			var promise = apiService.adminApi($scope.data.setting.do_api,$scope.data.input);
-			promise.then
-			(
-				function(r) 
+		var obj =
+		{
+			'message' :'确认送出',
+			buttons: 
+			[
 				{
-					if(r.data.status =="100")
+					text: "是",
+					click: function() 
 					{
-						var obj =
-						{
-							'message':'送出成功',
-							buttons: 
-							[
+						var promise = apiService.adminApi($scope.data.setting.do_api,$scope.data.input);
+						promise.then
+						(
+							function(r) 
+							{
+								if(r.data.status =="100")
 								{
-									text: "close",
-									click: function() 
+									var obj =
 									{
-										$( this ).dialog( "close" );
-										history.go(-1);
-									}
-								}
-							]
-						};
-						dialog(obj);
-					}else
-					{
-						var obj =
-						{
-							'message' :r.data.message,
-							buttons: 
-							[
+										'message':'送出成功',
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+													history.go(-1);
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}else
 								{
-									text: "close",
-									click: function() 
+									var obj =
 									{
-										$( this ).dialog( "close" );
-									}
+										'message' :r.data.message,
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+												}
+											}
+										]
+									};
+									dialog(obj);
 								}
-							]
-						};
-						dialog(obj);
+							},
+							function() {
+								var obj ={
+									'message' :'系统错误'
+								};
+								 dialog(obj);
+							}
+						)
 					}
 				},
-				function() {
-					var obj ={
-						'message' :'系统错误'
-					};
-					 dialog(obj);
+				{
+					text: "否",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+					}
 				}
-			)
+			]
+		};
+		dialog(obj);
 	}
+	
+
 	
 	$scope.init = function()
 	{
 		$( ".datepicker" ).datepicker({ dateFormat:'yy-mm-dd' });
-		if(typeof $scope.data.setting.init_api !="undefined")
+		if($scope.data.setting.init_api !=undefined)
 		{
-			var promise = apiService.adminApi($scope.data.setting.init_api);
+			var obj =
+			{
+				rbc_id : $routeParams.rbc_id
+			}
+			var promise = apiService.adminApi($scope.data.setting.init_api ,obj);
 			promise.then
 			(
 				function(r) 
@@ -241,6 +294,7 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 					if(r.data.status =="100")
 					{
 						$scope.data.init = r.data.body;
+						$scope.data.input = r.data.body;
 					}else
 					{
 						var obj =
@@ -268,7 +322,10 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 				}
 			)
 		}
-		$scope.search();
+		if($scope.data.setting.search_api !=undefined)
+		{
+			$scope.search();
+		}
 	}
 	
 	$scope.reset= function()

@@ -1,0 +1,53 @@
+<input type="hidden"  ng-model="data.setting.search_api" ng-init="data.setting.search_api ='/receivingBankCardList'">
+<input type="hidden"  ng-model="data.setting.init_api" ng-init="data.setting.init_api ='/receivingBankCardInit'">
+<div  ng-init="init()">
+	<div class="grid_3 grid_4">
+		<div class="col-md-12 page_1">
+			<a href="/admin/index.php?/Admin/renterTemplates#!/bank{{action.router}}" ng-click="actionClick($event, action)" ng-repeat-start="action in data.init.actions" ng-if="action.type =='head_button' " type="button" class="btn btn-lg btn-default" ng-bind="action.title"></a>
+			<span ng-repeat-end></span>
+		</div>
+		<div class="clearfix"> </div>
+		<div class="but_list">
+			<div ng-show="data.list.length > 0" class="col-md-12 page_1">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th width="15%" style="text-align:center" >银行卡号</th>
+							<th width="15%" style="text-align:center" >银行名称</th>
+							<th width="15%"  style="text-align:center">收款人</th>
+							<th width="" style="text-align:center">功能</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="row in data.list">
+							<td valign="middle" ng-bind="row.rbc_bank_account"></td>
+							<td valign="middle" ng-bind="row.rbc_bank_name"></td>
+							<td valign="middle" ng-bind="row.rbc_bank_user_name"></td>
+							<td valign="middle">
+								<a href="/admin/index.php?/Admin/renterTemplates#!/bank{{action.router}}/{{row.rbc_id}}"  ng-click="actionClick($event, action, row);" ng-repeat-start="action in data.init.actions" ng-show="action.type=='button' " type="button" class="btn btn-xs btn-default" ng-bind="action.title"></a>
+								<d ng-repeat-end></d>
+							</td>
+						</tr>
+					</tbody>
+				</table>  
+				<div>
+					<ul class="pagination pagination-sm">
+						<li  ng-class="data.p=='1'?'disabled':''">
+							<a ng-click="clickpage(data.p -1);$event.preventDefault();" href="#"><i class="fa fa-angle-left"></i></a>
+						</li>
+						<li  ng-class="($index +1)==data.p?'active':''" ng-repeat="n in [] | range:pageinfo.pages">
+							<a ng-click="clickpage($index +1);$event.preventDefault();" href="#" ng-bind="$index +1"></a>
+						</li>
+						<li ng-class="data.p==pageinfo.pages?'disabled':''">
+							<a ng-click="clickpage(data.p +1);$event.preventDefault();" href="#"><i class="fa fa-angle-right"></i></a>
+						</li>
+					</ul>	
+				</div>
+			</div>
+			<div ng-show="data.list.length == 0 && data.click_search=='1'" class="col-md-12 page_1">
+				<span>查无资料</span>
+			</div>
+			<div class="clearfix"> </div>
+		</div>
+	</div>
+</div>
