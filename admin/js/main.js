@@ -173,11 +173,13 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 		setting :{},
 		init:{},
 		click_search:0,
-		input:{}
+		input:{},
+		parent_amid:""
 	}
 	
 	$scope.actionClick = function($event,action, row)
 	{
+		$('input[name=parent_am_id]', parent.document).val($('input[name=am_id]', parent.document).val());
 		if( action.func !=null && action.func !="")
 		{
 			$event.preventDefault();
@@ -228,7 +230,10 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 												text: "close",
 												click: function() 
 												{
+													
 													$( this ).dialog( "close" );
+													console.log($('input[name=parent_am_id]', parent.document).val());
+													$('input[name=am_id]', parent.document).val(58);
 													history.go(-1);
 												}
 											}

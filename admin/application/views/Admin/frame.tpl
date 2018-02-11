@@ -45,6 +45,7 @@
 			<input type="hidden" name="root_id" ng-model="data.root_id" value="{{data.root_id}}">
 			<input type="hidden" name="nodes_id" ng-model="data.nodes_id" value="{{data.nodes_id}}">
 			<input type="hidden" name="am_id" ng-model="data.am_id" value="{{data.am_id}}">
+			<input type="hidden" name="parent_am_id" ng-model="data.parent_am_id" value="{{data.am_id}}">
 			<{include file='Admin/foot.tpl'}>	
 		</div>
 		<!--scrolling js-->
