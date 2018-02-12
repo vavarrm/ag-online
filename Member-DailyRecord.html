@@ -83,7 +83,7 @@
                     </div>
 
                     <div class="login-after jq-login-after" style="display: none;">
-						<div class="btn btn-bg" style="box-shadow :0px 0px 0px 0px" >                            <span class="nam">本地额度</span>							<span class="head-balance">1</span>                        </div>
+						<div class="btn btn-bg" style="box-shadow :0px 0px 0px 0px" >                            <span class="nam">本地额度</span>							<span class="head-balance"></span>                        </div>
                         <div class="login-member-detail jq-login-member-detail jq-cancelBubble">
 
                             <span class="member-nam jq-member-nam"></span>
@@ -858,27 +858,8 @@
 
                                             _each.append(
 
-                                                '<div class="tr">' +
-
-                                                '<div class="td" data-title="充值时间">' + data.body.list[i]
-
-                                                .ua_add_datetime + '</div>' +
-
-                                                '<div class="td" data-title="充值金额">' + data.body.list[i]
-
-                                                .ua_value + '</div>' +
-
-                                                // '<div class="td" data-title="充值方式">' + 'none' +
-
-                                                // '</div>' +
-
-                                                '<div class="td" data-title="状态">' + data.body.list[i].ua_status_str +
-
-                                                '</div>'
-
-                                                // '<div class="td" data-title="操作">' + 'none' + '</div>' +
-
-                                                // '</div>'
+                                            '<div class="tr">' +'<div class="td" data-title="充值时间">' + data.body.list[i].ua_add_datetime + '</div>' +											'<div class="td" data-title="充值类型">' + data.body.list[i].ua_type_1 + '</div>' +											'<div class="td" data-title="订单号">' + data.body.list[ i].uro_orderid + '</div>' +
+                                            '<div class="td" data-title="充值金额">' + data.body.list[i].ua_value + '</div>' +											'<div class="td" data-title="状态">' + data.body.list[i].ua_status_str +'</div>'+											'</div>'
 
                                             )
 
@@ -1073,36 +1054,7 @@
                                     for (i = 0; i < _length; i++) {
 
                                         _each.append(
-
-                                            '<div class="tr">' +
-
-                                            '<div class="td" data-title="充值时间">' + data.body.list[
-
-                                                i]
-
-                                            .ua_add_datetime + '</div>' +
-											'<div class="td" data-title="订单号">' + data.body.list[                                                i]                                            .ua_type_1 + '</div>' +																						'<div class="td" data-title="充值类型">' + data.body.list[                                                i]                                            .uro_orderid + '</div>' +
-                                            '<div class="td" data-title="充值金额">' + data.body.list[
-
-                                                i]
-
-                                            .ua_value + '</div>' +
-
-                                            // '<div class="td" data-title="充值方式">' + 'none' +
-
-                                            // '</div>' +
-
-                                            '<div class="td" data-title="状态">' + data.body.list[
-
-                                                i].ua_status_str +
-
-                                            '</div>' +
-
-                                            // '<div class="td" data-title="操作">' + 'none' +
-
-                                            // '</div>' +
-
-                                            '</div>'
+											'<div class="tr">' +'<div class="td" data-title="充值时间">' + data.body.list[i].ua_add_datetime + '</div>' +											'<div class="td" data-title="充值类型">' + data.body.list[i].ua_type_1 + '</div>' +											'<div class="td" data-title="订单号">' + data.body.list[ i].uro_orderid + '</div>' +                                            '<div class="td" data-title="充值金额">' + data.body.list[i].ua_value + '</div>' +											'<div class="td" data-title="状态">' + data.body.list[i].ua_status_str +'</div>'+											'</div>'
 
                                         )
 

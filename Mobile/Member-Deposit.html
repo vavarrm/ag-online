@@ -263,7 +263,7 @@
                                             <span>银联支付</span>
 
                                         </label>
-
+										<label class="col-xs-12">                                            <input class="jq-input-radio" data-title="银行汇款" value="bank_transfer" type="radio" name="paytype-1">                                            <span>银行汇款</span>                                        </label>																				<label class="col-xs-12">                                            <input class="jq-input-radio" data-title="微信支付" value="wechat3" type="radio" name="paytype-1">                                            <span>微信支付</span>                                        </label>																				<label class="col-xs-12">                                            <input class="jq-input-radio" data-title="支付宝" value="alipay2" type="radio" name="paytype-1">                                            <span>支付宝</span>                                        </label>
 
                                     </div>
 
@@ -271,7 +271,7 @@
 
                             </div>
 
-                            <div class="row">
+                            <div class="rows step2"  style="display:none;">
 
                                 <div class="input-group-container clear">
 
@@ -285,19 +285,19 @@
 
                                             <span style="color:red;">50.00</span> 元，最高
 
-                                            <span style="color:red;">20000.00</span> 元 *
+                                            <span style="color:red;">50000.00</span> 元 *
 
                                         </span>
 
                                     </div>
 
                                 </div>
-
+								<div class="input-group-container clear bank_transfer" style="display:none;">                                    <p class="title">收款银行</p>                                    <div class="input-group clear">                                        <select name="rbc_id">                                        </select>                                    </div>                                </div>																								<div class="input-group-container clear bank_transfer_step2">									<p class="title">收款银行帐户</p>									<div class="input-group">										<span style="" class="rbc_bank_account"></span>									</div>								</div>								<div class="input-group-container clear bank_transfer_step2">									<p class="title"  >收款人姓名</p>									<div class="input-group">										<span style="" class="rbc_bank_user_name">1</span>									</div>								</div>
                             </div>
 
                             <div class="row btn-action">
 
-                                <input class="btn btn-bg-blue step-btn1" type="button" value="下一步">
+                                <input class="btn btn-bg-blue step-btn1" type="button" value="下一步">								<input class="btn btn-bg-blue step2-bank-transfer" style="display:none;" type="button" value="下一步">                                <input class="btn btn-bg-blue step2-wechat3" style="display:none;" type="button" value="下一步">                                <input class="btn btn-bg-blue step2-alipay2" style="display:none;" type="button" value="下一步">
 
                             </div>
 
@@ -363,7 +363,7 @@
                             </div>
 
                         </div>
-
+						<div class="container bank-transfe-checkpay" style="display:none;">                            <div class="row" >                                <div class="confirm-group-container clear">                                    <p class="title">用户名</p>                                    <p class="detail bank-transfe-u_account" ></p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">充值金额</p>                                    <p class="detail bank-transfe-amount" ></p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">订单号码</p>                                    <p class="detail bank-transfe-orderid" ></p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">收款银行</p>                                    <p class="detail bank-transfe-bank_name" ></p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">收款银行帐户</p>                                    <p class="detail bank-transfe-bank_account" ></p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">收款人姓名</p>                                    <p class="detail bank-transfe-bank_user_name" ></p>                                </div>								<div class="row btn-action">                                    <input class="btn btn-bg-blue bank-transfe-step3" type="submit" value="确认送出">                                </div>                            </div>                         </div>						 						 <div class="container wechat3-checkpay" style="display:none;">                            <div class="row" >                                <div class="confirm-group-container clear">                                    <p class="title">用户名</p>                                    <p class="detail wechat3-u_account" ></p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">充值金额</p>                                    <p class="detail wechat3-amount" ></p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">订单号码</p>                                    <p class="detail wechat3-orderid" >11</p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">微信号</p>                                    <p class="detail wechat3-wechat-account" >11</p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">微信QR 码</p>                                    <image width="200px" height="200px" src="/images/wechat3QR.png">                                </div>								<div class="row btn-action">                                    <input class="btn btn-bg-blue wechat3-step3" type="submit" value="确认送出">                                </div>                            </div>                        </div>												<div class="container alipay2-checkpay" style="display:none;">                            <div class="row" >                                <div class="confirm-group-container clear">                                    <p class="title">用户名</p>                                    <p class="detail alipay2-u_account" ></p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">充值金额</p>                                    <p class="detail alipay2-amount" ></p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">订单号码</p>                                    <p class="detail alipay2-orderid" ></p>                                </div>								<div class="confirm-group-container clear">                                    <p class="title">支付宝帐号</p>                                    <p class="detail alipay2-account" ></p>                                </div>								<div class="row btn-action">                                    <input class="btn btn-bg-blue alipay2-step3" type="submit" value="确认送出">                                </div>                            </div>                        </div>
 
                     </div>
 
@@ -761,61 +761,7 @@
             Live.Global.owl_banner();
         </script>
 
-        <script>
-            // Privity
-
-            $('.step-btn1').click(function () {
-                if ($('.jq-input-radio:checked').length == 0) {
-                    alert('请选择充值渠道');
-                    return false;
-                }
-
-                if ($('input[name=amount-1]').val() > 20000) {
-                    alert('單筆充值限額最高 200010元');
-                    return false;
-                }
-
-
-                $.ajax({
-
-                    url: "/api/Api/getRechargeOrder?sess=" + localStorage.session,
-
-                    type: "POST",
-
-                    data: JSON.stringify({
-
-                        paytype: $('.jq-input-radio:checked').val(),
-
-                        amount: $('input[name=amount-1]').val()
-
-                    }),
-
-                    success: function (data) {
-
-                        if (data.status == '100') {
-                            console.log(data);
-                            $('#_u_account').html(data.body.u_account);
-                            $('#_order_id').html(data.body.orderid);
-                            $('#_paytype').html($('.jq-input-radio:checked').data('title'));
-                            $('#_amount').html(data.body.amount);
-
-                            $('.step1').hide();
-                            $('.checkpay').show();
-                            $.each(data.body, function (i, e) {
-                                $('input[type=hidden][name=' + i + ']').val(e);
-                            });
-                            $('#payfrm').attr('action', data.body.pay_url);
-                        } else {
-                            alert(data.message);
-
-                        }
-
-                    }
-
-                });
-
-            })
-        </script>
+       
 
     </div>
 
