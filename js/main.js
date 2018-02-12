@@ -55,8 +55,7 @@ function userInformation() {
 
 
 					case 100:
-
-						if(data.body.user.u_receiving_bank_card_alert =='0')
+						if(data.body.user.u_receiving_bank_card_alert ==0)
 						{
 							alert('汇款前请随时查看，汇款资料');
 							localStorage.receiving_bank_card_alert =1;
@@ -1063,6 +1062,7 @@ $('.step2-wechat3').click(function(){
 				$('.wechat3-orderid').text(data.body.orderid);
 				$('.wechat3-amount').text($('input[name=amount-1]').val());
 				$('.wechat3-wechat-account').text(data.body.wechat_account);
+				$('.wechat3-wechat-QR').attr('src','/images/wechatpayQR/'+data.body.wechat3_pay_QR);
 				ajax_load = false;
 			}else{
 				alert(data.message);

@@ -309,7 +309,16 @@ class Api extends CI_Controller {
 			$orderid="wechat3".date('Ymd').substr(time(),-5).sprintf('%02d',rand(1,99));
 			$output['body']['orderid']=$orderid ;
 			$output['body']['u_account']=$this->_user['u_account'] ;
-			$output['body']['wechat_account']='sss' ;
+			$rows = $this->webConfig->getList(array('9','11'));
+			if(!empty($rows))
+			{
+				foreach($rows as $value)
+				{
+					$temp[$value['wc_key']] = $value['wc_value'];
+				}
+			}
+			$output['body']['wechat_account']=$temp['wechat3_pay_account'] ;
+			$output['body']['wechat3_pay_QR']=$temp['wechat3_pay_QR'] ;
 			
 		}catch(MyException $e)
 		{
@@ -397,7 +406,8 @@ class Api extends CI_Controller {
 			$orderid="alipay2".date('Ymd').substr(time(),-5).sprintf('%02d',rand(1,99));
 			$output['body']['orderid']=$orderid ;
 			$output['body']['u_account']=$this->_user['u_account'] ;
-			$output['body']['alipay2_account']='sss' ;
+			$rows = $this->webConfig->getList(array('10'));
+			$output['body']['alipay2_account']=$rows[0]['wc_value'] ;
 			
 		}catch(MyException $e)
 		{
@@ -1765,7 +1775,12 @@ class Api extends CI_Controller {
 			unset($this->_user['u_money_passwd']);
 			unset($this->_user['u_ag_passwd']);
 			$row = $this->account->getBalance($this->_user['u_id']);
-			$this->user->updReceivingBankCardAlert(array('u_id'=>$this->_user['u_id'] , 'change' =>'1'));
+			$_user = $this->user->getUserByID($this->_user['u_id']);
+			if($_user['u_receiving_bank_card_alert'] =='0')
+			{
+				$this->user->updReceivingBankCardAlert(array('u_id'=>$this->_user['u_id'] , 'change' =>'1'));
+			}
+			$this->_user['u_receiving_bank_card_alert'] = $_user['u_receiving_bank_card_alert'];
 			$this->_user['balance'] = $row['balance'];
 			$noReadMessageTotal = $this->user->getNoReadMessageTotal($this->_user['u_id']);
 			$this->_user['no_read_message_total'] =$noReadMessageTotal['total'];
