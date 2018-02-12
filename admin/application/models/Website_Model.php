@@ -225,6 +225,108 @@
 			return $output;
 		}
 		
+		public function wechat3Alipay2Set($ary)
+		{
+			$output= array('list' =>array());
+			try
+			{
+				$affected_rows = 0;
+				$sql ="UPDATE web_config SET wc_value =? WHERE 	wc_key ='wechat3_pay_account'";
+				$bind   =array(
+					$ary['wechat3_pay_account']
+				);
+				$query = $this->db->query($sql,$bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$affected_rows +=$this->db->affected_rows();
+				
+				$sql ="UPDATE web_config SET wc_value =? WHERE 	wc_key ='alipay2_pay_account'";
+				$bind   =array(
+					$ary['alipay2_pay_account']
+				);
+				$query = $this->db->query($sql,$bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$affected_rows +=$this->db->affected_rows();
+				
+				if ($_FILES["wechat3_pay_QR"]["error"] == 0)
+				{
+					$filename =md5(time().rand(1,999)) ;
+					$config['file_name'] = md5($filename);
+					$config['upload_path'] = FCPATH.'../images/wechatpayQR/';
+					$config['allowed_types'] = 'gif|jpg|png|jpeg';
+					$config['max_size']	= '2048';
+					$config['max_width']  = '600';
+					$config['max_height']  = '600';
+					$config['overwrite']  = true;
+					$this->CI->load->library('upload',$config);
+					if(!$this->CI->upload->do_upload('wechat3_pay_QR'))
+					{
+						$array = array(
+							'message' 	=>'上传失败',
+							'type' 		=>'api' ,
+							'status'	=>'002'
+						);
+						$MyException = new MyException();
+						$MyException->setParams($array);
+						throw $MyException;
+					}
+					$image= $this->CI->upload->data();
+				
+					$sql = "UPDATE web_config SET wc_value =? WHERE wc_key ='wechat3_pay_QR'";
+			
+					$bind = array(
+						$image['file_name']
+					);
+					$query = $this->db->query($sql, $bind);
+					$error = $this->db->error();
+					if($error['message'] !="")
+					{
+						$MyException = new MyException();
+						$array = array(
+							'message' 	=>$error['message'] ,
+							'type' 		=>'db' ,
+							'status'	=>'001'
+						);
+						
+						$MyException->setParams($array);
+						throw $MyException;
+					}
+					$affected_rows += 1;
+				}
+				
+				return $affected_rows;
+				
+			}catch(MyException $e)
+			{
+				throw $MyException;
+				return false;
+			}
+			return $output;
+		}
+		
 		public function getListByKey($ary = array())
 		{
 			$output= array('list' =>array());
@@ -274,7 +376,6 @@
 				
 			}catch(MyException $e)
 			{
-				$this->db->trans_rollback();
 				throw $MyException;
 				return false;
 			}

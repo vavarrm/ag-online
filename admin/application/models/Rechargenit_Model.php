@@ -59,11 +59,11 @@
 		{
 			try {
 				$this->db->trans_start();
-				
-				$sql = "UPDATE user_account SET ua_status = ? , ua_change_status_remarks =?,  ua_upd_date = DATE_FORMAT(NOW(),'%Y-%m-%d')  WHERE ua_id =?";
+				$sql = "UPDATE user_account SET ua_status = ? , ua_change_status_remarks =?,  ua_upd_date = DATE_FORMAT(NOW(),'%Y-%m-%d') , ua_aduit_ad_id =?  WHERE ua_id =?";
 				$bind =  array(
 					$ary['ua_status'],
 					$ary['ua_change_status_remarks'],
+					$admin['ad_id'],
 					$ary['ua_id']
 				);
 				$query = $this->db->query($sql, $bind);
@@ -492,7 +492,7 @@
 					FROM 
 						user_account AS ua 
 							INNER JOIN user AS u  ON ua.ua_u_id = u.u_id
-							LEFT JOIN admin AS ad  ON ua.ua_from_am_id = ad.ad_id
+							LEFT JOIN admin AS ad  ON ua.ua_aduit_ad_id = ad.ad_id
 							LEFT JOIN user_bank_info AS ub ON ub.ub_id = ua_ub_id
 							LEFT JOIN bank_info AS bi ON ub.ub_bank_id = bi_id
 							LEFT JOIN user_account_type AS uat ON ua.ua_type = uat.uat_id

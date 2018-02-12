@@ -55,6 +55,10 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"rechargeAuditList.html"+"?"+ Math.random(),
 		controller: "accountCtrl",
 		cache: false,
+	}).when("/account/wechat3alipay2/",{
+		templateUrl: templatePath+"/wechat3alipay2.html"+"?"+ Math.random(),
+		controller: "accountCtrl",
+		cache: false,
 	}).when("/account/rechargeAuditList/",{
 		templateUrl: templatePath+"rechargeAuditList.html"+"?"+ Math.random(),
 		controller: "accountCtrl",
@@ -2556,8 +2560,87 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		search:{},
 		search_api:'',
 		order:{},
-		isload :0
+		isload :0,
+		from_list:{}
 	};
+	
+	$scope.wechat3Alipay2Set = function()
+	{
+		var promise = apiService.adminApi('/wechat3Alipay2Set');
+		promise.then
+		(
+			function(r) 
+			{
+				if(r.data.status =="100")
+				{
+				
+				}else
+				{
+					var obj =
+					{
+						'message' :r.data.message,
+						buttons: 
+						[
+							{
+								text: "close",
+								click: function() 
+								{
+									$( this ).dialog( "close" );
+								}
+							}
+						]
+					};
+					dialog(obj);
+				}
+			},
+			function() {
+				var obj ={
+					'message' :'系统错误'
+				};
+				 dialog(obj);
+			}
+		)
+	}
+	
+	$scope.wechat3Alipay2Init = function()
+	{
+		var promise = apiService.adminApi('/wechat3Alipay2Init');
+		promise.then
+		(
+			function(r) 
+			{
+				if(r.data.status =="100")
+				{
+					$scope.data.from_list = r.data.body.list;
+					$scope.data.QR_images = r.data.body.QR_images;
+					$scope.data.posturl ='/admin/Api/wechat3Alipay2Set?sess='+$cookies.get('sess');;
+				}else
+				{
+					var obj =
+					{
+						'message' :r.data.message,
+						buttons: 
+						[
+							{
+								text: "close",
+								click: function() 
+								{
+									$( this ).dialog( "close" );
+								}
+							}
+						]
+					};
+					dialog(obj);
+				}
+			},
+			function() {
+				var obj ={
+					'message' :'系统错误'
+				};
+				 dialog(obj);
+			}
+		)
+	}
 	
 	$scope.thirdBettinglListInit = function()
 	{

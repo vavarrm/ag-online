@@ -9,6 +9,38 @@
 			$this->db->query("SET time_zone='+8:00'");
 		}
 		
+		public function updReceivingBankCardAlert($ary)
+		{
+			try
+			{
+				$sql ="UPDATE user  SET	u_receiving_bank_card_alert = ?  WHERE u_id =?";
+				$bind = array(
+					$ary['change'],
+					$ary['u_id']
+				);
+		
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$affected_rows=$this->db->affected_rows();
+				return $affected_rows;
+			}catch(MyException $e)
+			{
+				throw $e;
+			}
+		}
+		
 		public function lockUserBankCard($ary)
 		{
 			try

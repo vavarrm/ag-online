@@ -239,6 +239,7 @@
 					$u_id,
 					$u_id,
 					$u_id,
+					$u_id,
 					$u_id
 				);
 				$query = $this->db->query($sql, $bind);

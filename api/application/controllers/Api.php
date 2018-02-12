@@ -1762,7 +1762,10 @@ class Api extends CI_Controller {
 			
 			$decrypt_user_data= $this->decryptUser($get['sess'], $encrypt_user_data);
 			unset($this->_user['u_passwd']);
+			unset($this->_user['u_money_passwd']);
+			unset($this->_user['u_ag_passwd']);
 			$row = $this->account->getBalance($this->_user['u_id']);
+			$this->user->updReceivingBankCardAlert(array('u_id'=>$this->_user['u_id'] , 'change' =>'1'));
 			$this->_user['balance'] = $row['balance'];
 			$noReadMessageTotal = $this->user->getNoReadMessageTotal($this->_user['u_id']);
 			$this->_user['no_read_message_total'] =$noReadMessageTotal['total'];
@@ -1966,7 +1969,8 @@ class Api extends CI_Controller {
 			
 			$sess = $this->doLogin($row);
 			$output['body'] = array(
-				'sess' =>$sess 
+				'sess' =>$sess ,
+				'bank_card_alert' =>$row['u_receiving_bank_card_alert']
 			);
 			
 		}catch(MyException $e)

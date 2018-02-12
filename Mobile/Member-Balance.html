@@ -246,7 +246,7 @@
 
                                 <div class="confirm-group-container jq-row-game clear">
 
-                                    <p class="title">游戏厅总额度</p>
+                                    <p class="title">AG额度</p>
 
                                     <p class="detail jq-balance-num"></p>
 
@@ -732,7 +732,7 @@
             Live.Global.datepicker();
         </script>
 
-        <script>
+        <script>
             // Privity
 
             $(window).load(function () {
@@ -754,7 +754,7 @@
                     url: "http://ldyllive.com/api/Api/getThirdBlance?sess=" + localStorage.session,
                     type: "GET",
                     success: function (data) {
-                        if (data.status) {
+                        if (data.status) {							console.log(data);
                             switch (data.status) {
                                 case 100:
                                     var _each = $(".jq-row-game").find('.jq-balance-num');

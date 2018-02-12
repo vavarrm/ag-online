@@ -100,7 +100,7 @@
 				$affected_rows= $this->db->affected_rows();
 				if($affected_rows >0)
 				{
-					$sql="UPDATE user SET u_receiving_bank_card_alert =1";
+					$sql="UPDATE user SET u_receiving_bank_card_alert =0";
 					$query = $this->db->query($sql);
 					$error = $this->db->error();
 					if($error['message'] !="")

@@ -49,15 +49,22 @@ function userInformation() {
 			if (data.status) {
 
 
-
+				
 				switch (data.status) {
 
 
 
 					case 100:
 
-
-
+						if(data.body.user.u_receiving_bank_card_alert =='0')
+						{
+							alert('汇款前请随时查看，汇款资料');
+							localStorage.receiving_bank_card_alert =1;
+						}else if(typeof localStorage.receiving_bank_card_alert == undefined)
+						{
+							alert('汇款前请随时查看，汇款资料');
+						}
+						
 						$('.jq-login-before').hide();
 
 
@@ -289,7 +296,7 @@ $('.ajax-btn-login').click(function () {
 
 
 
-
+						console.log(data);
 
 
 
@@ -304,7 +311,8 @@ $('.ajax-btn-login').click(function () {
 						$('.jq-pop-window').find('.jq-pop-login').removeClass('active');
 
 
-
+						
+						
 						userInformation()
 
 
