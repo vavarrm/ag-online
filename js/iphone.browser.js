@@ -21,5 +21,5 @@ var browser={
 }
 
 if(browser.versions.mobile||browser.versions.android||browser.versions.ios){
-	location.href="/Mobile/Home-Index.html";
+	location.href="/";
 }
