@@ -2658,10 +2658,12 @@ class Api extends CI_Controller {
 		$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
 		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
 		$u_account = (isset($this->request['u_account']))?$this->request['u_account']:'';
+		$ull_ip= (isset($this->request['ull_ip']))?$this->request['ull_ip']:'';
 		
 		$ary['start_time'] =array('value' =>$start_time, 'operator' =>'>=');
 		$ary['end_time'] =array('value' =>$end_time, 'operator' =>'<=');
 		$ary['u_account'] =array('value' =>$u_account, 'operator' =>'=');
+		$ary['ull_ip'] =array('value' =>$ull_ip, 'operator' =>'=');
 		
 		if(is_array($this->request['order']) && count($this->request['order'])>0)
 		{
