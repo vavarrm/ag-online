@@ -1253,4 +1253,11 @@ $('.step-btn1').click(function () {
 	});
 })
 
+$('input[name=amount-1]').bind('keypress', function(e) {
+    if(e.keyCode==13){
+		e.preventDefault();
+		return false;
+    }
+});
+
             
