@@ -116,63 +116,63 @@ function captcha_get() {
 
 
 
-		url: "/api/Api/getCaptcha",
+			url: "/api/Api/getCaptcha",
 
 
 
-		type: "GET",
+			type: "GET",
 
 
 
-		success: function (data) {
+			success: function (data) {
 
 
 
-			$(".jq-pop-register").find('.jq-captcha-container').find('img').remove();
+					$(".jq-pop-register").find('.jq-captcha-container').find('img').remove();
 
 
 
-			var _each = $(".jq-pop-register").find('.jq-captcha-container');
+					var _each = $(".jq-pop-register").find('.jq-captcha-container');
 
 
 
-			if (data.status) {
+					if (data.status) {
 
 
 
-				switch (data.status) {
+							switch (data.status) {
 
 
 
-					case 100:
+									case 100:
 
 
 
-						_each.append(
+											_each.append(
 
 
 
-							data.body.image
+													data.body.image
 
 
 
-						)
+											)
 
 
 
-						break;
+											break;
 
 
 
-				}
+							}
+
+
+
+					}
 
 
 
 			}
-
-
-
-		}
 
 
 
@@ -228,11 +228,11 @@ $('.ajax-btn-login').click(function () {
 
 
 
-	var _account = $('input[name=login-account]').val();
+	var _account = $('input[name=account]').val();
 
 
 
-	var _passwd = $('input[name=login-passwd]').val();
+	var _passwd = $('input[name=passwd]').val();
 
 
 
@@ -286,6 +286,11 @@ $('.ajax-btn-login').click(function () {
 						setCookie(data.body.sess);
 
 
+
+
+
+
+
 						alert('登入成功');
 
 
@@ -331,6 +336,8 @@ $('.ajax-btn-login').click(function () {
 
 
 });
+
+
 
 $('.ajax-btn-logout').click(function () {
 
@@ -409,6 +416,8 @@ $('.ajax-btn-logout').click(function () {
 
 
 });
+
+
 
 $('.ajax-btn-pcb').click(function () {
 
@@ -508,6 +517,8 @@ $('.ajax-btn-pcb').click(function () {
 
 });
 
+
+
 $('.jq-btn-pop-register').click(function () {
 
 
@@ -517,6 +528,8 @@ $('.jq-btn-pop-register').click(function () {
 
 
 });
+
+
 
 $('.ajax-btn-register').click(function () {
 
@@ -598,9 +611,7 @@ $('.ajax-btn-register').click(function () {
 
 						alert('註冊成功');
 
-						$('.jq-pop-window').removeClass('active');
 
-						$('.jq-pop-register').removeClass('active');
 
 						window.location.reload();
 
@@ -648,6 +659,8 @@ $('.ajax-btn-register').click(function () {
 
 });
 
+
+
 $('.ajax-btn-captcha-reload').click(function () {
 
 
@@ -658,241 +671,11 @@ $('.ajax-btn-captcha-reload').click(function () {
 
 });
 
-$('[name=login-account]').keypress(function (e) {
-
-	if (e.which == 13) {
-
-		$('.ajax-btn-login').click(function () {
-
-
-
-			var _account = $('input[name=login-account]').val();
-
-
-
-			var _passwd = $('input[name=login-passwd]').val();
-
-
-
-
-
-
-			$.ajax({
-
-
-
-				url: "/api/Api/login",
-
-
-
-				type: "POST",
-
-
-
-				data: JSON.stringify({
-
-
-
-					account: _account,
-
-
-
-					passwd: _passwd
-
-
-
-				}),
-
-
-
-				success: function (data) {
-
-
-
-					if (data.status) {
-
-
-
-						switch (data.status) {
-
-
-
-							case 100:
-
-
-
-								setCookie(data.body.sess);
-
-
-								alert('登入成功');
-
-
-
-								$('.jq-pop-window').removeClass('active');
-
-
-
-								$('.jq-pop-window').find('.jq-pop-login').removeClass('active');
-
-
-
-								userInformation()
-
-
-
-								break;
-
-
-
-							case '999':
-
-
-
-								alert('帐号或密码错误');
-
-
-
-						}
-
-
-
-					}
-
-
-
-				}
-
-
-
-			});
-
-
-
-		});
-
-	}
-
-});
-
-$('[name=login-passwd]').keypress(function (e) {
-
-	if (e.which == 13) {
-
-		$('.ajax-btn-login').click(function () {
-
-
-
-			var _account = $('input[name=login-account]').val();
-
-
-
-			var _passwd = $('input[name=login-passwd]').val();
-
-
-
-
-
-
-			$.ajax({
-
-
-
-				url: "/api/Api/login",
-
-
-
-				type: "POST",
-
-
-
-				data: JSON.stringify({
-
-
-
-					account: _account,
-
-
-
-					passwd: _passwd
-
-
-
-				}),
-
-
-
-				success: function (data) {
-
-
-
-					if (data.status) {
-
-
-
-						switch (data.status) {
-
-
-
-							case 100:
-
-
-
-								setCookie(data.body.sess);
-
-
-								alert('登入成功');
-
-
-
-								$('.jq-pop-window').removeClass('active');
-
-
-
-								$('.jq-pop-window').find('.jq-pop-login').removeClass('active');
-
-
-
-								userInformation()
-
-
-
-								break;
-
-
-
-							case '999':
-
-
-
-								alert('帐号或密码错误');
-
-
-
-						}
-
-
-
-					}
-
-
-
-				}
-
-
-
-			});
-
-
-
-		});
-
-	}
-
-});
-
 
 
 $(function () {
+
+
 
 	$.ajax({
 
@@ -992,7 +775,9 @@ $(function () {
 
 	});
 
-	$('[name=login-account]').focus();
+
+
+
 
 	if (localStorage.session == undefined || localStorage.session == '') {
 
@@ -1021,3 +806,416 @@ $(function () {
 
 
 });
+
+var bank_transfer_data ;
+var ajax_load = false;
+$('.bank-transfe-step3').bind('click', function(){
+	if(confirm('确认支付'))
+	{
+		if(ajax_load == true)
+		{
+			alert('系统执行中，请稍后');
+			return false;
+		}
+		ajax_load = true;
+		$.ajax({
+			url: "/api/Api/addRechargeFromBank?sess=" + localStorage.session,
+			type: "POST",
+			data: JSON.stringify({
+				rbc_id :$('select[name=rbc_id]').val(),
+				amount :$('input[name=amount-1]').val(),
+				orderid :$('.bank-transfe-orderid').text(),
+			}),
+			success: function (data) {
+				if(data.status == 100)
+				{
+					alert('送出成功、请记下订单记录，并汇款后通知运营入帐');
+					$('.bank-transfe-step3').hide();
+					
+				}else{
+					alert(data.message);
+				}
+				ajax_load = false;
+			},
+			error: function (error) {
+				alert('系统错误、请联系客服');
+				ajax_load = false;
+			}
+		});
+	}
+})
+
+$('select[name=rbc_id]').bind('change' ,function(){
+	var index =$('select[name=rbc_id] option:selected').index();
+	$('.rbc_bank_account').text(bank_transfer_data[index].rbc_bank_account);
+	$('.rbc_bank_user_name').text(bank_transfer_data[index].rbc_bank_user_name);
+})
+
+$('.jq-input-radio').click(function(){
+	if($(this).val() =='bank_transfer')
+	{
+		$('.step2-bank-transfer').show();
+		$('.bank_transfer_step2').show();
+		$('.step-btn1').hide();
+		$('.bank_transfer').hide();
+		$('.step2-wechat3').hide();
+		$('.step2-alipay2').hide();
+		if(ajax_load == true)
+		{
+			alert('系统执行中，请稍后');
+			return false;
+		}
+		ajax_load = true;
+		$.ajax({
+			url: "/api/Api/getReceivingBankCard?sess=" + localStorage.session,
+			type: "POST",
+			data: JSON.stringify({
+			}),
+			success: function (data) {
+				if(data.status == 100)
+				{
+					bank_transfer_data  = data.body.list;
+					ajax_load = false;
+					$('.bank_transfer').show();
+					$('.step2').show();
+					$('select[name=rbc_id] option').remove();
+					$.each(data.body.list,function(i,e){
+						$('select[name=rbc_id]')
+						.append($("<option></option>")
+						.attr("value",e.rbc_id)
+						.text(e.rbc_bank_name)); 
+					});
+					$('.rbc_bank_account').text(bank_transfer_data[0].rbc_bank_account);
+					$('.rbc_bank_user_name').text(bank_transfer_data[0].rbc_bank_user_name);
+				}else{
+					alert(data.message);
+				}
+			},
+			error: function (error) {
+				alert('系统错误、请联系客服');
+				ajax_load = false;
+			}
+		});
+	}else if($(this).val() =='wechat3')
+	{
+		$('.step-btn1').hide();
+		$('.step2').show();
+		$('.step2-wechat3').show();
+		$('.bank_transfer').hide();
+		$('.bank_transfer_step2').hide();
+		$('.step2-bank-transfer').hide();
+		$('.step2-alipay2').hide();
+	}
+	else if($(this).val() =='alipay2')
+	{
+		$('.step-btn1').hide();
+		$('.step2').show();
+		$('.step2-wechat3').hide();
+		$('.step2-alipay2').show();
+		$('.bank_transfer').hide();
+		$('.bank_transfer_step2').hide();
+		$('.step2-bank-transfer').hide();
+	}
+	else{
+		$('.step2').show();
+		$('.step2-bank-transfer').hide();
+		$('.step-btn1').show();
+		$('.bank_transfer').hide();
+		$('.bank_transfer_step2').hide();
+		$('.step2-wechat3').hide();
+		$('.step2-alipay2').hide();
+	}
+})
+
+
+
+
+$('.wechat3-step3').click(function(){
+	if(confirm('确认支付'))
+	{
+		if(ajax_load == true)
+		{
+			alert('系统执行中，请稍后');
+			return false;
+		}
+		ajax_load = true;
+		$.ajax({
+			url: "/api/Api/addRechargeWechat3?sess=" + localStorage.session,
+			type: "POST",
+			data: JSON.stringify({
+				orderid :$('.wechat3-orderid').text(),
+				amount :$('input[name=amount-1]').val(),
+			}),
+			success: function (data) {
+				if(data.status == 100)
+				{
+					alert('送出成功、请记下订单记录，并汇款后通知运营入帐');
+					$('.wechat3-step3').hide();
+				}else{
+					alert(data.message);
+				}
+				ajax_load = false;
+			},
+			error: function (error) {
+				alert('系统错误、请联系客服');
+				ajax_load = false;
+			}
+		});
+	}
+})
+
+$('.alipay2-step3').click(function(){
+	if(confirm('确认支付'))
+	{
+		if(ajax_load == true)
+		{
+			alert('系统执行中，请稍后');
+			return false;
+		}
+		ajax_load = true;
+		$.ajax({
+			url: "/api/Api/addRechargeAlipay?sess=" + localStorage.session,
+			type: "POST",
+			data: JSON.stringify({
+				orderid :$('.alipay2-orderid').text(),
+				amount :$('input[name=amount-1]').val(),
+			}),
+			success: function (data) {
+				if(data.status == 100)
+				{
+					alert('送出成功、请记下订单记录，并汇款后通知运营入帐');
+					$('.wechat3-step3').hide();
+				}else{
+					alert(data.message);
+				}
+				ajax_load = false;
+			},
+			error: function (error) {
+				alert('系统错误、请联系客服');
+				ajax_load = false;
+			}
+		});
+	}
+})
+
+$('.step2-wechat3').click(function(){
+	if(ajax_load == true)
+	{
+		alert('系统执行中，请稍后');
+		return false;
+	}
+	
+	if($('.jq-input-radio:checked').length ==0)
+	{
+		alert('请选择充值渠道');
+		return false;
+	}
+
+	if($('input[name=amount-1]').val() =='')
+	{
+		alert('请输入充值金额');
+		return false;
+	}
+
+	if($('input[name=amount-1]').val() >50000)
+	{
+		alert('單筆充值限額最高 50000元');
+		return false;
+	}
+	
+	
+	$.ajax({
+		url: "/api/Api/getReceivingWechat3CardOrderID?sess=" + localStorage.session,
+		type: "POST",
+		data: JSON.stringify({
+		}),
+		success: function (data) {
+			if(data.status == 100)
+			{
+				$('.step1').hide();
+				$('.bank-transfe-checkpay').hide();
+				$('.wechat3-checkpay').show();
+				$('.wechat3-u_account').text(data.body.u_account);
+				$('.wechat3-orderid').text(data.body.orderid);
+				$('.wechat3-amount').text($('input[name=amount-1]').val());
+				$('.wechat3-wechat-account').text(data.body.wechat_account);
+				ajax_load = false;
+			}else{
+				alert(data.message);
+			}
+		},
+		error: function (error) {
+			alert('系统错误、请联系客服');
+			ajax_load = false;
+		}
+	});
+})
+
+$('.step2-alipay2').click(function(){
+	if(ajax_load == true)
+	{
+		alert('系统执行中，请稍后');
+		return false;
+	}
+	
+	if($('.jq-input-radio:checked').length ==0)
+	{
+		alert('请选择充值渠道');
+		return false;
+	}
+
+	if($('input[name=amount-1]').val() =='')
+	{
+		alert('请输入充值金额');
+		return false;
+	}
+
+	if($('input[name=amount-1]').val() >50000)
+	{
+		alert('單筆充值限額最高 50000元');
+		return false;
+	}
+	
+	
+	$.ajax({
+		url: "/api/Api/getReceivingalipay2CardOrderID?sess=" + localStorage.session,
+		type: "POST",
+		data: JSON.stringify({
+		}),
+		success: function (data) {
+			if(data.status == 100)
+			{
+				$('.step1').hide();
+				$('.bank-transfe-checkpay').hide();
+				$('.wechat3-checkpay').hide();
+				$('.alipay2-checkpay').show();
+				$('.alipay2-u_account').text(data.body.u_account);
+				$('.alipay2-orderid').text(data.body.orderid);
+				$('.alipay2-amount').text($('input[name=amount-1]').val());
+				$('.alipay2-account').text(data.body.alipay2_account);
+				ajax_load = false;
+			}else{
+				alert(data.message);
+			}
+		},
+		error: function (error) {
+			alert('系统错误、请联系客服');
+			ajax_load = false;
+		}
+	});
+})
+
+$('.step2-bank-transfer').click(function(){
+	if(ajax_load == true)
+	{
+		alert('系统执行中，请稍后');
+		return false;
+	}
+	
+	if($('.jq-input-radio:checked').length ==0)
+	{
+		alert('请选择充值渠道');
+		return false;
+	}
+
+	if($('input[name=amount-1]').val() =='')
+	{
+		alert('请输入充值金额');
+		return false;
+	}
+
+	if($('input[name=amount-1]').val() >50000)
+	{
+		alert('單筆充值限額最高 50000元');
+		return false;
+	}
+	
+	
+	$.ajax({
+		url: "/api/Api/getReceivingBankCardOrderID?sess=" + localStorage.session,
+		type: "POST",
+		data: JSON.stringify({
+			rbc_id :$('select[name=rbc_id]').val()
+		}),
+		success: function (data) {
+			if(data.status == 100)
+			{
+				$('.step1').hide();
+				$('.bank-transfe-checkpay').show();
+				$('.bank-transfe-amount').text($('input[name=amount-1]').val());
+				$('.bank-transfe-orderid').text(data.body.orderid);
+				$('.bank-transfe-u_account').text(data.body.u_account);
+				$('.bank-transfe-bank_name').text($('select[name=rbc_id] option:selected').text());
+				var index = $('select[name=rbc_id] option:selected').index();
+				$('.bank-transfe-bank_account').text(bank_transfer_data[index].rbc_bank_account);
+				$('.bank-transfe-bank_user_name').text(bank_transfer_data[index].rbc_bank_user_name);
+				ajax_load = false;
+			}else{
+				alert(data.message);
+			}
+		},
+		error: function (error) {
+			alert('系统错误、请联系客服');
+			ajax_load = false;
+		}
+	});
+})
+
+$('.step-btn1').click(function () {
+	if($('.jq-input-radio:checked').val() =="bank_transfer")
+	{
+		return false;
+	}
+
+	if($('.jq-input-radio:checked').length ==0)
+	{
+		alert('请选择充值渠道');
+		return false;
+	}
+
+	if($('input[name=amount-1]').val() =='')
+	{
+		alert('请输入充值金额');
+		return false;
+	}
+
+	if($('input[name=amount-1]').val() >50000)
+	{
+		alert('單筆充值限額最高 50000元');
+		return false;
+	}
+
+	$.ajax({
+		url: "/api/Api/getRechargeOrder?sess=" + localStorage.session,
+		type: "POST",		
+		data: JSON.stringify({
+			paytype: $('.jq-input-radio:checked').val(),
+			amount: $('input[name=amount-1]').val()
+		}),
+
+		success: function (data) {
+			if (data.status == '100') {
+				$('#_u_account').html(data.body.u_account);
+				$('#_order_id').html(data.body.orderid);
+				$('#_paytype').html($('.jq-input-radio:checked').data('title'));
+				$('#_amount').html(data.body.amount);
+
+				$('.step1').hide();
+				$('.checkpay').show();
+				$.each(data.body, function(i,e){
+
+					$('input[type=hidden][name='+i+']').val(e);
+
+				});
+				$('#payfrm').attr('action',data.body.pay_url);
+
+			}else
+
+			{
+				alert(data.message);
+			}
+		}
+	});
+})
+
+            

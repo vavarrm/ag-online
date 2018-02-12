@@ -57,8 +57,8 @@
 			try
 			{
 				$this->db->trans_begin();
-				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime)
-					  VALUES(?,?,'bank_transfer',?,NOW())";
+				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime,uro_respcode)
+					  VALUES(?,?,'bank_transfer',?,NOW(),98)";
 				$bind = array(
 					$ary['orderid'],
 					$ary['u_id'],
@@ -123,8 +123,8 @@
 			try
 			{
 				$this->db->trans_begin();
-				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime)
-					  VALUES(?,?,'wechat3',?,NOW())";
+				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime,uro_respcode)
+					  VALUES(?,?,'wechat3',?,NOW(),99)";
 				$bind = array(
 					$ary['orderid'],
 					$ary['u_id'],
@@ -188,8 +188,8 @@
 			try
 			{
 				$this->db->trans_begin();
-				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime)
-					  VALUES(?,?,'alipay2',?,NOW())";
+				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime,uro_respcode)
+					  VALUES(?,?,'alipay2',?,NOW(),99)";
 				$bind = array(
 					$ary['orderid'],
 					$ary['u_id'],
