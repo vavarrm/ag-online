@@ -81,7 +81,7 @@
                     </div>
 
                     <div class="login-after jq-login-after" style="display: none;">
-
+						<div class="btn btn-bg" style="box-shadow :0px 0px 0px 0px" >                            <span class="nam">本地额度</span>							<span class="head-balance">1</span>                        </div>
                         <div class="login-member-detail jq-login-member-detail jq-cancelBubble">
 
                             <span class="member-nam jq-member-nam"></span>
@@ -346,11 +346,7 @@
 
                             <div class="warning">
 
-                                <p>一个银行帐户最多只能绑定
 
-                                    <span class="color-red">5</span> 张银行卡</p>
-
-                                <p>
 
                                     <span class="color-red">银行卡锁定</span>可以增强帐户安全，推荐锁定(如：帐户被他人盗用后，由于锁定的限制，您帐户的资金不会被他人提款)</p>
 
@@ -840,17 +836,12 @@
 
                                 if (data.status) {
 
-                                    switch (data.status) {
-
-                                        case 100:
+                                    if(data.status ==100) {
 
                                             alert('银行卡已锁定');
 
-                                            window.location.reload();
-
-                                            break;
-
-                                    }
+                                            window.location.reload();																					
+                                    }else									{										alert(data.message);									}
 
                                 }
 

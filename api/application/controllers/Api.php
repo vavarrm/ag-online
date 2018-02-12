@@ -99,6 +99,39 @@ class Api extends CI_Controller {
 		}
     }
 	
+	public function getTableInfo()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='取得每桌资料';
+		$output['message'] = '成功';
+		try 
+		{
+			$first=3200000+substr(time(),1,2);
+			$second=2800000+substr(time(),2,3);
+			$third=2400000+substr(time(),4,5);
+			
+			$table = array(
+				number_format($first, 0, '.', ','),
+				number_format($second,0, '.', ','),
+				number_format($third,0, '.', ',')
+			);
+			
+			$output['body']=$table;
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
 	public function addRechargeFromBank()
 	{
 		$output['status'] = 100;
@@ -1312,7 +1345,7 @@ class Api extends CI_Controller {
 				$array = array(
 					'message' 	=>'使用者已锁定过银行卡' ,
 					'type' 		=>'api' ,
-					'status'	=>'002'
+					'status'	=>'999'
 				);
 				$MyException = new MyException();
 				$MyException->setParams($array);
@@ -1326,7 +1359,7 @@ class Api extends CI_Controller {
 				$array = array(
 					'message' 	=>'锁定失败' ,
 					'type' 		=>'api' ,
-					'status'	=>'002'
+					'status'	=>'999'
 				);
 				$MyException = new MyException();
 				$MyException->setParams($array);
@@ -2037,6 +2070,16 @@ class Api extends CI_Controller {
 			}
 			
 			$output['body']['list'] = $result_ary['games'];
+			$first=3200000+substr(time(),1,2);
+			$second=2800000+substr(time(),2,3);
+			$third=2400000+substr(time(),4,5);
+			
+			$table = array(
+				number_format($first, 0, '.', ','),
+				number_format($second,0, '.', ','),
+				number_format($third,0, '.', ',')
+			);
+			$output['body']['table'] =$table;
 			$output['body']['pageinfo']  = array(
 				'total'	=>$result_ary['page_info']['totalCount'],
 				'pages'	=>$result_ary['page_info']['totalPage'],

@@ -168,7 +168,10 @@
 
                     <div class="login-after jq-login-after" style="display: none;">
 
-
+						<div class="btn btn-bg" style="box-shadow :0px 0px 0px 0px" >
+                            <span class="nam">本地额度</span>
+							<span class="head-balance">1</span>
+                        </div>
 
                         <div class="login-member-detail jq-login-member-detail jq-cancelBubble">
 
@@ -414,7 +417,7 @@
 
 
 
-                                    <span>B01</span>
+                                    
 
 
 
@@ -426,19 +429,11 @@
 
 
 
-                                <p class="price-num">$ 2,514,508</p>
+                                <p class="price-num"></p>
 
 
 
-                                <a class="btn btn-bg-orange" href="javascript:void(0)">
 
-
-
-                                    <span>跟注发财</span>
-
-
-
-                                </a>
 
 
 
@@ -466,7 +461,7 @@
 
 
 
-                                    <span>B01</span>
+                                    
 
 
 
@@ -478,19 +473,11 @@
 
 
 
-                                <p class="price-num">$ 2,514,508</p>
+                                <p class="price-num"></p>
 
 
 
-                                <a class="btn btn-bg-orange" href="javascript:void(0)">
 
-
-
-                                    <span>跟注发财</span>
-
-
-
-                                </a>
 
 
 
@@ -518,7 +505,7 @@
 
 
 
-                                    <span>B01</span>
+                                    
 
 
 
@@ -530,19 +517,11 @@
 
 
 
-                                <p class="price-num">$ 2,514,508</p>
+                                <p class="price-num"></p>
 
 
 
-                                <a class="btn btn-bg-orange" href="javascript:void(0)">
 
-
-
-                                    <span>跟注发财</span>
-
-
-
-                                </a>
 
 
 
@@ -1331,7 +1310,9 @@
 
                                 case 100:
 
-
+									$('.price-num').eq(0).text('$ '+data.body.table[0]);
+									$('.price-num').eq(1).text('$ '+data.body.table[1]);
+									$('.price-num').eq(2).text('$ '+data.body.table[2]);
 
                                     for (i = 0; i < _length; i++) {
 

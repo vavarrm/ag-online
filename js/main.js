@@ -69,6 +69,8 @@ function userInformation() {
 						$('.jq-member-nam').text(data.body.user.u_name);
 
 						$('.nam span').eq(0).html(data.body.user.balance);
+						$('.head-balance').html(data.body.user.balance);
+	
 
 						$('.nam span').eq(1).html(data.body.user.no_read_message_total);
 
