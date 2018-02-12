@@ -838,7 +838,7 @@ $('.bank-transfe-step3').bind('click', function(){
 			success: function (data) {
 				if(data.status == 100)
 				{
-					alert('送出成功、请记下订单记录，并汇款后通知运营入帐');
+					alert('送出成功、请记下订单資料，汇款后請通知平台入帐');
 					$('.bank-transfe-step3').hide();
 					
 				}else{
@@ -966,7 +966,7 @@ $('.wechat3-step3').click(function(){
 			success: function (data) {
 				if(data.status == 100)
 				{
-					alert('送出成功、请记下订单记录，并汇款后通知运营入帐');
+					alert('送出成功、请记下订单資料，汇款后請通知平台入帐');
 					$('.wechat3-step3').hide();
 				}else{
 					alert(data.message);
@@ -1000,7 +1000,7 @@ $('.alipay2-step3').click(function(){
 			success: function (data) {
 				if(data.status == 100)
 				{
-					alert('送出成功、请记下订单记录，并汇款后通知运营入帐');
+					alert('送出成功、请记下订单資料，汇款后請通知平台入帐');
 					$('.wechat3-step3').hide();
 				}else{
 					alert(data.message);
