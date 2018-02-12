@@ -116,63 +116,63 @@ function captcha_get() {
 
 
 
-			url: "/api/Api/getCaptcha",
+		url: "/api/Api/getCaptcha",
 
 
 
-			type: "GET",
+		type: "GET",
 
 
 
-			success: function (data) {
+		success: function (data) {
 
 
 
-					$(".jq-pop-register").find('.jq-captcha-container').find('img').remove();
+			$(".jq-pop-register").find('.jq-captcha-container').find('img').remove();
 
 
 
-					var _each = $(".jq-pop-register").find('.jq-captcha-container');
+			var _each = $(".jq-pop-register").find('.jq-captcha-container');
 
 
 
-					if (data.status) {
+			if (data.status) {
 
 
 
-							switch (data.status) {
+				switch (data.status) {
 
 
 
-									case 100:
+					case 100:
 
 
 
-											_each.append(
+						_each.append(
 
 
 
-													data.body.image
+							data.body.image
 
 
 
-											)
+						)
 
 
 
-											break;
+						break;
 
 
 
-							}
-
-
-
-					}
+				}
 
 
 
 			}
+
+
+
+		}
 
 
 
@@ -227,12 +227,11 @@ function checkPhone(namber) {
 $('.ajax-btn-login').click(function () {
 
 
-
-	var _account = $('input[name=account]').val();
-
+	var _account = $('input[name=login-account]').val();
 
 
-	var _passwd = $('input[name=passwd]').val();
+
+	var _passwd = $('input[name=login-passwd]').val();
 
 
 
@@ -286,11 +285,6 @@ $('.ajax-btn-login').click(function () {
 						setCookie(data.body.sess);
 
 
-
-
-
-
-
 						alert('登入成功');
 
 
@@ -336,8 +330,6 @@ $('.ajax-btn-login').click(function () {
 
 
 });
-
-
 
 $('.ajax-btn-logout').click(function () {
 
@@ -416,8 +408,6 @@ $('.ajax-btn-logout').click(function () {
 
 
 });
-
-
 
 $('.ajax-btn-pcb').click(function () {
 
@@ -517,8 +507,6 @@ $('.ajax-btn-pcb').click(function () {
 
 });
 
-
-
 $('.jq-btn-pop-register').click(function () {
 
 
@@ -528,8 +516,6 @@ $('.jq-btn-pop-register').click(function () {
 
 
 });
-
-
 
 $('.ajax-btn-register').click(function () {
 
@@ -611,7 +597,9 @@ $('.ajax-btn-register').click(function () {
 
 						alert('註冊成功');
 
+						$('.jq-pop-window').removeClass('active');
 
+						$('.jq-pop-register').removeClass('active');
 
 						window.location.reload();
 
@@ -659,8 +647,6 @@ $('.ajax-btn-register').click(function () {
 
 });
 
-
-
 $('.ajax-btn-captcha-reload').click(function () {
 
 
@@ -671,11 +657,241 @@ $('.ajax-btn-captcha-reload').click(function () {
 
 });
 
+$('[name=login-account]').keypress(function (e) {
+
+	if (e.which == 13) {
+
+		$('.ajax-btn-login').click(function () {
+
+
+
+			var _account = $('input[name=login-account]').val();
+
+
+
+			var _passwd = $('input[name=login-passwd]').val();
+
+
+
+
+
+
+			$.ajax({
+
+
+
+				url: "/api/Api/login",
+
+
+
+				type: "POST",
+
+
+
+				data: JSON.stringify({
+
+
+
+					account: _account,
+
+
+
+					passwd: _passwd
+
+
+
+				}),
+
+
+
+				success: function (data) {
+
+
+
+					if (data.status) {
+
+
+
+						switch (data.status) {
+
+
+
+							case 100:
+
+
+
+								setCookie(data.body.sess);
+
+
+								alert('登入成功');
+
+
+
+								$('.jq-pop-window').removeClass('active');
+
+
+
+								$('.jq-pop-window').find('.jq-pop-login').removeClass('active');
+
+
+
+								userInformation()
+
+
+
+								break;
+
+
+
+							case '999':
+
+
+
+								alert('帐号或密码错误');
+
+
+
+						}
+
+
+
+					}
+
+
+
+				}
+
+
+
+			});
+
+
+
+		});
+
+	}
+
+});
+
+$('[name=login-passwd]').keypress(function (e) {
+
+	if (e.which == 13) {
+
+		$('.ajax-btn-login').click(function () {
+
+
+
+			var _account = $('input[name=login-account]').val();
+
+
+
+			var _passwd = $('input[name=login-passwd]').val();
+
+
+
+
+
+
+			$.ajax({
+
+
+
+				url: "/api/Api/login",
+
+
+
+				type: "POST",
+
+
+
+				data: JSON.stringify({
+
+
+
+					account: _account,
+
+
+
+					passwd: _passwd
+
+
+
+				}),
+
+
+
+				success: function (data) {
+
+
+
+					if (data.status) {
+
+
+
+						switch (data.status) {
+
+
+
+							case 100:
+
+
+
+								setCookie(data.body.sess);
+
+
+								alert('登入成功');
+
+
+
+								$('.jq-pop-window').removeClass('active');
+
+
+
+								$('.jq-pop-window').find('.jq-pop-login').removeClass('active');
+
+
+
+								userInformation()
+
+
+
+								break;
+
+
+
+							case '999':
+
+
+
+								alert('帐号或密码错误');
+
+
+
+						}
+
+
+
+					}
+
+
+
+				}
+
+
+
+			});
+
+
+
+		});
+
+	}
+
+});
+
 
 
 $(function () {
-
-
 
 	$.ajax({
 
@@ -775,36 +991,18 @@ $(function () {
 
 	});
 
-
-
-
+	$('[name=login-account]').focus();
 
 	if (localStorage.session == undefined || localStorage.session == '') {
 
 
 
 		$('.jq-login-before').show();
-
-
-
 		$('.jq-login-after').hide();
 
-
-
 	} else {
-
-
-
 		userInformation()
-
-
-
 	}
-
-
-
-
-
 });
 
 var bank_transfer_data ;
@@ -1217,5 +1415,3 @@ $('.step-btn1').click(function () {
 		}
 	});
 })
-
-            
