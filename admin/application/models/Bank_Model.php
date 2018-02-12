@@ -9,6 +9,64 @@
 			$this->db->query("SET time_zone='+8:00'");
 		}
 		
+		public function doDeleteReceivingBankCard($ary)
+		{
+				try {
+				$sql="DELETE FROM receiving_bank_card WHERE rbc_id=?";
+				$bind = array(
+					$ary['rbc_id'],
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw  $MyException;
+				}
+				return $affected_rows;
+			}
+			catch (Exception $e) {
+				throw $e;
+			}
+		}
+		
+		public function addReceivingBankCard($ary)
+		{
+			try {
+				$sql="INSERT INTO receiving_bank_card (rbc_bank_name, rbc_bank_account, 	rbc_bank_user_name,	rbc_add_datetime) VALUES(?,?,?,NOW())";
+				$bind = array(
+					$ary['rbc_bank_name'],
+					$ary['rbc_bank_account'],
+					$ary['rbc_bank_user_name'],
+				);
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw  $MyException;
+				}
+				return $affected_rows;
+			}
+			catch (Exception $e) {
+				throw $e;
+			}
+		}
+		
 		public function editReceivingBankCard($ary)
 		{
 			try {
@@ -40,7 +98,24 @@
 					throw  $MyException;
 				}
 				$affected_rows= $this->db->affected_rows();
-				
+				if($affected_rows >0)
+				{
+					$sql="UPDATE user SET u_receiving_bank_card_alert =1";
+					$query = $this->db->query($sql);
+					$error = $this->db->error();
+					if($error['message'] !="")
+					{
+						$MyException = new MyException();
+						$array = array(
+							'message' 	=>$error['message'] ,
+							'type' 		=>'db' ,
+							'status'	=>'001'
+						);
+						
+						$MyException->setParams($array);
+						throw  $MyException;
+					}
+				}
 				return $affected_rows;
 			}
 			catch (Exception $e) {

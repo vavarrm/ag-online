@@ -93,6 +93,78 @@ class Api extends CI_Controller {
 		}
     }
 	
+	public function doDeleteReceivingBankCard()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='删除银行卡';
+		$output['message'] = '成功';
+		try 
+		{
+			if(
+				$this->request['rbc_id'] =="" 
+			){
+				$array = array(
+					'message' 	=>'必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$this->bank->doDeleteReceivingBankCard($this->request);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function doAddReceivingBankCard()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='收款银行卡编辑';
+		$output['message'] = '成功';
+		try 
+		{
+			if(
+				$this->request['rbc_bank_name'] =="" ||
+				$this->request['rbc_bank_account'] =="" ||
+				$this->request['rbc_bank_user_name'] =="" 
+			){
+				$array = array(
+					'message' 	=>'必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$this->bank->addReceivingBankCard($this->request);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
 	public function doEditReceivingBankCard()
 	{
 		$output['status'] = 100;
@@ -102,7 +174,10 @@ class Api extends CI_Controller {
 		try 
 		{
 			if(
-				$this->request['rbc_id'] ==""
+				$this->request['rbc_id'] =="" ||
+				$this->request['rbc_bank_name'] =="" ||
+				$this->request['rbc_bank_account'] =="" ||
+				$this->request['rbc_bank_user_name'] =="" 
 			){
 				$array = array(
 					'message' 	=>'必传参数为空' ,
@@ -248,8 +323,8 @@ class Api extends CI_Controller {
 			if($uro_respcode =='1')
 			{
 				$ary['uro_respcode'] =array('value' =>'00' , 'operator' =>'=');
-			}elseif($uro_respcode=='0'){
-				$ary['uro_respcode'] =array('value' =>'00' , 'operator' =>'!=');
+			}else{
+				$ary['uro_respcode'] =array('value' =>$uro_respcode , 'operator' =>'=');
 			}
 
 			if(is_array($this->request['order']) && count($this->request['order'])>0)
@@ -2759,11 +2834,18 @@ class Api extends CI_Controller {
 			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
 			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
 			$u_account = (isset($this->request['u_account']))?$this->request['u_account']:'';
-			
+			$ua_type = (isset($this->request['ua_type']))?$this->request['ua_type']:'';
 			$ary['start_time'] =array('value' =>$start_time, 'operator' =>'>=');
 			$ary['end_time'] =array('value' =>$end_time, 'operator' =>'<=');
 			$ary['u_account'] =array('value' =>$u_account, 'operator' =>'<=');
-			$ary['ua.ua_type'] =  array('value' =>'1', 'operator' =>'=');
+			if($ua_type !="")
+			{
+				$ary['ua.ua_type'] =  array('value' =>$ua_type, 'operator' =>'=');
+			}else
+			{
+				$ary['ua.ua_type'] =  array('value' =>'1,2', 'operator' =>'in');
+			}
+			
 			$ary['ua.ua_value'] =  array('value' =>0, 'operator' =>'>');
 			if(is_array($this->request['order']) && count($this->request['order'])>0)
 			{
@@ -2829,6 +2911,7 @@ class Api extends CI_Controller {
 				'ua_to' =>$this->request['u_id'],
 				'ua_balance' =>intval($this->request['u_balance']),
 				'ua_remarks' =>$this->request['ua_remarks'],
+				'ua_from_am_id' =>$this->admin_data['ad_id']
 			);
 			$affected_rows = $this->rechargenit->addBalance($ary);
 			if($affected_rows <=0)

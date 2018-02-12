@@ -99,6 +99,136 @@ class Api extends CI_Controller {
 		}
     }
 	
+	public function addRechargeFromBank()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='银行汇款充值';
+		$output['message'] = '成功';
+		try 
+		{
+			
+			if(
+				$this->request['rbc_id']	=="" ||
+				$this->request['orderid']	=="" 
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			if(
+				intval($this->request['amount']) >50 &&
+				intval($this->request['amount']) <=50000 
+			){
+				$array = array(
+					'message' 	=>'充值最小为50,最高为50000' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			
+			$ary = array(
+				'rbc_id' => $this->request['rbc_id'],
+				'orderid' => $this->request['orderid'],
+				'amount' => $this->request['amount'],
+				'u_id' => $this->_user['u_id'],
+			);
+			
+			$this->account->addRechargeFromBank($ary);
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function getReceivingBankCardOrderID()
+	{
+			
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='设定优汇';
+		$output['message'] = '成功';
+		try 
+		{
+			
+			if(
+				$this->request['rbc_id']	=="" 
+		
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			$orderid="bank".date('Ymd').$this->request['rbc_id'].substr(time(),-5).sprintf('%02d',rand(1,99));
+			$output['body']['orderid']=$orderid ;
+			$output['body']['u_account']=$this->_user['u_account'] ;
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function  getReceivingBankCard()
+	{
+		
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='设定优汇';
+		$output['message'] = '成功';
+		try 
+		{
+
+			$rows = $this->bank->getReceivingBankCard();
+			$output['body']['list'] = 	$rows;
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
 	public function setDiscount()
 	{
 		$output['status'] = 100;

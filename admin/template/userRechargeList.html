@@ -5,13 +5,12 @@
 			<form class="form-inline">
 			  <div class="form-group">
 				<label class="sr-only" for="exampleInputPassword3"></label>
-				时间起：<input type="text" ng-model="data.search.start_time" class="form-control datepicker" >
-				~<input type="text" ng-model="data.search.end_time" class="form-control datepicker" >
+				时间起：<input type="text" ng-model="data.search.start_time" class="form-control datepicker" >~<input type="text" ng-model="data.search.end_time" class="form-control datepicker" >
 			  </div>
 			  <div class="form-group">
 				<label class="sr-only" for="exampleInputPassword3"></label>
 				用户名：<input type="text" ng-model="data.search.u_account" class="form-control" >
-			  </div>
+			  </div><p>
 			  <div class="form-group">
 				<label class="sr-only" for="exampleInputPassword3"></label>
 				充值渠道：
@@ -19,26 +18,19 @@
 					<option value="">全部</option>
 					<option value="unionpay2">银联</option>
 					<option value="unionpay3">网银</option>
+					<option value="bank_transfer">银行转帐</option>
 				</select>
 			  </div>
-				<div class="form-group">
-					<label class="sr-only" for="exampleInputPassword3"></label>
-					是否回应：
-					<select ng-model="data.search.uro_reply" ng-change="search()" ng-init="data.search.uro_reply=''">
-						<option value="">全部</option>
-						<option value="1">已回應</option>
-						<option value="0">無回應</option>
-					</select>
-				</div>
 				<div class="form-group">
 					<label class="sr-only" for="exampleInputPassword3"></label>
 					回应状态：
 					<select ng-model="data.search.uro_respcode" ng-change="search()" ng-init="data.search.uro_respcode=''">
 						<option value="">全部</option>
 						<option value="1">成功</option>
-						<option value="0">失敗</option>
+						<option value="99">失敗</option>
+						<option value="98">审核中</option>
 					</select>
-				</div>
+				</div><p>
 			  <button type="submit" class="btn btn-default" ng-click="search()">搜寻</button>
 			  <button  class="btn btn-default" ng-click="reset()">清除搜寻条件</button>
 			</form>
@@ -72,10 +64,7 @@
 								<i  ng-show="data.order.uro_add_datetime=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
 							</th>
 							<th  style="text-align:center">
-								是否收到回应
-							</th>
-							<th  style="text-align:center">
-								回应状态
+								状态
 							</th>
 						</tr>
 					</thead>
@@ -86,7 +75,6 @@
 							<td valign="middle" width="5%"  ng-bind="row.uro_paytype_str"></td>
 							<td valign="middle" width="20%" ng-bind="row.uro_orderid"></td>
 							<td valign="middle" width="10%"  ng-bind="row.uro_add_datetime"></td>
-							<td valign="middle" width="5%"  ng-bind="row.uro_reply_str"></td>
 							<td valign="middle" width="5%"  ng-bind="row.uro_respcode_str"></td>
 						</tr>
 					</tbody>

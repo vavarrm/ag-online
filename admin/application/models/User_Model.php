@@ -474,6 +474,24 @@
 							WHEN '1' THEN '已锁定'
 							WHEN '0' THEN '未锁定'
 						END AS u_bank_card_lock_str
+						,
+						(
+							(SELECT  SUM(IFNULL(ua_value,0)) AS Balance FROM user_account WHERE ua_u_id = u.u_id AND ua_status = 'received')+
+							(SELECT  SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id = u.u_id AND ua_status = 'payment')+
+							(SELECT  SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id = u.u_id AND ua_status = 'chargeback')+
+							(SELECT  SUM(IFNULL(ua.ua_value,0)*-1) AS Balance 
+								FROM user_account AS ua 
+								INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
+								WHERE 
+									ua_u_id = u.u_id AND ua_status = 'transfer_out' 
+							)+
+							(SELECT  SUM(IFNULL(ua.ua_value,0)) AS Balance 
+								FROM user_account AS ua 
+								INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
+								WHERE 
+									ua_u_id = u.u_id AND ua_status = 'transfer_in' 
+						)
+						) AS u_balance
 					FROM 
 						user AS u LEFT JOIN  user u2 ON u.u_superior_id =  u2.u_id";
 			$search_sql = $sql.$where.$limit ;

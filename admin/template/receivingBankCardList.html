@@ -1,6 +1,6 @@
 <input type="hidden"  ng-model="data.setting.search_api" ng-init="data.setting.search_api ='/receivingBankCardList'">
 <input type="hidden"  ng-model="data.setting.init_api" ng-init="data.setting.init_api ='/receivingBankCardInit'">
-<div  ng-init="init()">
+<div  ng-init="init(1)">
 	<div class="grid_3 grid_4">
 		<div class="col-md-12 page_1">
 			<a href="/admin/index.php?/Admin/renterTemplates#!/bank{{action.router}}" ng-click="actionClick($event, action)" ng-repeat-start="action in data.init.actions" ng-if="action.type =='head_button' " type="button" class="btn btn-lg btn-default" ng-bind="action.title"></a>

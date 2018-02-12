@@ -9,6 +9,51 @@
 			$this->db->query("SET time_zone='+8:00'");
 		}
 		
+		public function getReceivingBankCardOrderId($ary)
+		{
+			try 
+			{
+				
+				return $rows;
+			}catch(MyException $e)
+			{
+				throw $e;
+				return false;
+			}
+		}
+		
+		
+		
+		public function getReceivingBankCard()
+		{
+			try 
+			{
+				$sql="SELECT * FROM receiving_bank_card  ";
+				$query = $this->db->query($sql);
+
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$rows =  $query->result_array();
+				$query->free_result();
+				return $rows;
+			}catch(MyException $e)
+			{
+				throw $e;
+				return false;
+			}
+		}
+		
 		public function getBankList()
 		{
 			try 

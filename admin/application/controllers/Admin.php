@@ -10,7 +10,8 @@ class Admin extends CI_Controller {
 		$encrypt_admin_data = $this->session->userdata('encrypt_admin_data');
 		if(empty($encrypt_admin_data))
 		{
-				$this->myfunc->gotourl('Login', '請登入');
+			$this->session->sess_destroy();
+			$this->myfunc->gotourl('Login', '請登入');
 		}
     }
 	

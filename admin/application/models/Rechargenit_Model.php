@@ -292,7 +292,7 @@
 				{
 					foreach($ary as $key =>$row)
 					{
-					
+						;
 						if(in_array($key, $gitignore) || $row['value']==='' )	
 						{
 							continue;
@@ -340,16 +340,22 @@
 							CASE
 								WHEN  uro_paytype = 'unionpay2' THEN '银联'
 								WHEN  uro_paytype = 'unionpay3' THEN '网银'
+								WHEN  uro_paytype = 'bank_transfer' THEN '银行汇款'
 							END AS 	uro_paytype_str,
 							CASE
 								WHEN  	uro_reply = '0' THEN '无回应'
 								WHEN  	uro_reply = '1ˇ' THEN '已回应'
 							END AS 	uro_reply_str,
 							CASE
+								WHEN  ua_status = 'audit' THEN '审核中'
+								WHEN  ua_status = 'received' THEN '已入帐'
 								WHEN  uro_respcode = '00' THEN '交易成功'
+								WHEN  uro_respcode = '99' THEN '交易失败'
 							END AS 	uro_respcode_str
 						FROM 
-							user_recharge_order AS uro LEFT JOIN user AS u ON uro.uro_u_id =u.u_id ";
+							user_recharge_order AS  uro
+								INNER JOIN user AS u ON uro.uro_u_id =u.u_id 
+								LEFT JOIN user_account AS ua ON ua.ua_uro_id=uro.uro_id ";
 				$search_sql = $sql.$where.$order.$limit ;
 				$query = $this->db->query($search_sql, $bind);
 				$rows = $query->result_array();
@@ -606,48 +612,42 @@
 		
 		public function addBalance($ary)
 		{
-			$this->db->trans_start();
-			$sql = "INSERT INTO user_account 
-					(ua_value,	ua_type, ua_add_datetime, ua_from, ua_u_id, ua_remarks)
-					VALUES(?,?,NOW(),?,?,?)";
-			$bind= array(
-				$ary['ua_balance'],
-				$ary['ua_type'],
-				$ary['ua_from'],
-				$ary['ua_to'],
-				$ary['ua_remarks']
-			);
-			$query = $this->db->query($sql, $bind);
-			$affected_rows =  $this->db->affected_rows();
-			$this->db->trans_complete();
-			
-			if ($this->db->trans_status() === FALSE)
+			try
 			{
-				$MyException = new MyException();
-				$array = array(
-					'message' 	=>$error['message'] ,
-					'type' 		=>'db' ,
-					'status'	=>'001'
+				$this->db->trans_start();
+				$sql = "INSERT INTO user_account 
+						(ua_value,	ua_type, ua_add_datetime, ua_from, ua_u_id, ua_remarks, ua_from_am_id)
+						VALUES(?,?,NOW(),?,?,?,?)";
+				$bind= array(
+					$ary['ua_balance'],
+					$ary['ua_type'],
+					$ary['ua_from'],
+					$ary['ua_to'],
+					$ary['ua_remarks'],
+					$ary['ua_from_am_id'],
 				);
+				$query = $this->db->query($sql, $bind);;
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw  $MyException;
+				}
+				$affected_rows =  $this->db->affected_rows();
+				$this->db->trans_commit();
 				
-				$MyException->setParams($array);
-				throw  $MyException;
+				return $affected_rows;
 			}
-			
-			$error = $this->db->error();
-			if($error['message'] !="")
-			{
-				$MyException = new MyException();
-				$array = array(
-					'message' 	=>$error['message'] ,
-					'type' 		=>'db' ,
-					'status'	=>'001'
-				);
-				
-				$MyException->setParams($array);
+			catch (Exception $e) {
+				throw $e;
 			}
-			
-			return $affected_rows;
 		}
 		
 		public function addChargebackFroAudit($ary)

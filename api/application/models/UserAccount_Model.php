@@ -9,7 +9,6 @@
 			$this->load->database();
 			$this->CI =& get_instance();
 			$this->db->query("SET time_zone='+8:00'");
-			$this->db->query("SET time_zone='+8:00'");
 		}
 		
 		
@@ -49,6 +48,73 @@
 			}catch(MyException $e)
 			{
 				throw $e;
+			}
+		}
+		
+		
+		public function addRechargeFromBank($ary)
+		{
+			try
+			{
+				$this->db->trans_begin();
+				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime)
+					  VALUES(?,?,'bank_transfer',?,NOW())";
+				$bind = array(
+					$ary['orderid'],
+					$ary['u_id'],
+					$ary['amount'],
+				);
+				$query = $this->db->query($sql,$bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$uro_id = $this->db->insert_id();
+				
+				$sql ="INSERT INTO user_account(ua_value, ua_type, ua_add_datetime, ua_u_id, ua_uro_id,ua_rbc_id)
+						VALUES(?,2,NOW(),?,?,?)";
+				$bind = array(
+					$ary['amount'],
+					$ary['u_id'],
+					$uro_id ,
+					$ary['rbc_id'] ,
+				);
+				
+				$query = $this->db->query($sql,$bind );
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$affected_rows = $this->db->affected_rows();
+				
+				$this->db->trans_commit();
+				
+				return $affected_rows;
+				
+			}catch(MyException $e)
+			{
+			   $this->db->trans_rollback();
+			   throw $e;
 			}
 		}
 		

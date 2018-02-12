@@ -153,6 +153,10 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"editReceivingBankCardForm.html"+"?"+ Math.random(),
 		controller: "bankCtrl",
 		cache: false,
+	}).when("/bank/addReceivingBankCardForm/",{
+		templateUrl: templatePath+"addReceivingBankCardForm.html"+"?"+ Math.random(),
+		controller: "bankCtrl",
+		cache: false,
 	})
 });
 
@@ -175,6 +179,84 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 		click_search:0,
 		input:{},
 		parent_amid:""
+	}
+	
+	$scope.delReceivingBankCard = function(row)
+	{
+		var obj =
+		{
+			'message' :'确认删除',
+			buttons: 
+			[
+				{
+					text: "是",
+					click: function() 
+					{
+						var obj ={
+							rbc_id :row.rbc_id
+						}
+						var promise = apiService.adminApi('/doDeleteReceivingBankCard',obj);
+						promise.then
+						(
+							function(r) 
+							{
+								if(r.data.status =="100")
+								{
+									var obj =
+									{
+										'message':'送出成功',
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													
+													$( this ).dialog( "close" );
+													$scope.search();
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}else
+								{
+									var obj =
+									{
+										'message' :r.data.message,
+										buttons: 
+										[
+											{
+												text: "close",
+												click: function() 
+												{
+													$( this ).dialog( "close" );
+												}
+											}
+										]
+									};
+									dialog(obj);
+								}
+							},
+							function() {
+								var obj ={
+									'message' :'系统错误'
+								};
+								 dialog(obj);
+							}
+						)
+					}
+				},
+				{
+					text: "否",
+					click: function() 
+					{
+						$( this ).dialog( "close" );
+					}
+				}
+			]
+		};
+		dialog(obj);
 	}
 	
 	$scope.actionClick = function($event,action, row)
@@ -221,6 +303,7 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 							{
 								if(r.data.status =="100")
 								{
+									$('input[name=am_id]', parent.document).val($('input[name=parent_am_id]', parent.document).val());
 									var obj =
 									{
 										'message':'送出成功',
@@ -232,8 +315,8 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 												{
 													
 													$( this ).dialog( "close" );
-													console.log($('input[name=parent_am_id]', parent.document).val());
-													$('input[name=am_id]', parent.document).val(58);
+	
+													
 													history.go(-1);
 												}
 											}
@@ -282,8 +365,12 @@ var bankCtrl=function($scope, $http, apiService, $cookies, $routeParams, $rootSc
 	
 
 	
-	$scope.init = function()
+	$scope.init = function(isroot)
 	{
+		if(isroot ==1)
+		{
+			$('input[name=am_id]', parent.document).val($('input[name=parent_am_id]', parent.document).val());
+		}
 		$( ".datepicker" ).datepicker({ dateFormat:'yy-mm-dd' });
 		if($scope.data.setting.init_api !=undefined)
 		{
@@ -2743,9 +2830,15 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		
 	}
 	
+	$scope.selectChange = function()
+	{
+		$scope.data.p =1;
+		$scope.search();
+	}
 	
 	$scope.search = function()
 	{
+		
 		if($scope.data.isload == 1)
 		{
 			var obj ={
