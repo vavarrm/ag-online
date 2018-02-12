@@ -225,6 +225,8 @@
 							UNION
 								SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'payment'
 							UNION
+								SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'audit' AND ua_type = 3
+							UNION
 								SELECT 
 									ua.ua_id , IFNULL(ua.ua_value,0)*-1 AS Balance FROM user_account AS ua INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
 								WHERE 
@@ -490,7 +492,10 @@
 								INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
 								WHERE 
 									ua_u_id = u.u_id AND ua_status = 'transfer_in' 
-						)
+							)+
+							(
+								SELECT SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id =  u.u_id AND ua_status = 'audit' AND ua_type = 3
+							)
 						) AS u_balance
 					FROM 
 						user AS u LEFT JOIN  user u2 ON u.u_superior_id =  u2.u_id";

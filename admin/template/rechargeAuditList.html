@@ -44,12 +44,13 @@
 								<i  ng-show="data.order.u_account=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
 							</th>
 							<th  style="text-align:center">
-								状态
+								订单号
+							</th>
+							<th  style="text-align:center">
+								操作
 							</th>
 							<th style="text-align:center">
-								<a href="" ng-click="orderClick('ua_from');$event.preventDefault();">操作帐号</a> 
-								<i  ng-show="data.order.ua_from=='DESC'" class="fa fa-chevron-down" aria-hidden="true"></i>
-								<i  ng-show="data.order.ua_from=='ASC'"  class="fa fa-chevron-up" aria-hidden="true"></i>
+								操作帐号
 							</th>
 							<th  style="text-align:center">
 								<a href="" ng-click="orderClick('ua_value');$event.preventDefault();">充值额</a> 
@@ -67,6 +68,7 @@
 					<tbody>
 						<tr ng-repeat="row in data.list">
 							<td valign="middle" width="5%" ng-bind="row.u_account"></td>
+							<td valign="middle" width="5%" ng-bind="row.uro_orderid"></td>
 							<td valign="middle" width="10%">
 								<select ng-model="row.ua_status" ng-disabled="row.change_status_disabled =='1'" ng-change="changeStatus(row)">
 									<option value="audit">待审核</option>

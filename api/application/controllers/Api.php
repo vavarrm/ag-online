@@ -202,6 +202,183 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
+	public function addRechargeWechat3()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='微信支付充值';
+		$output['message'] = '成功';
+		try 
+		{
+			
+			if(
+				$this->request['orderid']	=="" 
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			if(
+				intval($this->request['amount']) >50 &&
+				intval($this->request['amount']) <=50000 
+			){
+				$array = array(
+					'message' 	=>'充值最小为50,最高为50000' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			
+			$ary = array(
+				'orderid' => $this->request['orderid'],
+				'amount' => $this->request['amount'],
+				'u_id' => $this->_user['u_id'],
+			);
+			
+			$this->account->addRechargeWechat3($ary);
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function getReceivingWechat3CardOrderID()
+	{
+			
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='设定优汇';
+		$output['message'] = '成功';
+		try 
+		{
+			
+			
+			$orderid="wechat3".date('Ymd').substr(time(),-5).sprintf('%02d',rand(1,99));
+			$output['body']['orderid']=$orderid ;
+			$output['body']['u_account']=$this->_user['u_account'] ;
+			$output['body']['wechat_account']='sss' ;
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function addRechargeAlipay()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='支付宝充值';
+		$output['message'] = '成功';
+		try 
+		{
+			
+			if(
+				$this->request['orderid']	=="" 
+			){
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			if(
+				intval($this->request['amount']) >50 &&
+				intval($this->request['amount']) <=50000 
+			){
+				$array = array(
+					'message' 	=>'充值最小为50,最高为50000' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			
+			
+			$ary = array(
+				'orderid' => $this->request['orderid'],
+				'amount' => $this->request['amount'],
+				'u_id' => $this->_user['u_id'],
+			);
+			
+			$this->account->addRechargeAlipay2($ary);
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function getReceivingalipay2CardOrderID()
+	{
+			$output['status'] = 100;
+		$output['body'] =array(
+		);
+		$output['title'] ='设定优汇';
+		$output['message'] = '成功';
+		try 
+		{
+			
+			
+			$orderid="alipay2".date('Ymd').substr(time(),-5).sprintf('%02d',rand(1,99));
+			$output['body']['orderid']=$orderid ;
+			$output['body']['u_account']=$this->_user['u_account'] ;
+			$output['body']['alipay2_account']='sss' ;
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
 	public function  getReceivingBankCard()
 	{
 		
@@ -1128,6 +1305,20 @@ class Api extends CI_Controller {
 			$ary = array(
 				'u_id' =>$this->_user['u_id']
 			);
+			
+			$user =$this->user->getUserByID($this->_user['u_id']);
+			if($user['u_bank_card_lock'] =='1')
+			{
+				$array = array(
+					'message' 	=>'使用者已锁定过银行卡' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;	
+			}
+			
 			$affected_rows = $this->user->lockUserBankCard($ary);
 			
 			if($affected_rows ==0)

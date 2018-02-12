@@ -459,6 +459,7 @@
 						ub.*,
 						bi.*,
 						uat.*,
+						uro.*,
 						(
 							SELECT COUNT(*) 
 							FROM  
@@ -493,6 +494,7 @@
 							LEFT JOIN user_bank_info AS ub ON ub.ub_id = ua_ub_id
 							LEFT JOIN bank_info AS bi ON ub.ub_bank_id = bi_id
 							LEFT JOIN user_account_type AS uat ON ua.ua_type = uat.uat_id
+							LEFT JOIN user_recharge_order AS uro ON ua.	ua_uro_id = uro.uro_id
 					";
 			$search_sql = $sql.$where.$order.$limit ;
 			$query = $this->db->query($search_sql, $bind);

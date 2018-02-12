@@ -118,6 +118,136 @@
 			}
 		}
 		
+		public function addRechargeWechat3($ary)
+		{
+			try
+			{
+				$this->db->trans_begin();
+				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime)
+					  VALUES(?,?,'wechat3',?,NOW())";
+				$bind = array(
+					$ary['orderid'],
+					$ary['u_id'],
+					$ary['amount'],
+				);
+				$query = $this->db->query($sql,$bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$uro_id = $this->db->insert_id();
+				
+				$sql ="INSERT INTO user_account(ua_value, ua_type, ua_add_datetime, ua_u_id, ua_uro_id)
+						VALUES(?,2,NOW(),?,?)";
+				$bind = array(
+					$ary['amount'],
+					$ary['u_id'],
+					$uro_id ,
+				);
+				
+				$query = $this->db->query($sql,$bind );
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$affected_rows = $this->db->affected_rows();
+				
+				$this->db->trans_commit();
+				
+				return $affected_rows;
+				
+			}catch(MyException $e)
+			{
+			   $this->db->trans_rollback();
+			   throw $e;
+			}
+		}
+		
+		public function addRechargeAlipay2($ary)
+		{
+			try
+			{
+				$this->db->trans_begin();
+				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime)
+					  VALUES(?,?,'alipay2',?,NOW())";
+				$bind = array(
+					$ary['orderid'],
+					$ary['u_id'],
+					$ary['amount'],
+				);
+				$query = $this->db->query($sql,$bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$uro_id = $this->db->insert_id();
+				
+				$sql ="INSERT INTO user_account(ua_value, ua_type, ua_add_datetime, ua_u_id, ua_uro_id)
+						VALUES(?,2,NOW(),?,?)";
+				$bind = array(
+					$ary['amount'],
+					$ary['u_id'],
+					$uro_id ,
+				);
+				
+				$query = $this->db->query($sql,$bind );
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$affected_rows = $this->db->affected_rows();
+				
+				$this->db->trans_commit();
+				
+				return $affected_rows;
+				
+			}catch(MyException $e)
+			{
+			   $this->db->trans_rollback();
+			   throw $e;
+			}
+		}
+		
 		public function rechargeCallBackLog($ary)
 		{
 			try
@@ -1049,11 +1179,17 @@
 								WHEN  ua_status = 'transfer_in' THEN '转入'
 								WHEN  ua_status = 'chargeback' THEN '系统扣款'
 								ELSE ua_status 
-							END   AS ua_status_str
+							END   AS ua_status_str,
+							CASE 
+								WHEN ua_type ='1' THEN '系统充值'
+								WHEN ua_type ='2' THEN '用户充值'
+							END
+							AS 	ua_type_1
 						FROM 
 							user_account AS ua 
 								LEFT JOIN  user_account_type AS uat ON uat.uat_id = ua.ua_type
-								LEFT JOIN  discount d ON ua.ua_from_d_id = d.d_id";
+								LEFT JOIN  discount d ON ua.ua_from_d_id = d.d_id
+								LEFT JOIN user_recharge_order AS uro ON uro.uro_id = ua.ua_uro_id";
 				$search_sql = $sql.$where.$order.$limit ;
 				// echo $search_sql;
 				$query = $this->db->query($search_sql, $bind);
