@@ -862,6 +862,8 @@ $('.jq-input-radio').click(function(){
 		$('.bank_transfer').hide();
 		$('.step2-wechat3').hide();
 		$('.step2-alipay2').hide();
+		$('.amount-min').text(100);
+		$('.amount-max').text(50000);
 		if(ajax_load == true)
 		{
 			alert('系统执行中，请稍后');
@@ -900,6 +902,8 @@ $('.jq-input-radio').click(function(){
 		});
 	}else if($(this).val() =='wechat3')
 	{
+		$('.amount-min').text(100);
+		$('.amount-max').text(3000);
 		$('.step-btn1').hide();
 		$('.step2').show();
 		$('.step2-wechat3').show();
@@ -910,6 +914,8 @@ $('.jq-input-radio').click(function(){
 	}
 	else if($(this).val() =='alipay2')
 	{
+		$('.amount-min').text(100);
+		$('.amount-max').text(5000);
 		$('.step-btn1').hide();
 		$('.step2').show();
 		$('.step2-wechat3').hide();
@@ -919,6 +925,8 @@ $('.jq-input-radio').click(function(){
 		$('.step2-bank-transfer').hide();
 	}
 	else{
+		$('.amount-min').text(50);
+		$('.amount-max').text(50000);
 		$('.step2').show();
 		$('.step2-bank-transfer').hide();
 		$('.step-btn1').show();
@@ -1019,9 +1027,15 @@ $('.step2-wechat3').click(function(){
 		return false;
 	}
 
-	if($('input[name=amount-1]').val() >50000)
+	if($('input[name=amount-1]').val() <100)
 	{
-		alert('單筆充值限額最高 50000元');
+		alert('單筆充值限額最低 100元');
+		return false;
+	}
+	
+	if($('input[name=amount-1]').val() >3000)
+	{
+		alert('單筆充值限額最高 3000元');
 		return false;
 	}
 	
@@ -1072,9 +1086,15 @@ $('.step2-alipay2').click(function(){
 		return false;
 	}
 
-	if($('input[name=amount-1]').val() >50000)
+	if($('input[name=amount-1]').val() <100)
 	{
-		alert('單筆充值限額最高 50000元');
+		alert('單筆充值限額最低 100元');
+		return false;
+	}
+	
+	if($('input[name=amount-1]').val() >5000)
+	{
+		alert('單筆充值限額最高 5000元');
 		return false;
 	}
 	
@@ -1126,6 +1146,13 @@ $('.step2-bank-transfer').click(function(){
 		return false;
 	}
 
+	
+	if($('input[name=amount-1]').val() <100)
+	{
+		alert('單筆充值限額最低 100元');
+		return false;
+	}
+	
 	if($('input[name=amount-1]').val() >50000)
 	{
 		alert('單筆充值限額最高 50000元');
@@ -1178,6 +1205,12 @@ $('.step-btn1').click(function () {
 	if($('input[name=amount-1]').val() =='')
 	{
 		alert('请输入充值金额');
+		return false;
+	}
+	
+	if($('input[name=amount-1]').val() <50)
+	{
+		alert('單筆充值限額最低 50元');
 		return false;
 	}
 

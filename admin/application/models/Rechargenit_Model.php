@@ -341,6 +341,8 @@
 								WHEN  uro_paytype = 'unionpay2' THEN '银联'
 								WHEN  uro_paytype = 'unionpay3' THEN '网银'
 								WHEN  uro_paytype = 'bank_transfer' THEN '银行汇款'
+								WHEN  uro_paytype = 'wechat3' THEN '微信扫码支付'
+								WHEN  uro_paytype = 'alipay2' THEN '支付宝'
 							END AS 	uro_paytype_str,
 							CASE
 								WHEN  	uro_reply = '0' THEN '无回应'

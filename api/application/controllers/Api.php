@@ -155,15 +155,15 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}	
-			
+
 			if(
-				intval($this->request['amount']) >50 &&
-				intval($this->request['amount']) <=50000 
+				intval($this->request['amount']) <100 ||
+				intval($this->request['amount']) >50000 
 			){
 				$array = array(
-					'message' 	=>'充值最小为50,最高为50000' ,
+					'message' 	=>'充值最小为100,最高为50000' ,
 					'type' 		=>'api' ,
-					'status'	=>'002'
+					'status'	=>'999'
 				);
 				$MyException = new MyException();
 				$MyException->setParams($array);
@@ -259,13 +259,13 @@ class Api extends CI_Controller {
 			}	
 			
 			if(
-				intval($this->request['amount']) >50 &&
-				intval($this->request['amount']) <=50000 
+				intval($this->request['amount']) <100 ||
+				intval($this->request['amount']) >3000 
 			){
 				$array = array(
-					'message' 	=>'充值最小为50,最高为50000' ,
+					'message' 	=>'充值最小为100,最高为3000' ,
 					'type' 		=>'api' ,
-					'status'	=>'002'
+					'status'	=>'999'
 				);
 				$MyException = new MyException();
 				$MyException->setParams($array);
@@ -348,13 +348,13 @@ class Api extends CI_Controller {
 			}	
 			
 			if(
-				intval($this->request['amount']) >50 &&
-				intval($this->request['amount']) <=50000 
+				intval($this->request['amount']) <100 ||
+				intval($this->request['amount']) >5000 
 			){
 				$array = array(
-					'message' 	=>'充值最小为50,最高为50000' ,
+					'message' 	=>'充值最小为100,最高为5000' ,
 					'type' 		=>'api' ,
-					'status'	=>'002'
+					'status'	=>'999'
 				);
 				$MyException = new MyException();
 				$MyException->setParams($array);

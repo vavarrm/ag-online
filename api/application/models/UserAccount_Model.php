@@ -57,8 +57,27 @@
 			try
 			{
 				$this->db->trans_begin();
-				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime)
-					  VALUES(?,?,'bank_transfer',?,NOW())";
+				
+				$sql="SELECT COUNT(*) AS total FROM user_recharge_order WHERE uro_orderid=?";
+				$bind = array($ary['orderid']);
+				$query = $this->db->query($sql,$bind);
+				$row = $query->row_array();
+				
+				if($row['total']>0)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'订单号重覆，请重新取得' ,
+						'type' 		=>'db' ,
+						'status'	=>'999'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime,uro_respcode)
+					  VALUES(?,?,'bank_transfer',?,NOW(),98)";
 				$bind = array(
 					$ary['orderid'],
 					$ary['u_id'],
@@ -123,8 +142,27 @@
 			try
 			{
 				$this->db->trans_begin();
-				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime)
-					  VALUES(?,?,'wechat3',?,NOW())";
+						
+				$sql="SELECT COUNT(*) AS total FROM user_recharge_order WHERE uro_orderid=?";
+				$bind = array($ary['orderid']);
+				$query = $this->db->query($sql,$bind);
+				$row = $query->row_array();
+				
+				if($row['total']>0)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'订单号重覆，请重新取得' ,
+						'type' 		=>'db' ,
+						'status'	=>'999'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime,uro_respcode)
+					  VALUES(?,?,'wechat3',?,NOW(),98)";
 				$bind = array(
 					$ary['orderid'],
 					$ary['u_id'],
@@ -188,8 +226,27 @@
 			try
 			{
 				$this->db->trans_begin();
-				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime)
-					  VALUES(?,?,'alipay2',?,NOW())";
+						
+				$sql="SELECT COUNT(*) AS total FROM user_recharge_order WHERE uro_orderid=?";
+				$bind = array($ary['orderid']);
+				$query = $this->db->query($sql,$bind);
+				$row = $query->row_array();
+				
+				if($row['total']>0)
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>'订单号重覆，请重新取得' ,
+						'type' 		=>'db' ,
+						'status'	=>'999'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$sql ="INSERT INTO  user_recharge_order (uro_orderid, uro_u_id, uro_paytype,uro_amount,uro_add_datetime,uro_respcode)
+					  VALUES(?,?,'alipay2',?,NOW(),98)";
 				$bind = array(
 					$ary['orderid'],
 					$ary['u_id'],
