@@ -21,5 +21,7 @@ var browser={
 }
 
 if(browser.versions.mobile||browser.versions.android||browser.versions.ios){
-	location.href="/";
+	location.href="/Mobile/";
+
 }
+
