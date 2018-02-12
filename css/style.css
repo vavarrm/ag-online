@@ -1695,7 +1695,6 @@ body main .sect-member-detail > .container .member-detail > .container .row .inp
 }
 
 body main .sect-member-detail > .container .member-detail > .container .row .input-group-container .input-group input[type=text],
-body main .sect-member-detail > .container .member-detail > .container .row .input-group-container .input-group input[type=number],
 body main .sect-member-detail > .container .member-detail > .container .row .input-group-container .input-group input[type=password] {
   height: 30px;
   font-size: 18px;
@@ -2101,17 +2100,6 @@ body main .sect-app .download-container {
 
 body main .sect-app .download-container img {
   width: 100%;
-}
-
-body main .sect-app .download-container img.qrcode {
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  top: 15px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
 }
 
 body main .sect-app .download-container .type {

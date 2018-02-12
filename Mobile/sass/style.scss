@@ -194,7 +194,7 @@ body {
           &::before {
             content: '';
             display: block;
-            background-image: url(/img/title-img1.png);
+            background-image: url(../img/title-img1.png);
             width: 29px;
             height: 28px;
             position: absolute;
@@ -204,7 +204,7 @@ body {
           &::after {
             content: '';
             display: block;
-            background-image: url(/img/title-img2.png);
+            background-image: url(../img/title-img2.png);
             width: 29px;
             height: 28px;
             position: absolute;
@@ -258,7 +258,7 @@ body {
           &::before {
             content: '';
             display: block;
-            background-image: url(/img/title-img1.png);
+            background-image: url(../img/title-img1.png);
             width: 29px;
             height: 28px;
             position: absolute;
@@ -268,7 +268,7 @@ body {
           &::after {
             content: '';
             display: block;
-            background-image: url(/img/title-img2.png);
+            background-image: url(../img/title-img2.png);
             width: 29px;
             height: 28px;
             position: absolute;
@@ -979,16 +979,6 @@ body {
         }
         img {
           width: 100%;
-          &.qrcode {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            top: 15px;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin: auto;
-          }
         }
         .type {
           font-size: 24px;

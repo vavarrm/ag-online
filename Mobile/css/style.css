@@ -1126,7 +1126,7 @@ body main .sect-game-list > .container > .title {
 body main .sect-game-list > .container > .title::before {
   content: '';
   display: block;
-  background-image: url(/img/title-img1.png);
+  background-image: url(../img/title-img1.png);
   width: 29px;
   height: 28px;
   position: absolute;
@@ -1137,7 +1137,7 @@ body main .sect-game-list > .container > .title::before {
 body main .sect-game-list > .container > .title::after {
   content: '';
   display: block;
-  background-image: url(/img/title-img2.png);
+  background-image: url(../img/title-img2.png);
   width: 29px;
   height: 28px;
   position: absolute;
@@ -1200,7 +1200,7 @@ body main .sect-entertainment-list > .container > .title {
 body main .sect-entertainment-list > .container > .title::before {
   content: '';
   display: block;
-  background-image: url(/img/title-img1.png);
+  background-image: url(../img/title-img1.png);
   width: 29px;
   height: 28px;
   position: absolute;
@@ -1211,7 +1211,7 @@ body main .sect-entertainment-list > .container > .title::before {
 body main .sect-entertainment-list > .container > .title::after {
   content: '';
   display: block;
-  background-image: url(/img/title-img2.png);
+  background-image: url(../img/title-img2.png);
   width: 29px;
   height: 28px;
   position: absolute;
@@ -2060,17 +2060,6 @@ body main .sect-app .download-container > [class*="col-"]:last-child {
 
 body main .sect-app .download-container img {
   width: 100%;
-}
-
-body main .sect-app .download-container img.qrcode {
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  top: 15px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
 }
 
 body main .sect-app .download-container .type {

@@ -18,10 +18,6 @@
 
 
 
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-
-
-
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
 
@@ -114,7 +110,7 @@
 
 
 
-                            <input class="account" type="text" name="login-account" placeholder="游戏账号">
+                            <input class="account" type="text" name="account" placeholder="游戏账号">
 
 
 
@@ -130,7 +126,7 @@
 
 
 
-                            <input class="password" type="password" name="login-passwd" placeholder="游戏密码">
+                            <input class="password" type="password" name="passwd" placeholder="游戏密码">
 
 
 
@@ -278,7 +274,7 @@
 
 
 
-                    <li class="jq-nav-option active">
+                    <li class="jq-nav-option">
 
 
 
@@ -358,7 +354,7 @@
 
 
 
-            <section class="sect-entertainment-list">
+            <section class="sect-game-list jq-sect-game-list">
 
 
 
@@ -366,195 +362,11 @@
 
 
 
-                    <p class="title">AG旗舰好路推荐</p>
+                    <p class="title">热门游戏推荐</p>
 
 
 
-                    <div class="list-group clear">
-
-
-
-                        <div class="col-xs-7 jq-entertainment-list">
-
-
-
-
-
-
-
-                        </div>
-
-
-
-                        <div class="col-xs-5">
-
-
-
-                            <div class="row" style="background-image: url(img/live-bg2.png);">
-
-
-
-                                <div class="tag" style="background-image: url(img/live-tag1.png);">
-
-
-
-                                    <img src="img/live-tag2.png" alt="">
-
-
-
-                                    <p class="rank-num">1</p>
-
-
-
-                                </div>
-
-
-
-                                <p class="title">
-
-
-
-                                    <span>B01</span>
-
-
-
-                                    <span>24小时玩家盈利</span>
-
-
-
-                                </p>
-
-
-
-                                <p class="price-num">$ 2,514,508</p>
-
-
-
-                                <a class="btn btn-bg-orange" href="javascript:void(0)">
-
-
-
-                                    <span>跟注发财</span>
-
-
-
-                                </a>
-
-
-
-                            </div>
-
-
-
-                            <div class="row" style="background-image: url(img/live-bg3.jpg);">
-
-
-
-                                <div class="tag" style="background-image: url(img/live-tag3.png);">
-
-
-
-                                    <p class="rank-num">2</p>
-
-
-
-                                </div>
-
-
-
-                                <p class="title">
-
-
-
-                                    <span>B01</span>
-
-
-
-                                    <span>24小时玩家盈利</span>
-
-
-
-                                </p>
-
-
-
-                                <p class="price-num">$ 2,514,508</p>
-
-
-
-                                <a class="btn btn-bg-orange" href="javascript:void(0)">
-
-
-
-                                    <span>跟注发财</span>
-
-
-
-                                </a>
-
-
-
-                            </div>
-
-
-
-                            <div class="row" style="background-image: url(img/live-bg3.jpg);">
-
-
-
-                                <div class="tag" style="background-image: url(img/live-tag4.png);">
-
-
-
-                                    <p class="rank-num">3</p>
-
-
-
-                                </div>
-
-
-
-                                <p class="title">
-
-
-
-                                    <span>B01</span>
-
-
-
-                                    <span>24小时玩家盈利</span>
-
-
-
-                                </p>
-
-
-
-                                <p class="price-num">$ 2,514,508</p>
-
-
-
-                                <a class="btn btn-bg-orange" href="javascript:void(0)">
-
-
-
-                                    <span>跟注发财</span>
-
-
-
-                                </a>
-
-
-
-                            </div>
-
-
-
-                        </div>
-
-
-
-                    </div>
+                    <div class="list-group clear"></div>
 
 
 
@@ -822,7 +634,7 @@
 
 
 
-                        <input class="input" type="text" name="invitecode" placeholder="请输入注册码...">
+                        <input class="input" type="text" name="invitecode" placeholder="请输入邀请码...">
 
 
 
@@ -1278,7 +1090,7 @@
 
 
 
-        <script src="/js/main.js"></script>
+        <script src="js/main.js"></script>
 
 
 
@@ -1301,7 +1113,7 @@
 
 
 
-                    url: "/api/Api/getGameList?game_type=LIVE&p=1&limit=9999&platform=html5&client_type=web",
+                    url: "/api/Api/getGameList?game_type=RNG&p=1&limit=9999&platform=html5&client_type=web",
 
 
 
@@ -1313,7 +1125,7 @@
 
 
 
-                        var _each = $(".jq-entertainment-list");
+                        var _each = $(".jq-sect-game-list").find('.list-group');
 
 
 
@@ -1341,7 +1153,7 @@
 
 
 
-                                            '<div class="col-xs-4">' +
+                                            '<div class="col-xs-2">' +
 
 
 
