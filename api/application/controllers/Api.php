@@ -259,11 +259,11 @@ class Api extends CI_Controller {
 			}	
 			
 			if(
-				intval($this->request['amount']) <100 ||
+				intval($this->request['amount']) <10 ||
 				intval($this->request['amount']) >3000 
 			){
 				$array = array(
-					'message' 	=>'充值最小为100,最高为3000' ,
+					'message' 	=>'充值最小为10,最高为3000' ,
 					'type' 		=>'api' ,
 					'status'	=>'999'
 				);
@@ -357,11 +357,11 @@ class Api extends CI_Controller {
 			}	
 			
 			if(
-				intval($this->request['amount']) <100 ||
+				intval($this->request['amount']) <10 ||
 				intval($this->request['amount']) >5000 
 			){
 				$array = array(
-					'message' 	=>'充值最小为100,最高为5000' ,
+					'message' 	=>'充值最小为10,最高为5000' ,
 					'type' 		=>'api' ,
 					'status'	=>'999'
 				);

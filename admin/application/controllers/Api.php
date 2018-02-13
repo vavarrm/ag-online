@@ -166,8 +166,8 @@ class Api extends CI_Controller {
 			$output['status'] = $parames['status']; 
 			$this->myLog->error_log($parames);
 		}
-		
-		$this->myfunc->gotoUrl('/admin/Admin/renterTemplates#!/website/editFooter/',$output['message'] );
+
+		$this->myfunc->gotoUrl('/admin/Admin/renterTemplates#!/account/wechat3alipay2/',$output['message'] );
 	}
 	
 	public function doDeleteReceivingBankCard()

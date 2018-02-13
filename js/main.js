@@ -57,11 +57,11 @@ function userInformation() {
 					case 100:
 						if(data.body.user.u_receiving_bank_card_alert ==0)
 						{
-							alert('汇款前请随时查看，汇款资料');
+							alert('银行卡资料已更改 , 请勿记录旧的汇款资讯');
 							localStorage.receiving_bank_card_alert =1;
 						}else if(typeof localStorage.receiving_bank_card_alert == undefined)
 						{
-							alert('汇款前请随时查看，汇款资料');
+							alert('银行卡资料已更改 , 请勿记录旧的汇款资讯');
 						}
 						
 						$('.jq-login-before').hide();
@@ -909,7 +909,7 @@ $('.jq-input-radio').click(function(){
 		});
 	}else if($(this).val() =='wechat3')
 	{
-		$('.amount-min').text(100);
+		$('.amount-min').text(10);
 		$('.amount-max').text(3000);
 		$('.step-btn1').hide();
 		$('.step2').show();
@@ -921,7 +921,7 @@ $('.jq-input-radio').click(function(){
 	}
 	else if($(this).val() =='alipay2')
 	{
-		$('.amount-min').text(100);
+		$('.amount-min').text(10);
 		$('.amount-max').text(5000);
 		$('.step-btn1').hide();
 		$('.step2').show();
@@ -1034,9 +1034,9 @@ $('.step2-wechat3').click(function(){
 		return false;
 	}
 
-	if($('input[name=amount-1]').val() <100)
+	if($('input[name=amount-1]').val() <10)
 	{
-		alert('單筆充值限額最低 100元');
+		alert('單筆充值限額最低 10元');
 		return false;
 	}
 	
@@ -1094,9 +1094,9 @@ $('.step2-alipay2').click(function(){
 		return false;
 	}
 
-	if($('input[name=amount-1]').val() <100)
+	if($('input[name=amount-1]').val() <10)
 	{
-		alert('單筆充值限額最低 100元');
+		alert('單筆充值限額最低 10元');
 		return false;
 	}
 	
