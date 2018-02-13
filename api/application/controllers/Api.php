@@ -2088,6 +2088,16 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
+			foreach($result_ary['games'] AS $key=> $value)
+			{
+				if($value['tcgGameCode'] =="A00070")
+				{
+					$first = $value;
+					unset($result_ary['games'][$key]);
+					break;
+				}
+			}
+			array_unshift($result_ary['games'], $first);
 			$output['body']['list'] = $result_ary['games'];
 			$first=3200000+substr(time(),1,2);
 			$second=2800000+substr(time(),2,3);

@@ -79,7 +79,7 @@ $db['default'] = array(
 	'username' => $_SERVER['DB_USERNAME'],
 	'password' => $_SERVER['DB_PASSWORD'],
 	'database' => $_SERVER['DB_NAME'],
-	'dbdriver' => 'mysql',
+	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),
