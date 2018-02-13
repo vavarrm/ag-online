@@ -40,11 +40,12 @@
 		public function addReceivingBankCard($ary)
 		{
 			try {
-				$sql="INSERT INTO receiving_bank_card (rbc_bank_name, rbc_bank_account, 	rbc_bank_user_name,	rbc_add_datetime) VALUES(?,?,?,NOW())";
+				$sql="INSERT INTO receiving_bank_card (rbc_bank_name, rbc_bank_account, rbc_bank_user_name,	rbc_add_datetime, rbc_branch_name) VALUES(?,?,?,NOW(),?)";
 				$bind = array(
 					$ary['rbc_bank_name'],
 					$ary['rbc_bank_account'],
 					$ary['rbc_bank_user_name'],
+					$ary['rbc_branch_name'],
 				);
 				$query = $this->db->query($sql, $bind);
 				$error = $this->db->error();
@@ -75,12 +76,14 @@
 						SET 	
 							rbc_bank_name  = ?  ,
 							rbc_bank_account  = ?  ,
-							rbc_bank_user_name	  = ?  
+							rbc_bank_user_name	  = ? , 
+							rbc_branch_name	  = ?  
 						WHERE rbc_id =?";
 				$bind = array(
 					$ary['rbc_bank_name'],
 					$ary['rbc_bank_account'],
 					$ary['rbc_bank_user_name'],
+					$ary['rbc_branch_name'],
 					$ary['rbc_id'],
 				);
 				$query = $this->db->query($sql, $bind);

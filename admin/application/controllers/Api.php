@@ -103,9 +103,11 @@ class Api extends CI_Controller {
 		{
 			$rows  = $this->website->getListByGroup('pay_account');
 			$QR  = $this->website->getListByKey(array('wechat3_pay_QR'));
+			$alipay2_pay_QR  = $this->website->getListByKey(array('alipay2_pay_QR'));
 			
 			$output['body'] = $rows;
 			$output['body']['QR_images'] = $QR['list'][0]['wc_value'];
+			$output['body']['alipay2_pay_QR'] = $alipay2_pay_QR['list'][0]['wc_value'];
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();
@@ -216,7 +218,8 @@ class Api extends CI_Controller {
 			if(
 				$this->request['rbc_bank_name'] =="" ||
 				$this->request['rbc_bank_account'] =="" ||
-				$this->request['rbc_bank_user_name'] =="" 
+				$this->request['rbc_bank_user_name'] =="" ||
+				$this->request['rbc_branch_name'] =="" 
 			){
 				$array = array(
 					'message' 	=>'必传参数为空' ,
@@ -254,7 +257,8 @@ class Api extends CI_Controller {
 				$this->request['rbc_id'] =="" ||
 				$this->request['rbc_bank_name'] =="" ||
 				$this->request['rbc_bank_account'] =="" ||
-				$this->request['rbc_bank_user_name'] =="" 
+				$this->request['rbc_bank_user_name'] =="" ||
+				$this->request['rbc_branch_name'] =="" 
 			){
 				$array = array(
 					'message' 	=>'必传参数为空' ,

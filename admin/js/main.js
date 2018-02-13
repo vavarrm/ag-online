@@ -2613,6 +2613,7 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 				{
 					$scope.data.from_list = r.data.body.list;
 					$scope.data.QR_images = r.data.body.QR_images;
+					$scope.data.alipay2_pay_QR = r.data.body.alipay2_pay_QR;
 					$scope.data.posturl ='/admin/Api/wechat3Alipay2Set?sess='+$cookies.get('sess');;
 				}else
 				{

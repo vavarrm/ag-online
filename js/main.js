@@ -858,6 +858,7 @@ $('select[name=rbc_id]').bind('change' ,function(){
 	var index =$('select[name=rbc_id] option:selected').index();
 	$('.rbc_bank_account').text(bank_transfer_data[index].rbc_bank_account);
 	$('.rbc_bank_user_name').text(bank_transfer_data[index].rbc_bank_user_name);
+	$('.rbc_branch_name').text(bank_transfer_data[index].rbc_branch_name);
 })
 
 $('.jq-input-radio').click(function(){
@@ -892,12 +893,13 @@ $('.jq-input-radio').click(function(){
 					$('select[name=rbc_id] option').remove();
 					$.each(data.body.list,function(i,e){
 						$('select[name=rbc_id]')
-						.append($("<option></option>")
+						.append($("<option data-rbc_branch_name='"+e.rbc_branch_name+"'></option>")
 						.attr("value",e.rbc_id)
 						.text(e.rbc_bank_name)); 
 					});
 					$('.rbc_bank_account').text(bank_transfer_data[0].rbc_bank_account);
 					$('.rbc_bank_user_name').text(bank_transfer_data[0].rbc_bank_user_name);
+					$('.rbc_branch_name').text(bank_transfer_data[0].rbc_branch_name);
 				}else{
 					alert(data.message);
 				}
@@ -1123,6 +1125,7 @@ $('.step2-alipay2').click(function(){
 				$('.alipay2-orderid').text(data.body.orderid);
 				$('.alipay2-amount').text($('input[name=amount-1]').val());
 				$('.alipay2-account').text(data.body.alipay2_account);
+				$('.wechat3-wechat-QR').attr('src','/images/alipay2payQR/'+data.body.alipay2_pay_QR);
 				ajax_load = false;
 			}else{
 				alert(data.message);
@@ -1186,6 +1189,7 @@ $('.step2-bank-transfer').click(function(){
 				var index = $('select[name=rbc_id] option:selected').index();
 				$('.bank-transfe-bank_account').text(bank_transfer_data[index].rbc_bank_account);
 				$('.bank-transfe-bank_user_name').text(bank_transfer_data[index].rbc_bank_user_name);
+				$('.bank-transfe-branch_name').text(bank_transfer_data[index].rbc_branch_name);
 				ajax_load = false;
 			}else{
 				alert(data.message);

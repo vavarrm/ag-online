@@ -14,6 +14,7 @@
 						<tr>
 							<th width="15%" style="text-align:center" >银行卡号</th>
 							<th width="15%" style="text-align:center" >银行名称</th>
+							<th width="15%" style="text-align:center" >分行名称</th>
 							<th width="15%"  style="text-align:center">收款人</th>
 							<th width="" style="text-align:center">功能</th>
 						</tr>
@@ -22,6 +23,7 @@
 						<tr ng-repeat="row in data.list">
 							<td valign="middle" ng-bind="row.rbc_bank_account"></td>
 							<td valign="middle" ng-bind="row.rbc_bank_name"></td>
+							<td valign="middle" ng-bind="row.rbc_branch_name"></td>
 							<td valign="middle" ng-bind="row.rbc_bank_user_name"></td>
 							<td valign="middle">
 								<a href="/admin/index.php?/Admin/renterTemplates#!/bank{{action.router}}/{{row.rbc_id}}"  ng-click="actionClick($event, action, row);" ng-repeat-start="action in data.init.actions" ng-show="action.type=='button' " type="button" class="btn btn-xs btn-default" ng-bind="action.title"></a>

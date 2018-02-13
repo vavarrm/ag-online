@@ -406,8 +406,16 @@ class Api extends CI_Controller {
 			$orderid="alipay2".date('Ymd').substr(time(),-5).sprintf('%02d',rand(1,99));
 			$output['body']['orderid']=$orderid ;
 			$output['body']['u_account']=$this->_user['u_account'] ;
-			$rows = $this->webConfig->getList(array('10'));
-			$output['body']['alipay2_account']=$rows[0]['wc_value'] ;
+			$rows = $this->webConfig->getList(array('10','12'));
+			if(!empty($rows))
+			{
+				foreach($rows as $value)
+				{
+					$temp[$value['wc_key']] = $value['wc_value'];
+				}
+			}
+			$output['body']['alipay2_account']=$temp['alipay2_pay_account'] ;
+			$output['body']['alipay2_pay_QR']=$temp['alipay2_pay_QR']  ;
 			
 		}catch(MyException $e)
 		{
