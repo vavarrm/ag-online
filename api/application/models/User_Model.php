@@ -1078,8 +1078,8 @@
 			{
 				$sql="UPDATE user SET u_ag_is_reg =? WHERE u_id =?";
 				$bind = array(
-					$ary['u_id'],
-					!$ary['u_ag_is_reg']
+					'1',
+					$ary['u_id']
 				);
 				$query = $this->db->query($sql, $bind);
 				$error = $this->db->error();

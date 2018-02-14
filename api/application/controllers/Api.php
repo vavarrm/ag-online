@@ -1712,7 +1712,7 @@ class Api extends CI_Controller {
 			  // $randomWord .= chr( rand( 97, 122 ) );
 			// }
 			$randomWord  =sprintf('%06d',rand(1,999999));
-			setcookie("captcha", $randomWord, time()+3600, "/");
+			setcookie("captcha", $randomWord, time()+60);
 
 			$vals = array(
 					'word'          => $randomWord,
@@ -1912,7 +1912,7 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			if($row['u_ag_is_reg'] ==0 && $row['u_ag_game_model'] !='0')
+			if($row['u_ag_is_reg'] ==0)
 			{
 				$result_json = $this->tcgcommon->create_user($row['ag_u_account'],$row['u_ag_passwd']);
 				$json = json_decode($result_json, true);
@@ -2666,7 +2666,7 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}
-			
+			// var_dump($_COOKIE['captcha'] );
 			if($_COOKIE['captcha'] != $this->request['captcha'])
 			{
 				$array = array(
