@@ -1712,7 +1712,7 @@ class Api extends CI_Controller {
 			  // $randomWord .= chr( rand( 97, 122 ) );
 			// }
 			$randomWord  =sprintf('%06d',rand(1,999999));
-			setcookie("captcha", $randomWord, time()+60);
+			setcookie("captcha", $randomWord, time()+60, '/');
 
 			$vals = array(
 					'word'          => $randomWord,
