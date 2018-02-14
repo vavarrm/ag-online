@@ -116,8 +116,7 @@ $('.ajax-btn-login').click(function () {
 	var _account = $('.jq-pop-login').find('[name=account]').val();
 
 	var _passwd = $('.jq-pop-login').find('[name=passwd]').val();
-
-	console.log(_account, _passwd);
+
 
 	$.ajax({
 
@@ -142,8 +141,7 @@ $('.ajax-btn-login').click(function () {
 					case 100:
 
 						setCookie(data.body.sess);
-
-						console.log(data.body.sess);
+
 
 						alert('登入成功');
 
@@ -304,11 +302,10 @@ $('.ajax-btn-register').click(function () {
 
 					case 100:
 
-						alert('註冊成功');
+						alert('註冊成功');						$.ajax({							url: "/api/Api/login",							type: "POST",							data: JSON.stringify({								account: _account,								passwd: _passwd							}),							success: function (data) {								if (data.status) {									switch (data.status) {										case 100:											setCookie(data.body.sess);											$('.jq-pop-window').removeClass('active');											$('.jq-pop-window').find('.jq-pop-login').removeClass('active');											userInformation()											break;										case '999':											alert('帐号或密码错误');									}								}							}						});
+						
 
-						window.location.reload();
-
-						break;
+					break;
 
 					case '999':
 

@@ -1707,11 +1707,13 @@ class Api extends CI_Controller {
 		
 		try 
 		{
-			for($i = 0 ; $i < 6 ; $i++)
-			{
-			  $randomWord .= chr( rand( 97, 122 ) );
-			}
-			setcookie("captcha",$randomWord);
+			// for($i = 0 ; $i < 6 ; $i++)
+			// {
+			  // $randomWord .= chr( rand( 97, 122 ) );
+			// }
+			$randomWord  =sprintf('%06d',rand(1,999999));
+			setcookie("captcha", $randomWord, time()+3600, "/");
+
 			$vals = array(
 					'word'          => $randomWord,
 					'img_path'      => './captcha/',
@@ -2105,7 +2107,10 @@ class Api extends CI_Controller {
 					break;
 				}
 			}
-			array_unshift($result_ary['games'], $first);
+			if(!empty($first))
+			{
+				array_unshift($result_ary['games'], $first);
+			}
 			$output['body']['list'] = $result_ary['games'];
 			$first=3200000+substr(time(),1,2);
 			$second=2800000+substr(time(),2,3);
@@ -2638,7 +2643,7 @@ class Api extends CI_Controller {
 	
 	public function registered($rl_id='')
 	{
-		$output['status'] = '100';
+		$output['status'] = 100;
 		$output['message'] = '註冊成功'; 
 		$output['body'] =array();
 		$output['title'] ='註冊下級用戶';
@@ -2661,8 +2666,6 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}
-			
-			// var_dump($_COOKIE);
 			
 			if($_COOKIE['captcha'] != $this->request['captcha'])
 			{

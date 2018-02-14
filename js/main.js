@@ -565,107 +565,49 @@ $('.ajax-btn-register').click(function () {
 
 
 	$.ajax({
-
-
-
 		url: "/api/Api/registered/" + _invitecode,
-
-
-
 		type: "POST",
-
-
-
 		data: JSON.stringify({
-
-
-
 			name: _username,
-
-
-
 			account: _account,
-
-
-
 			passwd: _password,
-
-
-
 			captcha: _captcha
-
-
-
 		}),
-
-
-
 		success: function (data) {
+			if (data.status == 100) 
+			{
+				alert('註冊成功');
+				$.ajax({
+					url: "/api/Api/login",
+					type: "POST",
+					data: JSON.stringify({
+						account: _account,
+						passwd: _password
+					}),
+					success: function (data) {
+						if (data.status ==100) {
+								setCookie(data.body.sess);
+								$('.jq-pop-window').removeClass('active');
 
-
-
-
-
-			if (data.status) {
-
-
-
-				switch (data.status) {
-
-
-
-					case 100:
-
-
-
-						alert('註冊成功');
-
-
-
-						window.location.reload();
-
-
-
-						break;
-
-
-
-					case '999':
-
-
-
-						alert(data.message);
-
-
-
-				}
-
-
-
+								$('.jq-pop-window').find('.jq-pop-login').removeClass('active');
+								userInformation();
+								window.location.reload();
+						}
+						else
+						{
+							alert('帐号或密码错误');
+						}
+					}
+				})
 			}
-
-
-
+			else
+			{
+				alert(data.message)
+			}
 		},
-
-
-
 		error: function (data) {
-
-
-
-			console.log(data)
-
-
-
 		}
-
-
-
 	});
-
-
-
 });
 
 
