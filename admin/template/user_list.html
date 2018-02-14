@@ -28,6 +28,7 @@
 						<tr>
 							<th width="5%" style="text-align:center" >用戶帐号</th>
 							<th width="8%" style="text-align:center" >用戶状态</th>
+							<th width="8%" style="text-align:center" >AG帐号类型</th>
 							<th width="10%" style="text-align:center" >锁定绑定银行卡</th>
 							<th width="10%" style="text-align:center" >用戶餘額</th>
 							<th width="10%" style="text-align:center">上級</th>
@@ -37,9 +38,10 @@
 					<tbody>
 						<tr ng-repeat="row in data.list">
 							<td valign="middle">
-								{{row.u_account}}
+								{{row.u_account}} 
 							</td>
 							<td valign="middle" ng-bind="row.u_is_lock_str"></td>
+							<td valign="middle" ng-bind="row.u_ag_game_model_str"></td>
 							<td valign="middle" ng-bind="row.u_bank_card_lock_str"></td>
 							<td valign="middle" ng-if="row.u_balance" ng-bind="row.u_balance"></td>
 							<td valign="middle" ng-if="!row.u_balance" >0</td>

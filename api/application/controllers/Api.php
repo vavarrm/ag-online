@@ -2749,11 +2749,14 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
+			$superiorUser = $this->user->getSuperiorUser($registeredLink['u_id']);
+			
 			$ary =array(
-				'superior_id'	=>$registeredLink['u_id'],
-				'u_name'		=>$this->request['name'],
-				'u_account'		=>$this->request['account'],
-				'u_passwd'		=>md5($this->request['passwd']),
+				'superior_id'		=>$registeredLink['u_id'],
+				'u_name'			=>$this->request['name'],
+				'u_account'			=>$this->request['account'],
+				'u_passwd'			=>md5($this->request['passwd']),
+				'u_ag_game_model'	=>$superiorUser['u_ag_game_model']
 			);
 			
 			$this->user->insert($ary);

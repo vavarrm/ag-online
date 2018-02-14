@@ -292,6 +292,32 @@
 			return 	$output  ;
 		}
 		
+		public function getSuperiorUser($u_superior_id)
+		{
+			$sql = "SELECT * , 'false' AS `show` FROM user WHERE u_id = ?";
+			$bind = array(
+				$u_superior_id
+			);
+			$query = $this->db->query($sql, $bind);
+			$row = $query->row_array();
+			$query->free_result();
+			
+			$error = $this->db->error();
+			if($error['message'] !="")
+			{
+				$MyException = new MyException();
+				$array = array(
+					'message' 	=>$error['message'] ,
+					'type' 		=>'db' ,
+					'status'	=>'001'
+				);
+				
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			return $row    ;
+		}
+		
 		public function getRegisteredLinkByID($rl_id)
 		{
 			$sql="SELECT * FROM registered_link WHERE rl_id = ?";
@@ -1130,13 +1156,14 @@
 		
 		public function insert($ary)
 		{
-			$sql="	INSERT INTO user(u_superior_id	,u_name,u_account,u_passwd,u_add_datetime)
+			$sql="	INSERT INTO user(u_superior_id	,u_name,u_account,u_passwd,u_add_datetime,u_ag_game_model)
 					VALUES(?,?,?,?,NOW())";
 			$bind = array(
 				$ary['superior_id'],
 				$ary['u_name'],
 				$ary['u_account'],
-				$ary['u_passwd']
+				$ary['u_passwd'],
+				$ary['u_ag_game_model'],
 			);
 			$query = $this->db->query($sql, $bind);
 			$error = $this->db->error();

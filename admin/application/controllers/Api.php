@@ -2118,7 +2118,7 @@ class Api extends CI_Controller {
 		$output['status'] = '100';
 		$output['message'] = '註冊成功'; 
 		$output['body'] =array();
-		$output['title'] ='註冊總代用戶';	
+		$output['title'] ='註冊下级用戶';	
 		try 
 		{
 			if(
@@ -2186,7 +2186,21 @@ class Api extends CI_Controller {
 			if($accountIsExist ==1)
 			{
 				$array = array(
-					'message' 	=>'使用者帳號已存在' ,
+					'message' 	=>'使用者帐号已存在' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$superior = $this->user->getSuperiorUser($this->request['superior']);
+
+			if(empty($superior))
+			{
+				$array = array(
+					'message' 	=>'上级用户不存在' ,
 					'type' 		=>'api' ,
 					'status'	=>'999'
 				);
@@ -2196,10 +2210,11 @@ class Api extends CI_Controller {
 			}
 			
 			$ary =array(
-				'superior_id'	=>$this->request['superior'],
-				'u_name'		=>$this->request['name'],
-				'u_account'		=>$this->request['account'],
-				'u_passwd'		=>md5($this->request['passwd']),
+				'superior_id'		=>$this->request['superior'],
+				'u_name'			=>$this->request['name'],
+				'u_account'			=>$this->request['account'],
+				'u_passwd'			=>md5($this->request['passwd']),
+				'ag_game_model'		=>$superior['u_ag_game_model']
 			);
 			
 			$this->user->insert($ary);
@@ -2289,7 +2304,7 @@ class Api extends CI_Controller {
 			if($accountIsExist ==1)
 			{
 				$array = array(
-					'message' 	=>'使用者帳號已存在' ,
+					'message' 	=>'使用者帐号已存在' ,
 					'type' 		=>'api' ,
 					'status'	=>'999'
 				);
@@ -2303,6 +2318,7 @@ class Api extends CI_Controller {
 				'u_name'		=>$this->request['name'],
 				'u_account'		=>$this->request['account'],
 				'u_passwd'		=>md5($this->request['passwd']),
+				'ag_game_model'	=>$this->request['ag_game_model']
 			);
 			
 			$this->user->insert($ary);

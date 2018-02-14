@@ -341,6 +341,32 @@
 			return 	true   ;
 		}
 		
+		public function getSuperiorUser($u_superior_id)
+		{
+			$sql = "SELECT * , 'false' AS `show` FROM user WHERE u_id = ?";
+			$bind = array(
+				$u_superior_id
+			);
+			$query = $this->db->query($sql, $bind);
+			$row = $query->row_array();
+			$query->free_result();
+			
+			$error = $this->db->error();
+			if($error['message'] !="")
+			{
+				$MyException = new MyException();
+				$array = array(
+					'message' 	=>$error['message'] ,
+					'type' 		=>'db' ,
+					'status'	=>'001'
+				);
+				
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			return $row    ;
+		}
+		
 		public function getUserListBySuperiorId($u_superior_id)
 		{
 			$sql = "SELECT * , 'false' AS `show` FROM user WHERE u_superior_id = ?";
@@ -497,7 +523,11 @@
 							(
 								SELECT SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id =  u.u_id AND ua_status = 'audit' AND ua_type = 3
 							)
-						) AS u_balance
+						) AS u_balance,
+						CASE u.u_ag_game_model
+							WHEN '1' THEN '正式号'
+							WHEN '0' THEN '测试号' 
+						END AS u_ag_game_model_str
 					FROM 
 						user AS u LEFT JOIN  user u2 ON u.u_superior_id =  u2.u_id";
 			$search_sql = $sql.$where.$limit ;
@@ -560,13 +590,14 @@
 		
 		public function insert($ary)
 		{
-			$sql="	INSERT INTO user(u_superior_id,u_name,u_account,u_passwd,u_add_datetime)
-					VALUES(?,?,?,?,NOW())";
+			$sql="	INSERT INTO user(u_superior_id,u_name,u_account,u_passwd,u_add_datetime,u_ag_game_model)
+					VALUES(?,?,?,?,NOW(),?)";
 			$bind = array(
 				$ary['superior_id'],
 				$ary['u_name'],
 				$ary['u_account'],
-				$ary['u_passwd']
+				$ary['u_passwd'],
+				$ary['ag_game_model']
 			);
 			$query = $this->db->query($sql, $bind);
 			$error = $this->db->error();

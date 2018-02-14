@@ -2343,6 +2343,9 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 			}
 		});
 		
+		
+		
+		
 		if(!error)
 		{
 			
@@ -2352,7 +2355,7 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 					postdata[$(e).attr('name')] = $(e).val();
 				}
 			})
-			
+			postdata.ag_game_model = $('input[name=ag_game_model]').val();
 			var promise = apiService.adminApi(router, postdata);
 			promise.then
 			(
