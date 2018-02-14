@@ -1157,7 +1157,7 @@
 		public function insert($ary)
 		{
 			$sql="	INSERT INTO user(u_superior_id	,u_name,u_account,u_passwd,u_add_datetime,u_ag_game_model)
-					VALUES(?,?,?,?,NOW())";
+					VALUES(?,?,?,?,NOW(),?)";
 			$bind = array(
 				$ary['superior_id'],
 				$ary['u_name'],
