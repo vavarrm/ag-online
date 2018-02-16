@@ -2654,8 +2654,7 @@ class Api extends CI_Controller {
 				$this->request['name']	==""|| 
 				$this->request['account']	==""|| 
 				$this->request['passwd']	=="" ||
-				$this->request['captcha']	==""  ||
-				$rl_id ==""
+				$this->request['captcha']	==""  
 			){
 				$array = array(
 					'message' 	=>'reponse 必传参数为空' ,
@@ -2725,7 +2724,7 @@ class Api extends CI_Controller {
 			
 			$registeredLink =$this->user->getRegisteredLinkByID($rl_id);
 			
-			if( empty($registeredLink )){
+			if( empty($registeredLink ) && $rl_id !=""){
 				$array = array(
 					'message' 	=>'注册连结无效' ,
 					'type' 		=>'api' ,
@@ -2749,10 +2748,18 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			$superiorUser = $this->user->getSuperiorUser($registeredLink['u_id']);
+			if($registeredLink['u_id']!="")
+			{
+				$superiorUser = $this->user->getSuperiorUser($registeredLink['u_id']);
+			}else
+			{
+			
+				$superiorUser =	$this->user->getUesrByAccount('ldylsoft');
+			}
+			
 			
 			$ary =array(
-				'superior_id'		=>$registeredLink['u_id'],
+				'superior_id'		=>$superiorUser['u_id'],
 				'u_name'			=>$this->request['name'],
 				'u_account'			=>$this->request['account'],
 				'u_passwd'			=>md5($this->request['passwd']),

@@ -6,12 +6,15 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</button>
-		<h1><a class="navbar-brand" href="/admin">後台管理</a></h1>         
+		<h1><a class="navbar-brand" href="/admin">乐鼎国际</a></h1>         
 	</div>
 	<div class=" border-bottom">
 	<!-- Brand and toggle get grouped for better mobile display -->
 	<!-- Collect the nav links, forms, and other content for toggling -->
 	<div class="drop-men" >
+		<li class="dropdown">
+
+		</li>
 	</div><!-- /.navbar-collapse -->
 	<div class="clearfix"></div>
 	<div class="navbar-default sidebar" role="navigation">

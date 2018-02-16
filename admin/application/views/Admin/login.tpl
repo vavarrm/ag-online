@@ -28,12 +28,12 @@
 	</script>
 <body>
 	<div class="login">
-		<h1>後台管理中心</h1>
+		<h1>乐鼎国际后台管理中心</h1>
 		<div class="login-bottom">
 			<h2>登入</h2>
 			<div class="col-md-12">
 				<div class="login-mail">
-					<input type="text" name="account" placeholder="請輸入帳號" required="">
+					<input type="text" name="account" placeholder="请输入帐号" required="">
 					<i class="fa fa fa-user"></i>
 				</div>
 				<div class="login-mail">
@@ -73,7 +73,7 @@
 			if(account =="")
 			{
 				var obj = {
-					message:'請輸入帳號',
+					message:'请输入帐号',
 					buttons: [
 						{
 							text: "close",
