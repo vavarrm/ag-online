@@ -93,7 +93,7 @@ class Api extends CI_Controller {
 		}
     }
 	
-	public function wechat3Alipay2Init()
+	public function wechat3Init()
 	{
 		$output['status'] = 100;
 		$output['body'] =array();
@@ -101,13 +101,11 @@ class Api extends CI_Controller {
 		$output['message'] = '成功';
 		try 
 		{
-			$rows  = $this->website->getListByGroup('pay_account');
+			$row= $this->website->getListByKey(array('wechat3_pay_account'));
 			$QR  = $this->website->getListByKey(array('wechat3_pay_QR'));
-			$alipay2_pay_QR  = $this->website->getListByKey(array('alipay2_pay_QR'));
 			
-			$output['body'] = $rows;
+			$output['body'] = $row['list'][0];
 			$output['body']['QR_images'] = $QR['list'][0]['wc_value'];
-			$output['body']['alipay2_pay_QR'] = $alipay2_pay_QR['list'][0]['wc_value'];
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();
@@ -121,7 +119,33 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
-	public function wechat3Alipay2Set()
+	public function alipay2Init()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='微信支付宝设定页面';
+		$output['message'] = '成功';
+		try 
+		{
+			$row= $this->website->getListByKey(array('alipay2_pay_account'));
+			$QR  = $this->website->getListByKey(array('alipay2_pay_QR'));
+			
+			$output['body'] = $row['list'][0];
+			$output['body']['QR_images'] = $QR['list'][0]['wc_value'];
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function wechat3Set()
 	{
 		$output['status'] = 100;
 		$output['body'] =array();
@@ -131,8 +155,7 @@ class Api extends CI_Controller {
 		try 
 		{
 			if(
-				$post['wechat3_pay_account'] =="" ||
-				$post['alipay2_pay_account'] =="" 
+				$post['wechat3_pay_account'] =="" 
 			){
 				$array = array(
 					'message' 	=>'必传参数为空' ,
@@ -145,7 +168,7 @@ class Api extends CI_Controller {
 			}
 			
 			
-			$affected_rows = $this->website->wechat3Alipay2Set($post);
+			$affected_rows = $this->website->wechat3Set($post);
 			
 			if($affected_rows ==0)
 			{
@@ -169,7 +192,57 @@ class Api extends CI_Controller {
 			$this->myLog->error_log($parames);
 		}
 
-		$this->myfunc->gotoUrl('/admin/Admin/renterTemplates#!/account/wechat3alipay2/',$output['message'] );
+		$this->myfunc->gotoUrl('/admin/Admin/renterTemplates#!/bank/wechat3/',$output['message'] );
+	}
+	
+	public function alipay2Set()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='微信支付宝设定';
+		$output['message'] = '成功';
+		$post = $this->input->post();
+		try 
+		{
+			if(
+				$post['alipay2_pay_account'] =="" 
+			){
+				$array = array(
+					'message' 	=>'必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			
+			$affected_rows = $this->website->alipay2Set($post);
+			
+			if($affected_rows ==0)
+			{
+				$array = array(
+					'message' 	=>'無資料修改' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+
+		$this->myfunc->gotoUrl('/admin/Admin/renterTemplates#!/bank/alipay2/',$output['message'] );
 	}
 	
 	public function doDeleteReceivingBankCard()
@@ -359,7 +432,7 @@ class Api extends CI_Controller {
 	
 		try 
 		{
-			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
 			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
@@ -387,7 +460,7 @@ class Api extends CI_Controller {
 	
 		try 
 		{
-			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
 			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
@@ -563,7 +636,7 @@ class Api extends CI_Controller {
 	
 		try 
 		{
-			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
 			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
@@ -603,7 +676,7 @@ class Api extends CI_Controller {
 	
 		try 
 		{
-			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
 			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
@@ -644,7 +717,7 @@ class Api extends CI_Controller {
 	
 		try 
 		{
-			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 			$start_time = (isset($this->request['start_time']))?$this->request['start_time']." 00:00:00":date('Y-m-d 00:00:00');
 			$end_time = (isset($this->request['end_time']))?$this->request['end_time']." 23:59:59":date('Y-m-d 23:59:59');
@@ -745,7 +818,7 @@ class Api extends CI_Controller {
 	
 		try 
 		{
-			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
 			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
@@ -850,7 +923,7 @@ class Api extends CI_Controller {
 		$output['body'] =array();
 		$output['title'] ='第三方转帐列表';
 		$output['message'] = '成功';
-		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
 		$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
@@ -1135,7 +1208,7 @@ class Api extends CI_Controller {
 		$output['title'] ='電話回撥列表';
 		$output['message'] = '执行成功';
 		
-		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
 		$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
@@ -1483,7 +1556,7 @@ class Api extends CI_Controller {
 		$output['title'] ='大圖輪播列表';
 		$output['message'] = '执行成功';
 		
-		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
 		$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
@@ -1614,7 +1687,7 @@ class Api extends CI_Controller {
 		$output['body'] =array();
 		$output['title'] ='取得提款列表';
 		$output['message'] = '成功';
-		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
 		$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
@@ -1841,7 +1914,7 @@ class Api extends CI_Controller {
 		$output['body'] =array();
 		$output['title'] ='取得公告列表';
 		$output['message'] = '成功取得';
-		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 		$an_type = (isset($this->request['type']))?$this->request['type']:'';
 		$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';
@@ -1883,7 +1956,7 @@ class Api extends CI_Controller {
 		$output['body'] =array();
 		$output['title'] ='取得管理员列表';
 		$output['message'] = '成功取得';
-		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 		$ad_account = (isset($this->request['account']))?$this->request['account']:'';
 		try 
@@ -2714,7 +2787,7 @@ class Api extends CI_Controller {
 		$output['body'] =array();
 		$output['title'] ='使用者列表';
 		$output['message'] = '成功取得';
-		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+		$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 		$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 		$ary['u.u_superior_id'] = ($this->request['superior_id'] !="")?$this->request['superior_id']:0;
 		$ary['u.u_account'] = (isset($this->request['u_account']))?$this->request['u_account']:'';
@@ -2928,7 +3001,7 @@ class Api extends CI_Controller {
 	
 		try 
 		{
-			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:5;
+			$ary['limit'] = (isset($this->request['limit']))?$this->request['limit']:20;
 			$ary['p'] = (isset($this->request['p']))?$this->request['p']:1;
 			$end_time = (isset($this->request['end_time']))?$this->request['end_time']:'';
 			$start_time = (isset($this->request['start_time']))?$this->request['start_time']:'';

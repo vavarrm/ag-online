@@ -1213,5 +1213,3 @@ $('input[name=amount-1]').bind('keypress', function(e) {
 		return false;
     }
 });
-
-            

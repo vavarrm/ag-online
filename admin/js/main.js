@@ -55,8 +55,12 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"rechargeAuditList.html"+"?"+ Math.random(),
 		controller: "accountCtrl",
 		cache: false,
-	}).when("/account/wechat3alipay2/",{
-		templateUrl: templatePath+"/wechat3alipay2.html"+"?"+ Math.random(),
+	}).when("/bank/wechat3/",{
+		templateUrl: templatePath+"/wechat3.html"+"?"+ Math.random(),
+		controller: "accountCtrl",
+		cache: false,
+	}).when("/bank/alipay2",{
+		templateUrl: templatePath+"/alipay2.html"+"?"+ Math.random(),
 		controller: "accountCtrl",
 		cache: false,
 	}).when("/account/rechargeAuditList/",{
@@ -2605,19 +2609,58 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		)
 	}
 	
-	$scope.wechat3Alipay2Init = function()
+	$scope.wechat3Init = function()
 	{
-		var promise = apiService.adminApi('/wechat3Alipay2Init');
+		var promise = apiService.adminApi('/wechat3Init');
 		promise.then
 		(
 			function(r) 
 			{
 				if(r.data.status =="100")
 				{
-					$scope.data.from_list = r.data.body.list;
+					$scope.data.from_list = r.data.body;
 					$scope.data.QR_images = r.data.body.QR_images;
-					$scope.data.alipay2_pay_QR = r.data.body.alipay2_pay_QR;
-					$scope.data.posturl ='/admin/Api/wechat3Alipay2Set?sess='+$cookies.get('sess');;
+					$scope.data.posturl ='/admin/Api/wechat3Set?sess='+$cookies.get('sess');;
+				}else
+				{
+					var obj =
+					{
+						'message' :r.data.message,
+						buttons: 
+						[
+							{
+								text: "close",
+								click: function() 
+								{
+									$( this ).dialog( "close" );
+								}
+							}
+						]
+					};
+					dialog(obj);
+				}
+			},
+			function() {
+				var obj ={
+					'message' :'系统错误'
+				};
+				 dialog(obj);
+			}
+		)
+	}
+	
+	$scope.alipay2Init = function()
+	{
+		var promise = apiService.adminApi('/alipay2Init');
+		promise.then
+		(
+			function(r) 
+			{
+				if(r.data.status =="100")
+				{
+					$scope.data.from_list = r.data.body;
+					$scope.data.QR_images = r.data.body.QR_images;
+					$scope.data.posturl ='/admin/Api/alipay2Set?sess='+$cookies.get('sess');;
 				}else
 				{
 					var obj =

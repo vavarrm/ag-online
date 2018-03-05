@@ -506,23 +506,23 @@
 						,
 						(
 							(SELECT  SUM(IFNULL(ua_value,0)) AS Balance FROM user_account WHERE ua_u_id = u.u_id AND ua_status = 'received')+
-							(SELECT  SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id = u.u_id AND ua_status = 'payment')+
-							(SELECT  SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id = u.u_id AND ua_status = 'chargeback')+
-							(SELECT  SUM(IFNULL(ua.ua_value,0)*-1) AS Balance 
+							IFNULL((SELECT  SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id = u.u_id AND ua_status = 'payment'),0)+
+							IFNULL((SELECT  SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id = u.u_id AND ua_status = 'chargeback'),0)+
+							IFNULL((SELECT  SUM(IFNULL(ua.ua_value,0)*-1) AS Balance 
 								FROM user_account AS ua 
 								INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
 								WHERE 
 									ua_u_id = u.u_id AND ua_status = 'transfer_out' 
-							)+
-							(SELECT  SUM(IFNULL(ua.ua_value,0)) AS Balance 
+							),0)+
+							IFNULL((SELECT  SUM(IFNULL(ua.ua_value,0)) AS Balance 
 								FROM user_account AS ua 
 								INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
 								WHERE 
 									ua_u_id = u.u_id AND ua_status = 'transfer_in' 
-							)+
-							(
+							),0)+
+							IFNULL((
 								SELECT SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id =  u.u_id AND ua_status = 'audit' AND ua_type = 3
-							)
+							),0)
 						) AS u_balance,
 						CASE u.u_ag_game_model
 							WHEN '1' THEN '正式号'
@@ -532,6 +532,7 @@
 						user AS u LEFT JOIN  user u2 ON u.u_superior_id =  u2.u_id";
 			$search_sql = $sql.$where.$limit ;
 			$query = $this->db->query($search_sql, $bind);
+			// echo $this->db->last_query();
 			$rows = $query->result_array();
 			
 			$total_sql = sprintf("SELECT COUNT(*) AS total FROM(%s) AS t",$sql.$where) ;
