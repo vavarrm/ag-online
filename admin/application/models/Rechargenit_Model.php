@@ -1,12 +1,83 @@
 <?php
 	class Rechargenit_Model extends CI_Model 
 	{
+		public $CI ;
 		function __construct()
 		{
 			
 			parent::__construct();
+			$this->CI =&get_instance();
 			$this->load->database();
 			$this->db->query("SET time_zone='+8:00'");
+		}
+		
+		public function batchRecharge($ad_id)
+		{
+			if ($_FILES["batchCsv"]["error"] == 0)
+			{
+				
+				// $filename =md5(time().rand(1,999)) ;
+				// $config['file_name'] = md5($filename);
+				$config['upload_path'] = FCPATH.'../upload/batchRecharge/';
+				$config['allowed_types'] = 'csv';
+				$config['max_size']	= '2048';
+				$config['overwrite']  = true;
+				$config['encrypt_name']  = true;
+				$this->CI->load->library('upload',$config);
+				if(!$this->CI->upload->do_upload('batchCsv'))
+				{
+					echo "D";
+					$ary = $this->upload->display_errors();
+					var_dump($ary);
+					$array = array(
+						'message' 	=>'上传失败',
+						'type' 		=>'api' ,
+						'status'	=>'002'
+					);
+					$MyException = new MyException();
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				$upload= $this->CI->upload->data();
+				
+				$handle= fopen($upload['full_path'],"r");
+				$num = 0;
+				while (($data = fgetcsv($handle, 0, ",")) !== FALSE) 
+				{
+					if($num>0)
+					{
+						// echo 	intval($data[1]) ;
+						if(
+							intval($data[1]) <=0
+						)
+						{
+							continue;
+						}	
+						
+						$sql="SELECT u_id FROM user  WHERE  u_account =?";
+						$bind = array(
+							$data[0]
+						);
+						$query = $this->db->query($sql, $bind);
+						$row = $query->row_array();
+						if(!empty($row))
+						{
+
+							$ary = array(
+								'u_id' =>$row['u_id'],
+								'ua_type' =>'1',
+								'ua_from' =>$ad_id,
+								'ua_to' =>$row['u_id'],
+								'ua_balance' =>intval($data[1]),
+								'ua_remarks' =>'批量充值',
+								'ua_from_am_id' =>$ad_id
+							);
+							$affected_rows = $this->rechargenit->addBalance($ary);
+						}
+					}
+					$num+=1;
+				}
+			}
 		}
 		
 		public function getAccountLimit($ua_id)

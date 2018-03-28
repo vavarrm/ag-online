@@ -51,6 +51,10 @@ agApp.config(function($routeProvider){
 		templateUrl: templatePath+"loginList.html"+"?"+ Math.random(),
 		controller: "userCtrl",
 		cache: false,
+	}).when("/account/batchRecharge",{
+		templateUrl: templatePath+"batchRecharge.html"+"?"+ Math.random(),
+		controller: "accountCtrl",
+		cache: false,
 	}).when("/account/rechargeAuditList/",{
 		templateUrl: templatePath+"rechargeAuditList.html"+"?"+ Math.random(),
 		controller: "accountCtrl",
@@ -1176,8 +1180,6 @@ agApp.controller('indexCtrl',  ['$scope', '$http' ,'$rootScope', indexCtrl]);
 
 
 var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $rootScope){
-
-
 	$scope.data ={
 		root_id:$routeParams.root_id,
 		menulist: $cookies.getObject('menulist'),
@@ -1199,6 +1201,8 @@ var userCtrl = function($scope, $http, apiService, $cookies, $routeParams, $root
 		user_level_ary :[],
 		searchSubordinateAccount :""
 	};
+	
+
 	
 	$scope.unlockUserBankCard = function(row)
 	{
@@ -2570,6 +2574,12 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		isload :0,
 		from_list:{}
 	};
+	
+	$scope.batchRechargeInit = function()
+	{
+		$scope.data.am_id =$('input[name=am_id]', parent.document).val();
+		$scope.data.posturl="/admin/Api/batchRecharge?sess="+$cookies.get('sess');
+	}
 	
 	$scope.wechat3Alipay2Set = function()
 	{
