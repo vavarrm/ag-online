@@ -1888,7 +1888,7 @@ class Api extends CI_Controller {
 			$encrypt_user_data = $this->session->userdata('encrypt_user_data');
 			$urlRsaRandomKey = urlencode($rsaRandomKey) ;
 			$this->user->addLoginLog($row['u_id']);
-			if(!ereg('^[a-z0-9]{4,14}$', $row['ag_u_account']))
+			if(!preg_match('/'.'^[a-z0-9]{4,14}$'.'/', $row['ag_u_account']))
 			{
 				$array = array(
 					'message' 	=>'ag帐号长度为4~14位、由小写英文及数字组合' ,
@@ -1900,23 +1900,24 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			if(!ereg('^[a-z0-9A-Z]{6,12}$', $row['u_ag_passwd']))
-			{
-				$array = array(
-					'message' 	=>'ag密码长度为6~12位、由大小写英文及数字组合' ,
-					'type' 		=>'api' ,
-					'status'	=>'999'
-				);
-				$MyException = new MyException();
-				$MyException->setParams($array);
-				throw $MyException;
-			}
+			// if(!preg_match('/'.'^[a-z0-9A-Z]{6,12}$'.'/', $row['u_ag_passwd']))
+			// {
+				// $array = array(
+					// 'message' 	=>'ag密码长度为6~12位、由大小写英文及数字组合' ,
+					// 'type' 		=>'api' ,
+					// 'status'	=>'999'
+				// );
+				// $MyException = new MyException();
+				// $MyException->setParams($array);
+				// throw $MyException;
+			// }
 			
 			if($row['u_ag_is_reg'] ==0)
 			{
 				$result_json = $this->tcgcommon->create_user($row['ag_u_account'],$row['u_ag_passwd']);
 				$json = json_decode($result_json, true);
-				if($json['status'] !=0 || empty($json))
+				// var_dump($json);
+				if($json['status'] !=0 || empty($result_json))
 				{
 					$array = array(
 						'message' 	=> $json['error_desc'],
@@ -1930,7 +1931,6 @@ class Api extends CI_Controller {
 				$this->user->updAgIsLogin($row);
 			}
 			
-		
 			return $urlRsaRandomKey ;
 		}
 		catch(MyException $e)
@@ -1954,6 +1954,7 @@ class Api extends CI_Controller {
 		
 		try 
 		{
+			
 			if(
 				$this->request['account']	==""|| 
 				$this->request['passwd']	=="" 
@@ -1993,10 +1994,12 @@ class Api extends CI_Controller {
 			}
 			
 			$sess = $this->doLogin($row);
+			
 			$output['body'] = array(
 				'sess' =>$sess ,
 				'bank_card_alert' =>$row['u_receiving_bank_card_alert']
 			);
+			
 			
 		}catch(MyException $e)
 		{
@@ -2705,7 +2708,7 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			if(!ereg('^[a-z0-9]{4,10}$', $this->request['account'])){
+			if(!preg_match('/'.'^[a-z0-9]{4,10}$'.'/', $this->request['account'])){
 				$array = array(
 					'message' 	=>'帐号为4~10为小写英文与数字组合' ,
 					'type' 		=>'api' ,

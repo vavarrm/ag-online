@@ -33,7 +33,10 @@ class MyTcgCommon{
     public function create_user($username, $password ){
         $registerParams = array('username' => $username, 'currency' => $this->currency, 'method' => 'cm', 'password' => $password);
 		//print_r($getBalanceParams);
-        $result = $this->send_require($registerParams);
+        $result = $this->send_require($registerParams); 
+		$result = [
+			'status' =>0
+		];
         return $result;
     }
 	
