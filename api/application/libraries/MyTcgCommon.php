@@ -1,4 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+error_reporting(E_ERROR | E_PARSE);
 /**
  * <code>lt_common.php</code>
  * TC-Gaming Sample Code 天成游戏范例代码
@@ -239,8 +240,7 @@ class MyTcgCommon{
      * @return string
      */
     function encryptText($plainText, $key) {;
-        $padded = $this->pkcs5_pad($plainText,mcrypt_get_block_size("des", "ecb"));
-        $encText = mcrypt_encrypt("des",$key, $padded, "ecb");
+		$encText = openssl_encrypt($plainText,'des-ede3',$key,0);
         return base64_encode($encText);
     }
 

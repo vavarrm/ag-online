@@ -2086,6 +2086,22 @@ class Api extends CI_Controller {
 			
 			$result_json_str = $this->tcgcommon->getGameList($product_type, $platform, $client_type, $game_type, $page, $page_size);
 			$result_ary = json_decode($result_json_str , true);
+			
+			$result_ary['status'] =0;
+			$result_ary['games']= [
+				[
+					'tcgGameCode'=>'a',
+					'gameName'=>'真人百家樂',
+				],
+				[
+					'tcgGameCode'=>'a',
+					'gameName'=>'急速百家樂',
+				],
+				[
+					'tcgGameCode'=>'a',
+					'gameName'=>'龍虎',
+				],
+			];
 			if($result_ary['status'] !=0  ||  empty($result_ary['games']) )
 			{
 				$array = array(
