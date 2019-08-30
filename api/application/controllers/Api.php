@@ -6,10 +6,13 @@ class Api extends CI_Controller {
 	private $request = array();
 	private $_user = array();
 	private $product_type;
+	private $gpCommon;
 	
 	public function __construct() 
 	{
 		parent::__construct();	
+		// $this->gpCommon = $this->load->library('MyDgCommon');
+		// var_dump($this->gpCommon);
 		
 		$get = $this->input->get();
 		$this->product_type =4;
@@ -23,6 +26,9 @@ class Api extends CI_Controller {
 		$this->load->model('Discount_Model', 'discount');
 		$this->load->model('WebConfig_Model', 'webConfig');
 		$this->request = json_decode(trim(file_get_contents('php://input'), 'r'), true);
+        $this->load->library('MyDgCommon');
+        $gpcommonClass = strtolower('MyDgCommon');
+        $this->gpcommon = $this->$gpcommonClass;
 		
 		$output['status'] = 100;
 		$output['body'] =array();
@@ -2669,11 +2675,11 @@ class Api extends CI_Controller {
 		
 		try 
 		{
+            // var_dump($this->request);
 			if(
 				$this->request['name']	==""|| 
 				$this->request['account']	==""|| 
-				$this->request['passwd']	=="" ||
-				$this->request['captcha']	==""  
+				$this->request['passwd']	=="" 
 			){
 				$array = array(
 					'message' 	=>'reponse 必传参数为空' ,
@@ -2685,17 +2691,17 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			// var_dump($_COOKIE['captcha'] );
-			if($_COOKIE['captcha'] != $this->request['captcha'])
-			{
-				$array = array(
-					'message' 	=>'验证码错误' ,
-					'type' 		=>'api' ,
-					'status'	=>'999'
-				);
-				$MyException = new MyException();
-				$MyException->setParams($array);
-				throw $MyException;
-			}
+			// if($_COOKIE['captcha'] != $this->request['captcha'])
+			// {
+				// $array = array(
+					// 'message' 	=>'验证码错误' ,
+					// 'type' 		=>'api' ,
+					// 'status'	=>'999'
+				// );
+				// $MyException = new MyException();
+				// $MyException->setParams($array);
+				// throw $MyException;
+			// }
 			
 			if(strlen($this->request['name']) <4 || strlen($this->request['name'])>12){
 				$array = array(
@@ -2775,10 +2781,34 @@ class Api extends CI_Controller {
 			
 				$superiorUser =	$this->user->getUesrByAccount('ldylsoft');
 			}
+            
+            
+            if($superiorUser['u_ag_game_model'] ==null)
+            {
+                $superiorUser['u_ag_game_model'] = 1;
+            }
 			
-			
-			$ary =array(
-				'superior_id'		=>$superiorUser['u_id'],
+            $param = [
+                'username'=>$this->request['account'],
+                'winLimit'=>1000,
+            ];
+			$response = $this->gpcommon->createUser($param);
+            
+            if($response['code'] !=100)
+            {
+                $array = array(
+					'message' 	=>'註冊游戲方失敗' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+            }
+            
+           
+            $ary =array(
+				'superior_id'		=>intval($superiorUser['u_id']),
 				'u_name'			=>$this->request['name'],
 				'u_account'			=>$this->request['account'],
 				'u_passwd'			=>md5($this->request['passwd']),
@@ -2786,6 +2816,8 @@ class Api extends CI_Controller {
 			);
 			
 			$this->user->insert($ary);
+            
+            $output['body']=$response;
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();

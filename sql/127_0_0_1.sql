@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.7
+-- version 4.8.3
 -- https://www.phpmyadmin.net/
 --
--- 主機: 127.0.0.1
--- 產生時間： 2019-08-27 02:33:11
--- 伺服器版本: 5.7.14
--- PHP 版本： 5.6.25
+-- 主機: 127.0.0.1:3306
+-- 產生時間： 2019 年 08 月 28 日 06:55
+-- 伺服器版本: 5.7.23
+-- PHP 版本： 7.2.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -30,13 +30,16 @@ USE `ag`;
 -- 資料表結構 `admin`
 --
 
-CREATE TABLE `admin` (
-  `ad_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `admin`;
+CREATE TABLE IF NOT EXISTS `admin` (
+  `ad_id` int(11) NOT NULL AUTO_INCREMENT,
   `ad_account` varchar(12) NOT NULL,
   `ad_passwd` varchar(32) NOT NULL,
   `ad_role` int(11) NOT NULL,
-  `ad_add_datetime` datetime NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `ad_add_datetime` datetime NOT NULL,
+  PRIMARY KEY (`ad_id`),
+  UNIQUE KEY `ad_account` (`ad_account`)
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `admin`
@@ -60,51 +63,54 @@ INSERT INTO `admin` (`ad_id`, `ad_account`, `ad_passwd`, `ad_role`, `ad_add_date
 -- 資料表結構 `admin_menu`
 --
 
-CREATE TABLE `admin_menu` (
-  `am_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `admin_menu`;
+CREATE TABLE IF NOT EXISTS `admin_menu` (
+  `am_id` int(11) NOT NULL AUTO_INCREMENT,
   `am_title` varchar(12) NOT NULL,
   `am_router` varchar(30) NOT NULL,
   `am_parent_id` int(11) NOT NULL,
   `am_add_datetime` datetime NOT NULL,
   `am_type` enum('button','menu','head_button','action') NOT NULL DEFAULT 'menu',
-  `am_func` varchar(50) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `am_func` varchar(50) DEFAULT NULL,
+  `am_show` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`am_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `admin_menu`
 --
 
-INSERT INTO `admin_menu` (`am_id`, `am_title`, `am_router`, `am_parent_id`, `am_add_datetime`, `am_type`, `am_func`) VALUES
-(1, '使用者管理', '/user', 0, '2017-12-18 00:00:00', 'menu', NULL),
-(2, '列表', '/list', 1, '2017-12-24 00:00:00', 'menu', NULL),
-(3, '系統設定', '/system', 0, '2017-12-24 00:00:00', 'menu', NULL),
-(4, '權限管理', '/permissions', 3, '2017-12-24 00:00:00', 'menu', NULL),
-(5, '項目管裡', '/menu', 3, '2017-12-24 06:00:00', 'menu', NULL),
-(6, '修改使用者密碼', '/doSetUserPasswd', 2, '2017-12-24 00:00:00', 'action', NULL),
-(7, '修改資金密碼', '/setMoneyPasswd', 2, '2017-12-24 00:00:00', 'button', NULL),
-(8, '新增總代號', '/addParentUser', 2, '2017-12-24 00:00:00', 'head_button', NULL),
-(9, '新增下級帳號', '/addChildUser', 2, '2017-12-24 00:00:00', 'button', NULL),
-(14, '充值', '/rechargeForm', 2, '2018-01-31 00:00:00', 'button', NULL),
-(11, '充提管理', '/account', 0, '2017-12-24 00:00:00', 'menu', NULL),
-(12, '報表查詢', '/report', 0, '2017-12-24 00:00:00', 'button', NULL),
-(31, '论播banner', '/bigBannerList', 30, '2018-01-18 00:00:00', 'menu', NULL),
-(32, '新增', '/addBigBanner', 31, '2018-01-29 00:00:00', 'head_button', NULL),
-(17, '提款審核', '/withdrawalAuditList', 11, '2018-01-17 00:00:00', 'menu', NULL),
-(18, '使用者充值', '', 2, '2018-01-31 00:00:32', 'action', NULL),
-(19, '充值审核', '/rechargeAuditList', 11, '2018-01-07 00:00:53', 'menu', NULL),
-(20, '送出', '/doRechargeAudit', 19, '2018-01-08 00:00:00', 'action', NULL),
-(21, '新增后台帐号', '/addAdmin', 22, '2018-01-09 00:00:00', 'head_button', NULL),
-(22, '管理者列表', '/adminList', 3, '2018-01-30 00:00:00', 'menu', NULL),
-(23, '公告管理', '/announcemetList', 1, '2018-01-23 00:00:00', 'menu', NULL),
-(24, '新增', '/add', 23, '2018-01-13 00:00:37', 'head_button', NULL),
-(25, '修改', '/edit', 23, '2018-01-13 00:00:37', 'button', NULL),
-(26, '删除', '/del', 23, '2018-01-13 00:00:00', 'head_button', 'deleteAnnouncemet'),
-(27, '送出', '/doWithdrawalAudit', 17, '2018-01-09 00:00:00', 'action', NULL),
-(28, '修改使用者密碼', '/setUserPasswd', 2, '2018-01-01 00:00:00', 'button', NULL),
-(30, '网站管理', '/website', 0, '2018-01-01 00:00:00', 'menu', NULL),
-(33, '删除', '/delBigBanner', 31, '2018-01-31 13:00:00', 'head_button', 'deleteBanner'),
-(34, '修改', '/editBigBanner', 31, '2018-01-21 05:00:20', 'button', NULL),
-(35, '连结设定', '/editFooter', 30, '2018-01-17 00:00:00', 'menu', NULL);
+INSERT INTO `admin_menu` (`am_id`, `am_title`, `am_router`, `am_parent_id`, `am_add_datetime`, `am_type`, `am_func`, `am_show`) VALUES
+(1, '使用者管理', '/user', 0, '2017-12-18 00:00:00', 'menu', NULL, 1),
+(2, '列表', '/list', 1, '2017-12-24 00:00:00', 'menu', NULL, 1),
+(3, '系統設定', '/system', 0, '2017-12-24 00:00:00', 'menu', NULL, 1),
+(4, '權限管理', '/permissions', 3, '2017-12-24 00:00:00', 'menu', NULL, 1),
+(5, '項目管裡', '/menu', 3, '2017-12-24 06:00:00', 'menu', NULL, 1),
+(6, '修改使用者密碼', '/doSetUserPasswd', 2, '2017-12-24 00:00:00', 'action', NULL, 1),
+(7, '修改資金密碼', '/setMoneyPasswd', 2, '2017-12-24 00:00:00', 'button', NULL, 1),
+(8, '新增總代號', '/addParentUser', 2, '2017-12-24 00:00:00', 'head_button', NULL, 1),
+(9, '新增下級帳號', '/addChildUser', 2, '2017-12-24 00:00:00', 'button', NULL, 1),
+(14, '充值', '/rechargeForm', 2, '2018-01-31 00:00:00', 'button', NULL, 1),
+(11, '充提管理', '/account', 0, '2017-12-24 00:00:00', 'menu', NULL, 1),
+(12, '報表查詢', '/report', 0, '2017-12-24 00:00:00', 'button', NULL, 1),
+(31, '论播banner', '/bigBannerList', 30, '2018-01-18 00:00:00', 'menu', NULL, 1),
+(32, '新增', '/addBigBanner', 31, '2018-01-29 00:00:00', 'head_button', NULL, 1),
+(17, '提款審核', '/withdrawalAuditList', 11, '2018-01-17 00:00:00', 'menu', NULL, 1),
+(18, '使用者充值', '', 2, '2018-01-31 00:00:32', 'action', NULL, 1),
+(19, '充值审核', '/rechargeAuditList', 11, '2018-01-07 00:00:53', 'menu', NULL, 1),
+(20, '送出', '/doRechargeAudit', 19, '2018-01-08 00:00:00', 'action', NULL, 1),
+(21, '新增后台帐号', '/addAdmin', 22, '2018-01-09 00:00:00', 'head_button', NULL, 1),
+(22, '管理者列表', '/adminList', 3, '2018-01-30 00:00:00', 'menu', NULL, 1),
+(23, '公告管理', '/announcemetList', 1, '2018-01-23 00:00:00', 'menu', NULL, 1),
+(24, '新增', '/add', 23, '2018-01-13 00:00:37', 'head_button', NULL, 1),
+(25, '修改', '/edit', 23, '2018-01-13 00:00:37', 'button', NULL, 1),
+(26, '删除', '/del', 23, '2018-01-13 00:00:00', 'head_button', 'deleteAnnouncemet', 1),
+(27, '送出', '/doWithdrawalAudit', 17, '2018-01-09 00:00:00', 'action', NULL, 1),
+(28, '修改使用者密碼', '/setUserPasswd', 2, '2018-01-01 00:00:00', 'button', NULL, 1),
+(30, '网站管理', '/website', 0, '2018-01-01 00:00:00', 'menu', NULL, 1),
+(33, '删除', '/delBigBanner', 31, '2018-01-31 13:00:00', 'head_button', 'deleteBanner', 1),
+(34, '修改', '/editBigBanner', 31, '2018-01-21 05:00:20', 'button', NULL, 1),
+(35, '连结设定', '/editFooter', 30, '2018-01-17 00:00:00', 'menu', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -112,12 +118,15 @@ INSERT INTO `admin_menu` (`am_id`, `am_title`, `am_router`, `am_parent_id`, `am_
 -- 資料表結構 `admin_menu_control`
 --
 
-CREATE TABLE `admin_menu_control` (
-  `amc_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `admin_menu_control`;
+CREATE TABLE IF NOT EXISTS `admin_menu_control` (
+  `amc_id` int(11) NOT NULL AUTO_INCREMENT,
   `amc_ad_id` int(11) NOT NULL,
   `amc_am_id` int(11) NOT NULL,
-  `amc_add_datetime` datetime NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `amc_add_datetime` datetime NOT NULL,
+  PRIMARY KEY (`amc_id`),
+  UNIQUE KEY `amc_ap_id` (`amc_ad_id`,`amc_am_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `admin_menu_control`
@@ -133,11 +142,13 @@ INSERT INTO `admin_menu_control` (`amc_id`, `amc_ad_id`, `amc_am_id`, `amc_add_d
 -- 資料表結構 `admin_role`
 --
 
-CREATE TABLE `admin_role` (
-  `ar_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `admin_role`;
+CREATE TABLE IF NOT EXISTS `admin_role` (
+  `ar_id` int(11) NOT NULL AUTO_INCREMENT,
   `ar_name` varchar(12) NOT NULL,
-  `ar_add_datetime` datetime NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `ar_add_datetime` datetime NOT NULL,
+  PRIMARY KEY (`ar_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `admin_role`
@@ -154,16 +165,18 @@ INSERT INTO `admin_role` (`ar_id`, `ar_name`, `ar_add_datetime`) VALUES
 -- 資料表結構 `announcemet`
 --
 
-CREATE TABLE `announcemet` (
-  `an_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `announcemet`;
+CREATE TABLE IF NOT EXISTS `announcemet` (
+  `an_id` int(11) NOT NULL AUTO_INCREMENT,
   `an_title` varchar(100) NOT NULL,
   `an_content` text NOT NULL,
   `an_datetime` datetime NOT NULL,
   `an_update_datetime` datetime DEFAULT NULL,
   `an_is_open` enum('0','1') NOT NULL DEFAULT '0',
   `an_type` enum('action','public') NOT NULL,
-  `an_image` varchar(40) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `an_image` varchar(40) DEFAULT NULL,
+  PRIMARY KEY (`an_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `announcemet`
@@ -188,14 +201,16 @@ INSERT INTO `announcemet` (`an_id`, `an_title`, `an_content`, `an_datetime`, `an
 -- 資料表結構 `api_error_log`
 --
 
-CREATE TABLE `api_error_log` (
-  `ael_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `api_error_log`;
+CREATE TABLE IF NOT EXISTS `api_error_log` (
+  `ael_id` int(11) NOT NULL AUTO_INCREMENT,
   `ael_type` enum('system','api','db','customize') NOT NULL,
-  `aei_error_message` text NOT NULL,
+  `aei_error_message` text,
   `aei_add_datetime` datetime NOT NULL,
   `aei_class` varchar(30) NOT NULL,
-  `aei_function` varchar(30) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `aei_function` varchar(30) NOT NULL,
+  PRIMARY KEY (`ael_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=793 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `api_error_log`
@@ -925,7 +940,76 @@ INSERT INTO `api_error_log` (`ael_id`, `ael_type`, `aei_error_message`, `aei_add
 (720, 'api', '无资料更新', '2018-01-22 15:12:12', 'Api', 'doWithdrawalAudit'),
 (721, 'api', '无资料更新', '2018-01-22 15:12:30', 'Api', 'doWithdrawalAudit'),
 (722, 'db', '提款超过限制，一天只能出款三次，最高额度为300000', '2018-01-22 15:13:44', 'Api', 'doWithdrawalAudit'),
-(723, 'db', '提款超过限制，一天只能出款三次，最高额度为300000', '2018-01-22 15:14:11', 'Api', 'doWithdrawalAudit');
+(723, 'db', '提款超过限制，一天只能出款三次，最高额度为300000', '2018-01-22 15:14:11', 'Api', 'doWithdrawalAudit'),
+(724, 'api', '无法取得游戏列表', '2019-08-27 16:51:14', 'Api', 'getGameList'),
+(725, 'api', '无法取得游戏列表', '2019-08-27 16:53:13', 'Api', 'getGameList'),
+(726, 'api', '无法取得游戏列表', '2019-08-27 16:53:16', 'Api', 'getGameList'),
+(727, 'api', '无法取得游戏列表', '2019-08-27 16:53:23', 'Api', 'getGameList'),
+(728, 'api', '无法取得游戏列表', '2019-08-27 16:55:26', 'Api', 'getGameList'),
+(729, 'api', '无法取得游戏列表', '2019-08-27 16:55:36', 'Api', 'getGameList'),
+(730, 'api', '无法取得游戏列表', '2019-08-27 16:55:44', 'Api', 'getGameList'),
+(731, 'api', '无法取得游戏列表', '2019-08-27 16:56:22', 'Api', 'getGameList'),
+(732, 'api', '无法取得游戏列表', '2019-08-27 16:56:34', 'Api', 'getGameList'),
+(733, 'api', '密碼錯誤', '2019-08-28 09:15:50', 'Api', 'login'),
+(734, 'api', 'ag帐号长度为4~14位、由小写英文及数字组合', '2019-08-28 10:53:24', 'Api', 'doLogin'),
+(735, 'api', 'ag帐号长度为4~14位、由小写英文及数字组合', '2019-08-28 10:53:24', 'Api', 'login'),
+(736, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 10:54:52', 'Api', 'doLogin'),
+(737, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 10:54:52', 'Api', 'login'),
+(738, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 10:55:09', 'Api', 'doLogin'),
+(739, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 10:55:09', 'Api', 'login'),
+(740, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 10:55:41', 'Api', 'doLogin'),
+(741, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 10:55:41', 'Api', 'login'),
+(742, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 10:55:51', 'Api', 'doLogin'),
+(743, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 10:55:51', 'Api', 'login'),
+(744, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:07:37', 'Api', 'doLogin'),
+(745, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:07:37', 'Api', 'login'),
+(746, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:07:46', 'Api', 'doLogin'),
+(747, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:07:46', 'Api', 'login'),
+(748, 'api', '密碼錯誤', '2019-08-28 11:07:54', 'Api', 'login'),
+(749, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:08:26', 'Api', 'doLogin'),
+(750, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:08:26', 'Api', 'login'),
+(751, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:08:32', 'Api', 'doLogin'),
+(752, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:08:32', 'Api', 'login'),
+(753, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:08:43', 'Api', 'doLogin'),
+(754, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:08:43', 'Api', 'login'),
+(755, 'api', 'a1g密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:08:55', 'Api', 'doLogin'),
+(756, 'api', 'a1g密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:08:55', 'Api', 'login'),
+(757, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:09:05', 'Api', 'doLogin'),
+(758, 'api', 'ag密码长度为6~12位、由大小写英文及数字组合', '2019-08-28 11:09:05', 'Api', 'login'),
+(759, 'api', NULL, '2019-08-28 11:10:11', 'Api', 'doLogin'),
+(760, 'api', NULL, '2019-08-28 11:10:11', 'Api', 'login'),
+(761, 'api', NULL, '2019-08-28 11:11:25', 'Api', 'doLogin'),
+(762, 'api', NULL, '2019-08-28 11:11:25', 'Api', 'login'),
+(763, 'api', NULL, '2019-08-28 11:14:04', 'Api', 'doLogin'),
+(764, 'api', NULL, '2019-08-28 11:14:04', 'Api', 'login'),
+(765, 'api', NULL, '2019-08-28 11:15:01', 'Api', 'doLogin'),
+(766, 'api', NULL, '2019-08-28 11:15:01', 'Api', 'login'),
+(767, 'api', NULL, '2019-08-28 14:01:25', 'Api', 'doLogin'),
+(768, 'api', NULL, '2019-08-28 14:01:25', 'Api', 'login'),
+(769, 'api', NULL, '2019-08-28 14:02:05', 'Api', 'doLogin'),
+(770, 'api', NULL, '2019-08-28 14:02:05', 'Api', 'login'),
+(771, 'api', NULL, '2019-08-28 14:02:19', 'Api', 'doLogin'),
+(772, 'api', NULL, '2019-08-28 14:02:19', 'Api', 'login'),
+(773, 'api', NULL, '2019-08-28 14:02:36', 'Api', 'doLogin'),
+(774, 'api', NULL, '2019-08-28 14:02:36', 'Api', 'login'),
+(775, 'api', NULL, '2019-08-28 14:03:04', 'Api', 'doLogin'),
+(776, 'api', NULL, '2019-08-28 14:03:04', 'Api', 'login'),
+(777, 'api', NULL, '2019-08-28 14:03:11', 'Api', 'doLogin'),
+(778, 'api', NULL, '2019-08-28 14:03:11', 'Api', 'login'),
+(779, 'api', NULL, '2019-08-28 14:03:42', 'Api', 'doLogin'),
+(780, 'api', NULL, '2019-08-28 14:03:42', 'Api', 'login'),
+(781, 'api', NULL, '2019-08-28 14:03:50', 'Api', 'doLogin'),
+(782, 'api', NULL, '2019-08-28 14:03:50', 'Api', 'login'),
+(783, 'api', NULL, '2019-08-28 14:03:58', 'Api', 'doLogin'),
+(784, 'api', NULL, '2019-08-28 14:03:58', 'Api', 'login'),
+(785, 'api', NULL, '2019-08-28 14:04:56', 'Api', 'doLogin'),
+(786, 'api', NULL, '2019-08-28 14:04:56', 'Api', 'login'),
+(787, 'api', NULL, '2019-08-28 14:05:49', 'Api', 'doLogin'),
+(788, 'api', NULL, '2019-08-28 14:05:49', 'Api', 'login'),
+(789, 'api', NULL, '2019-08-28 14:06:32', 'Api', 'doLogin'),
+(790, 'api', NULL, '2019-08-28 14:06:32', 'Api', 'login'),
+(791, 'api', '密碼錯誤', '2019-08-28 14:08:43', 'Api', 'login'),
+(792, 'api', '密碼錯誤', '2019-08-28 14:17:03', 'Api', 'login');
 
 -- --------------------------------------------------------
 
@@ -933,12 +1017,15 @@ INSERT INTO `api_error_log` (`ael_id`, `ael_type`, `aei_error_message`, `aei_add
 -- 資料表結構 `bank_info`
 --
 
-CREATE TABLE `bank_info` (
-  `bi_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `bank_info`;
+CREATE TABLE IF NOT EXISTS `bank_info` (
+  `bi_id` int(11) NOT NULL AUTO_INCREMENT,
   `bi_name` varchar(50) NOT NULL,
   `bi_add_datetime` datetime NOT NULL,
-  `bi_upd_datetime` datetime DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `bi_upd_datetime` datetime DEFAULT NULL,
+  PRIMARY KEY (`bi_id`),
+  UNIQUE KEY `bi_name` (`bi_name`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `bank_info`
@@ -956,13 +1043,15 @@ INSERT INTO `bank_info` (`bi_id`, `bi_name`, `bi_add_datetime`, `bi_upd_datetime
 -- 資料表結構 `big_banner`
 --
 
-CREATE TABLE `big_banner` (
-  `bb_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `big_banner`;
+CREATE TABLE IF NOT EXISTS `big_banner` (
+  `bb_id` int(11) NOT NULL AUTO_INCREMENT,
   `bb_order` int(11) NOT NULL DEFAULT '0',
   `bb_image` varchar(40) DEFAULT NULL,
   `bb_add_datetime` datetime NOT NULL,
-  `bb_ position` enum('big') NOT NULL DEFAULT 'big'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `bb_ position` enum('big') NOT NULL DEFAULT 'big',
+  PRIMARY KEY (`bb_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `big_banner`
@@ -977,11 +1066,14 @@ INSERT INTO `big_banner` (`bb_id`, `bb_order`, `bb_image`, `bb_add_datetime`, `b
 -- 資料表結構 `captcha`
 --
 
-CREATE TABLE `captcha` (
-  `captcha_id` bigint(13) UNSIGNED NOT NULL,
+DROP TABLE IF EXISTS `captcha`;
+CREATE TABLE IF NOT EXISTS `captcha` (
+  `captcha_id` bigint(13) UNSIGNED NOT NULL AUTO_INCREMENT,
   `captcha_time` int(10) UNSIGNED NOT NULL,
   `ip_address` varchar(45) NOT NULL,
-  `word` varchar(20) NOT NULL
+  `word` varchar(20) NOT NULL,
+  PRIMARY KEY (`captcha_id`),
+  KEY `word` (`word`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -990,7 +1082,8 @@ CREATE TABLE `captcha` (
 -- 資料表結構 `ci_sessions`
 --
 
-CREATE TABLE `ci_sessions` (
+DROP TABLE IF EXISTS `ci_sessions`;
+CREATE TABLE IF NOT EXISTS `ci_sessions` (
   `id` varchar(40) NOT NULL,
   `ip_address` varchar(45) NOT NULL,
   `timestamp` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -1119,7 +1212,18 @@ INSERT INTO `ci_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
 ('o2u1gvl1cvr30r621j53duffgs3aqfo9', '127.0.0.1', 1516356783, 0x5f5f63695f6c6173745f726567656e65726174657c693a313531363335363738333b),
 ('02j99o6i5kkllrlmuvrllsn27j1sh9n6', '127.0.0.1', 1516375388, 0x5f5f63695f6c6173745f726567656e65726174657c693a313531363337353338383b),
 ('esjalo6d9uame4j2nt7eg5mggqc300lj', '127.0.0.1', 1516443658, 0x5f5f63695f6c6173745f726567656e65726174657c693a313531363434333635383b),
-('hq7k9b1l2c61rjkn59sisqafq40oja5h', '127.0.0.1', 1516526304, 0x5f5f63695f6c6173745f726567656e65726174657c693a313531363532363330343b);
+('hq7k9b1l2c61rjkn59sisqafq40oja5h', '127.0.0.1', 1516526304, 0x5f5f63695f6c6173745f726567656e65726174657c693a313531363532363330343b),
+('2a82pjpivd4dpi5k0jno9e8s9ueee1t9', '127.0.0.1', 1566883786, 0x5f5f63695f6c6173745f726567656e65726174657c693a313536363838333738363b),
+('pqiclluomvitivdusve20r6b7rjj1nfq', '127.0.0.1', 1566884252, 0x5f5f63695f6c6173745f726567656e65726174657c693a313536363838333738363b),
+('k0blsl36dmneqhgdq52vp1uk5g35i590', '127.0.0.1', 1566895643, ''),
+('1mc7nkoihsseudce4ck7f30mcdspdftr', '127.0.0.1', 1566895993, 0x5f5f63695f6c6173745f726567656e65726174657c693a313536363839353939333b),
+('ivps0lkhp5tpm2v2k290b54q4sd3keqi', '127.0.0.1', 1566895643, ''),
+('1dep2lfl2m6r6ir89cgth53mjliccp8n', '127.0.0.1', 1566900781, 0x5f5f63695f6c6173745f726567656e65726174657c693a313536363839353939333b),
+('j6dlv25eff3hlmc3649fbh1qllevr81j', '127.0.0.1', 1566954506, ''),
+('5oanfs3hulfi4rr45hpnjnm7an6il5d0', '127.0.0.1', 1566954506, ''),
+('9a70gosmos7o4ltq0mht105ud6olso4i', '127.0.0.1', 1566962101, ''),
+('oeas6n070quus1bqj30v94d7f8hpgrr3', '127.0.0.1', 1566973275, 0x5f5f63695f6c6173745f726567656e65726174657c693a313536363937333237353b656e63727970745f61646d696e5f646174617c733a3334343a2253315230636e4651646c704a526a464b6333527463564e454d6d4a4a4d6b637a6246684363565a4b4e464a7451544e6e596b49314f4642304d6e4e6e536e59796345354e4f546461615756434e6b565661473543556a56745445564a4f4646715456566b656d3147626d356961454a70614455345347314c536c5275576e68734c3246316147746d554764744c323161616d5253626e4e7454466c4b63575652543252746445464b55464e495330396f55454e79574552425a6a6844633277326147396c646b5234516c684b63473936656e63795332526f646a4e535346467062474a56527a686f566c46594c314e5764465a345a47644f4f445a796254597752453545565570614e335a7056586c57517a4670646e4533656e6c5a4b3068724f565277625546545432466c59304635516b394a62316c736547396e6154633151575a745a6a68795757777865454e316547637663513d3d223b),
+('ja5muvnhv31gbtmfg9rtbh5b1b3vockt', '127.0.0.1', 1566973283, 0x5f5f63695f6c6173745f726567656e65726174657c693a313536363937333237353b656e63727970745f61646d696e5f646174617c733a3334343a2253315230636e4651646c704a526a464b6333527463564e454d6d4a4a4d6b637a6246684363565a4b4e464a7451544e6e596b49314f4642304d6e4e6e536e59796345354e4f546461615756434e6b565661473543556a56745445564a4f4646715456566b656d3147626d356961454a70614455345347314c536c5275576e68734c3246316147746d554764744c323161616d5253626e4e7454466c4b63575652543252746445464b55464e495330396f55454e79574552425a6a6844633277326147396c646b5234516c684b63473936656e63795332526f646a4e535346467062474a56527a686f566c46594c314e5764465a345a47644f4f445a796254597752453545565570614e335a7056586c57517a4670646e4533656e6c5a4b3068724f565277625546545432466c59304635516b394a62316c736547396e6154633151575a745a6a68795757777865454e316547637663513d3d223b);
 
 -- --------------------------------------------------------
 
@@ -1127,10 +1231,12 @@ INSERT INTO `ci_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
 -- 資料表結構 `registered_link`
 --
 
-CREATE TABLE `registered_link` (
-  `rl_id` int(8) UNSIGNED ZEROFILL NOT NULL,
-  `u_id` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+DROP TABLE IF EXISTS `registered_link`;
+CREATE TABLE IF NOT EXISTS `registered_link` (
+  `rl_id` int(8) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+  `u_id` int(11) NOT NULL,
+  PRIMARY KEY (`rl_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `registered_link`
@@ -1150,43 +1256,50 @@ INSERT INTO `registered_link` (`rl_id`, `u_id`) VALUES
 -- 資料表結構 `user`
 --
 
-CREATE TABLE `user` (
-  `u_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE IF NOT EXISTS `user` (
+  `u_id` int(11) NOT NULL AUTO_INCREMENT,
   `u_superior_id` int(11) NOT NULL,
   `u_name` varchar(12) NOT NULL,
   `u_account` varchar(12) NOT NULL,
   `u_passwd` varchar(32) NOT NULL,
   `u_money_passwd` varchar(32) DEFAULT NULL,
   `u_status` enum('0','1') DEFAULT '1',
-  `u_add_datetime` datetime NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `u_add_datetime` datetime NOT NULL,
+  `u_ag_is_reg` tinyint(1) NOT NULL DEFAULT '0',
+  `u_is_lock` tinyint(1) NOT NULL DEFAULT '0',
+  `u_bank_card_lock` tinyint(1) NOT NULL DEFAULT '0',
+  `u_ag_game_model` tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`u_id`),
+  UNIQUE KEY `u_account` (`u_account`)
+) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `user`
 --
 
-INSERT INTO `user` (`u_id`, `u_superior_id`, `u_name`, `u_account`, `u_passwd`, `u_money_passwd`, `u_status`, `u_add_datetime`) VALUES
-(1, 0, 'test0000', 'tryion000', '25d55ad283aa400af464c76d713c07ad', '1c63129ae9db9c60c3e8aa94d3e00495', '1', '2017-12-20 00:00:00'),
-(2, 1, 'test0001', 'tryion001', '25d55ad283aa400af464c76d713c07ad', '', '1', '2017-12-20 16:52:27'),
-(3, 1, 'test0002', 'tryion002', '25d55ad283aa400af464c76d713c07ad', '', '1', '2017-12-20 17:51:34'),
-(4, 0, '1111111111', '111111111111', '593c9b4a9390551d53e5cacf28ebd638', NULL, '1', '2017-12-30 12:48:58'),
-(5, 0, '1111111111', '1223dfsdfse', '593c9b4a9390551d53e5cacf28ebd638', NULL, '1', '2017-12-30 12:49:07'),
-(6, 0, '111111111111', 'qswwww111111', '593c9b4a9390551d53e5cacf28ebd638', '593c9b4a9390551d53e5cacf28ebd638', '1', '2017-12-30 12:50:03'),
-(7, 6, '111111111111', '2eeeeeeee12', '6d7b52022ecefdb50f0ddac3c939cdaa', NULL, '1', '2017-12-30 14:17:55'),
-(8, 1, '1ee22r3wr2r2', '42fdv11e2fed', '57ba71e8b13ce4d87d70d16b837da3ab', NULL, '1', '2017-12-30 14:21:07'),
-(9, 1, 'fevdvfevwdev', 'vfds cdfvedw', '4b7a4732ebc1f0a2af5de0f941dd65e3', NULL, '1', '2017-12-30 14:21:51'),
-(10, 1, 'wdscfssv', 'dwfwfwefq', 'ce96593e4b718bceb76fa5c90bdd058f', NULL, '1', '2017-12-30 14:22:25'),
-(11, 0, '11111111', '111111111', 'adbc91a43e988a3b5b745b8529a90b61', NULL, '1', '2017-12-31 16:41:47'),
-(12, 0, '111111111111', 'aaaaaaqqqqqq', '93ebbbcb07b3abfdbff2cf3239060f1d', NULL, '1', '2017-12-31 16:42:59'),
-(13, 0, '111111adcdca', 'sfwfsavdavd', 'bfa191d9bcb77afda59b2e70ba5ccc61', NULL, '1', '2017-12-31 16:44:31'),
-(14, 0, '111sadasdas', '111sdsdasda', 'cbd59802ab8dd8a78db97c351ae8630a', NULL, '1', '2018-01-01 14:47:02'),
-(15, 1, '1111111111', 'qwdddddddddd', '593c9b4a9390551d53e5cacf28ebd638', NULL, '1', '2018-01-06 13:05:47'),
-(16, 1, '111111wsssss', '1111eeeddddd', '5f7ac67cbee86d37e550e9e5e9086f86', NULL, '1', '2018-01-06 13:10:06'),
-(17, 1, 'qwe123qwe123', 'aswq112wwsqq', 'a22c97c9f7232db208f1dfbdd8c87d6c', NULL, '1', '2018-01-06 13:10:49'),
-(18, 1, 'eveeeeeeeeee', 'tryion3tryio', '4b08f6289c57d10482e07650395e11a9', NULL, '1', '2018-01-06 13:11:29'),
-(19, 0, 'wsdddddddddd', 'admin1111111', 'efa7d5aff41d7401fcf1682fc07c00aa', NULL, '1', '2018-01-06 14:20:18'),
-(20, 1, 'test0001', 'tryion005', '25d55ad283aa400af464c76d713c07ad', NULL, '1', '2018-01-15 00:32:26'),
-(21, 0, '11111234532', '13rwefffffff', '4a52ad7592cef56dd55071fc7e540449', NULL, '1', '2018-01-18 23:54:15');
+INSERT INTO `user` (`u_id`, `u_superior_id`, `u_name`, `u_account`, `u_passwd`, `u_money_passwd`, `u_status`, `u_add_datetime`, `u_ag_is_reg`, `u_is_lock`, `u_bank_card_lock`, `u_ag_game_model`) VALUES
+(1, 0, 'test0000', 'tryion000', '8c97677e7cf25c075d5a0f8c907daaca', '1c63129ae9db9c60c3e8aa94d3e00495', '1', '2017-12-20 00:00:00', 1, 0, 0, 1),
+(2, 1, 'test0001', 'tryion001', '8c97677e7cf25c075d5a0f8c907daaca', '', '1', '2017-12-20 16:52:27', 0, 0, 0, 1),
+(3, 1, 'test0002', 'tryion002', '25d55ad283aa400af464c76d713c07ad', '', '1', '2017-12-20 17:51:34', 0, 0, 0, 1),
+(4, 0, '1111111111', '111111111111', '593c9b4a9390551d53e5cacf28ebd638', NULL, '1', '2017-12-30 12:48:58', 0, 0, 0, 1),
+(5, 0, '1111111111', '1223dfsdfse', '593c9b4a9390551d53e5cacf28ebd638', NULL, '1', '2017-12-30 12:49:07', 0, 0, 0, 1),
+(6, 0, '111111111111', 'qswwww111111', '593c9b4a9390551d53e5cacf28ebd638', '593c9b4a9390551d53e5cacf28ebd638', '1', '2017-12-30 12:50:03', 0, 0, 0, 1),
+(7, 6, '111111111111', '2eeeeeeee12', '6d7b52022ecefdb50f0ddac3c939cdaa', NULL, '1', '2017-12-30 14:17:55', 0, 0, 0, 1),
+(8, 1, '1ee22r3wr2r2', '42fdv11e2fed', '57ba71e8b13ce4d87d70d16b837da3ab', NULL, '1', '2017-12-30 14:21:07', 0, 0, 0, 1),
+(9, 1, 'fevdvfevwdev', 'vfds cdfvedw', '4b7a4732ebc1f0a2af5de0f941dd65e3', NULL, '1', '2017-12-30 14:21:51', 0, 0, 0, 1),
+(10, 1, 'wdscfssv', 'dwfwfwefq', 'ce96593e4b718bceb76fa5c90bdd058f', NULL, '1', '2017-12-30 14:22:25', 0, 0, 0, 1),
+(11, 0, '11111111', '111111111', 'adbc91a43e988a3b5b745b8529a90b61', NULL, '1', '2017-12-31 16:41:47', 0, 0, 0, 1),
+(12, 0, '111111111111', 'aaaaaaqqqqqq', '93ebbbcb07b3abfdbff2cf3239060f1d', NULL, '1', '2017-12-31 16:42:59', 0, 0, 0, 1),
+(13, 0, '111111adcdca', 'sfwfsavdavd', 'bfa191d9bcb77afda59b2e70ba5ccc61', NULL, '1', '2017-12-31 16:44:31', 0, 0, 0, 1),
+(14, 0, '111sadasdas', '111sdsdasda', 'cbd59802ab8dd8a78db97c351ae8630a', NULL, '1', '2018-01-01 14:47:02', 0, 0, 0, 1),
+(15, 1, '1111111111', 'qwdddddddddd', '593c9b4a9390551d53e5cacf28ebd638', NULL, '1', '2018-01-06 13:05:47', 0, 0, 0, 1),
+(16, 1, '111111wsssss', '1111eeeddddd', '5f7ac67cbee86d37e550e9e5e9086f86', NULL, '1', '2018-01-06 13:10:06', 0, 0, 0, 1),
+(17, 1, 'qwe123qwe123', 'aswq112wwsqq', 'a22c97c9f7232db208f1dfbdd8c87d6c', NULL, '1', '2018-01-06 13:10:49', 0, 0, 0, 1),
+(18, 1, 'eveeeeeeeeee', 'tryion3tryio', '4b08f6289c57d10482e07650395e11a9', NULL, '1', '2018-01-06 13:11:29', 0, 0, 0, 1),
+(19, 0, 'wsdddddddddd', 'admin1111111', 'efa7d5aff41d7401fcf1682fc07c00aa', NULL, '1', '2018-01-06 14:20:18', 0, 0, 0, 1),
+(20, 1, 'test0001', 'tryion005', '25d55ad283aa400af464c76d713c07ad', NULL, '1', '2018-01-15 00:32:26', 0, 0, 0, 1),
+(21, 0, '11111234532', '13rwefffffff', '4a52ad7592cef56dd55071fc7e540449', NULL, '1', '2018-01-18 23:54:15', 0, 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -1194,8 +1307,9 @@ INSERT INTO `user` (`u_id`, `u_superior_id`, `u_name`, `u_account`, `u_passwd`, 
 -- 資料表結構 `user_account`
 --
 
-CREATE TABLE `user_account` (
-  `ua_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `user_account`;
+CREATE TABLE IF NOT EXISTS `user_account` (
+  `ua_id` int(11) NOT NULL AUTO_INCREMENT,
   `ua_value` float UNSIGNED NOT NULL DEFAULT '0',
   `ua_type` int(2) NOT NULL,
   `ua_add_datetime` datetime NOT NULL,
@@ -1207,28 +1321,30 @@ CREATE TABLE `user_account` (
   `ua_from_third` enum('ag') DEFAULT NULL,
   `ua_from_am_id` int(11) DEFAULT NULL,
   `ua_ub_id` int(11) DEFAULT NULL,
-  `ua_upd_date` date DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `ua_upd_date` date DEFAULT NULL,
+  `ua_order_id` int(11) NOT NULL,
+  PRIMARY KEY (`ua_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `user_account`
 --
 
-INSERT INTO `user_account` (`ua_id`, `ua_value`, `ua_type`, `ua_add_datetime`, `ua_from`, `ua_u_id`, `ua_remarks`, `ua_status`, `ua_from_ua_id`, `ua_from_third`, `ua_from_am_id`, `ua_ub_id`, `ua_upd_date`) VALUES
-(1, 100, 1, '2018-01-18 19:42:15', '1', '1', '11', 'recorded', NULL, NULL, NULL, NULL, '2018-01-18'),
-(2, 50, 3, '2018-01-18 20:24:01', NULL, '1', NULL, 'stopPayment', NULL, NULL, NULL, 1, '2018-01-18'),
-(3, 5, 1, '2018-01-18 20:42:09', '1', '1', '0', 'audit', NULL, NULL, NULL, NULL, NULL),
-(4, 12, 1, '2018-01-18 20:42:25', '1', '1', '0', 'audit', NULL, NULL, NULL, NULL, NULL),
-(5, 11, 1, '2018-01-18 20:45:46', '1', '1', '1', 'audit', NULL, NULL, NULL, NULL, NULL),
-(6, 9, 1, '2018-01-18 20:57:08', '1', '1', '0', 'audit', NULL, NULL, NULL, NULL, NULL),
-(7, 16, 1, '2018-01-18 20:59:49', '1', '1', '11', 'audit', NULL, NULL, NULL, NULL, NULL),
-(8, 11, 1, '2018-01-18 21:00:04', '1', '1', '0', 'audit', NULL, NULL, NULL, NULL, NULL),
-(9, 50, 3, '2018-01-18 21:46:11', NULL, '1', NULL, 'payment', NULL, NULL, NULL, 1, '2018-01-22'),
-(10, 50, 3, '2018-01-18 21:46:15', NULL, '1', NULL, 'payment', NULL, NULL, NULL, 1, '2018-01-22'),
-(11, 50, 3, '2018-01-18 21:46:16', NULL, '1', NULL, 'payment', NULL, NULL, NULL, 1, '2018-01-22'),
-(12, 50, 3, '2018-01-18 21:46:17', NULL, '1', NULL, 'payment', NULL, NULL, NULL, 1, '2018-01-22'),
-(13, 50, 3, '2018-01-18 21:46:23', NULL, '1', NULL, 'stopPayment', NULL, NULL, NULL, 1, NULL),
-(14, 50, 3, '2018-01-18 21:46:24', NULL, '1', NULL, 'payment', NULL, NULL, NULL, 1, NULL);
+INSERT INTO `user_account` (`ua_id`, `ua_value`, `ua_type`, `ua_add_datetime`, `ua_from`, `ua_u_id`, `ua_remarks`, `ua_status`, `ua_from_ua_id`, `ua_from_third`, `ua_from_am_id`, `ua_ub_id`, `ua_upd_date`, `ua_order_id`) VALUES
+(1, 100, 1, '2018-01-18 19:42:15', '1', '1', '11', 'recorded', NULL, NULL, NULL, NULL, '2018-01-18', 0),
+(2, 50, 3, '2018-01-18 20:24:01', NULL, '1', NULL, 'stopPayment', NULL, NULL, NULL, 1, '2018-01-18', 0),
+(3, 5, 1, '2018-01-18 20:42:09', '1', '1', '0', 'audit', NULL, NULL, NULL, NULL, NULL, 0),
+(4, 12, 1, '2018-01-18 20:42:25', '1', '1', '0', 'audit', NULL, NULL, NULL, NULL, NULL, 0),
+(5, 11, 1, '2018-01-18 20:45:46', '1', '1', '1', 'audit', NULL, NULL, NULL, NULL, NULL, 0),
+(6, 9, 1, '2018-01-18 20:57:08', '1', '1', '0', 'audit', NULL, NULL, NULL, NULL, NULL, 0),
+(7, 16, 1, '2018-01-18 20:59:49', '1', '1', '11', 'audit', NULL, NULL, NULL, NULL, NULL, 0),
+(8, 11, 1, '2018-01-18 21:00:04', '1', '1', '0', 'audit', NULL, NULL, NULL, NULL, NULL, 0),
+(9, 50, 3, '2018-01-18 21:46:11', NULL, '1', NULL, 'payment', NULL, NULL, NULL, 1, '2018-01-22', 0),
+(10, 50, 3, '2018-01-18 21:46:15', NULL, '1', NULL, 'payment', NULL, NULL, NULL, 1, '2018-01-22', 0),
+(11, 50, 3, '2018-01-18 21:46:16', NULL, '1', NULL, 'payment', NULL, NULL, NULL, 1, '2018-01-22', 0),
+(12, 50, 3, '2018-01-18 21:46:17', NULL, '1', NULL, 'payment', NULL, NULL, NULL, 1, '2018-01-22', 0),
+(13, 50, 3, '2018-01-18 21:46:23', NULL, '1', NULL, 'stopPayment', NULL, NULL, NULL, 1, NULL, 0),
+(14, 50, 3, '2018-01-18 21:46:24', NULL, '1', NULL, 'payment', NULL, NULL, NULL, 1, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -1236,14 +1352,16 @@ INSERT INTO `user_account` (`ua_id`, `ua_value`, `ua_type`, `ua_add_datetime`, `
 -- 資料表結構 `user_account_record`
 --
 
-CREATE TABLE `user_account_record` (
-  `uar_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `user_account_record`;
+CREATE TABLE IF NOT EXISTS `user_account_record` (
+  `uar_id` int(11) NOT NULL AUTO_INCREMENT,
   `uar_am_id` int(11) NOT NULL,
   `uar_ua_id` int(11) NOT NULL,
   `uar_action` enum('change_status','insert','delete') DEFAULT NULL,
   `uar_add_datetime` datetime NOT NULL,
-  `uar_change_status` enum('allowed','audit','noallowed','payment') NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `uar_change_status` enum('allowed','audit','noallowed','payment') NOT NULL,
+  PRIMARY KEY (`uar_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `user_account_record`
@@ -1300,11 +1418,13 @@ INSERT INTO `user_account_record` (`uar_id`, `uar_am_id`, `uar_ua_id`, `uar_acti
 -- 資料表結構 `user_account_type`
 --
 
-CREATE TABLE `user_account_type` (
-  `uat_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `user_account_type`;
+CREATE TABLE IF NOT EXISTS `user_account_type` (
+  `uat_id` int(11) NOT NULL AUTO_INCREMENT,
   `uat_name` varchar(50) NOT NULL,
-  `uat_out_in` enum('out','in') NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `uat_out_in` enum('out','in') NOT NULL,
+  PRIMARY KEY (`uat_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `user_account_type`
@@ -1323,8 +1443,9 @@ INSERT INTO `user_account_type` (`uat_id`, `uat_name`, `uat_out_in`) VALUES
 -- 資料表結構 `user_bank_info`
 --
 
-CREATE TABLE `user_bank_info` (
-  `ub_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `user_bank_info`;
+CREATE TABLE IF NOT EXISTS `user_bank_info` (
+  `ub_id` int(11) NOT NULL AUTO_INCREMENT,
   `ub_u_id` int(11) NOT NULL,
   `ub_account` bigint(19) UNSIGNED NOT NULL,
   `ub_account_name` varchar(20) NOT NULL,
@@ -1332,8 +1453,10 @@ CREATE TABLE `user_bank_info` (
   `ub_province` varchar(10) NOT NULL,
   `ub_city` varchar(10) NOT NULL,
   `ub_branch_name` varchar(20) NOT NULL,
-  `ub_add_datetime` datetime NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `ub_add_datetime` datetime NOT NULL,
+  PRIMARY KEY (`ub_id`),
+  UNIQUE KEY `ub_account` (`ub_account`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `user_bank_info`
@@ -1346,18 +1469,75 @@ INSERT INTO `user_bank_info` (`ub_id`, `ub_u_id`, `ub_account`, `ub_account_name
 -- --------------------------------------------------------
 
 --
+-- 資料表結構 `user_login_log`
+--
+
+DROP TABLE IF EXISTS `user_login_log`;
+CREATE TABLE IF NOT EXISTS `user_login_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ull_ip` varchar(30) NOT NULL,
+  `ull_add_datetime` datetime NOT NULL,
+  `ull_u_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+
+--
+-- 資料表的匯出資料 `user_login_log`
+--
+
+INSERT INTO `user_login_log` (`id`, `ull_ip`, `ull_add_datetime`, `ull_u_id`) VALUES
+(1, '127.0.0.1', '2019-08-28 11:07:37', 1),
+(2, '127.0.0.1', '2019-08-28 11:07:46', 1),
+(3, '127.0.0.1', '2019-08-28 11:08:26', 1),
+(4, '127.0.0.1', '2019-08-28 11:08:32', 1),
+(5, '127.0.0.1', '2019-08-28 11:08:43', 1),
+(6, '127.0.0.1', '2019-08-28 11:08:55', 1),
+(7, '127.0.0.1', '2019-08-28 11:09:05', 1),
+(8, '127.0.0.1', '2019-08-28 11:09:15', 1),
+(9, '127.0.0.1', '2019-08-28 11:10:11', 1),
+(10, '127.0.0.1', '2019-08-28 11:11:25', 1),
+(11, '127.0.0.1', '2019-08-28 11:14:04', 1),
+(12, '127.0.0.1', '2019-08-28 11:15:01', 1),
+(13, '127.0.0.1', '2019-08-28 14:01:25', 1),
+(14, '127.0.0.1', '2019-08-28 14:02:05', 1),
+(15, '127.0.0.1', '2019-08-28 14:02:19', 1),
+(16, '127.0.0.1', '2019-08-28 14:02:36', 1),
+(17, '127.0.0.1', '2019-08-28 14:03:04', 1),
+(18, '127.0.0.1', '2019-08-28 14:03:11', 1),
+(19, '127.0.0.1', '2019-08-28 14:03:42', 1),
+(20, '127.0.0.1', '2019-08-28 14:03:50', 1),
+(21, '127.0.0.1', '2019-08-28 14:03:58', 1),
+(22, '127.0.0.1', '2019-08-28 14:04:56', 1),
+(23, '127.0.0.1', '2019-08-28 14:05:49', 1),
+(24, '127.0.0.1', '2019-08-28 14:06:32', 1),
+(25, '127.0.0.1', '2019-08-28 14:06:45', 1),
+(26, '127.0.0.1', '2019-08-28 14:06:53', 1),
+(27, '127.0.0.1', '2019-08-28 14:07:02', 1),
+(28, '127.0.0.1', '2019-08-28 14:08:11', 1),
+(29, '127.0.0.1', '2019-08-28 14:08:16', 1),
+(30, '127.0.0.1', '2019-08-28 14:08:54', 1),
+(31, '127.0.0.1', '2019-08-28 14:09:10', 1),
+(32, '127.0.0.1', '2019-08-28 14:09:15', 1),
+(33, '127.0.0.1', '2019-08-28 14:09:27', 1),
+(34, '127.0.0.1', '2019-08-28 14:14:02', 1);
+
+-- --------------------------------------------------------
+
+--
 -- 資料表結構 `user_message`
 --
 
-CREATE TABLE `user_message` (
-  `um_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `user_message`;
+CREATE TABLE IF NOT EXISTS `user_message` (
+  `um_id` int(11) NOT NULL AUTO_INCREMENT,
   `um_u_id` int(11) NOT NULL,
   `um_title` varchar(50) NOT NULL,
   `um_content` text NOT NULL,
   `um_add_datetime` datetime NOT NULL,
   `um_is_read` enum('0','1') NOT NULL DEFAULT '0',
-  `um_from_u_id` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `um_from_u_id` int(11) NOT NULL,
+  PRIMARY KEY (`um_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `user_message`
@@ -1397,246 +1577,43 @@ INSERT INTO `user_message` (`um_id`, `um_u_id`, `um_title`, `um_content`, `um_ad
 -- --------------------------------------------------------
 
 --
+-- 資料表結構 `user_transfer_account`
+--
+
+DROP TABLE IF EXISTS `user_transfer_account`;
+CREATE TABLE IF NOT EXISTS `user_transfer_account` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uta_reference_no` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- 資料表結構 `web_config`
 --
 
-CREATE TABLE `web_config` (
-  `wc_id` int(11) NOT NULL,
+DROP TABLE IF EXISTS `web_config`;
+CREATE TABLE IF NOT EXISTS `web_config` (
+  `wc_id` int(11) NOT NULL AUTO_INCREMENT,
   `wc_name` varchar(20) NOT NULL,
   `wc_value` varchar(50) NOT NULL,
-  `we_key` varchar(60) NOT NULL,
+  `wc_key` varchar(60) NOT NULL,
   `we_add_datetime` datetime NOT NULL,
-  `we_enable` enum('1','0') NOT NULL DEFAULT '1'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `we_enable` enum('1','0') NOT NULL DEFAULT '1',
+  PRIMARY KEY (`wc_id`),
+  UNIQUE KEY `we_key` (`wc_key`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 --
 -- 資料表的匯出資料 `web_config`
 --
 
-INSERT INTO `web_config` (`wc_id`, `wc_name`, `wc_value`, `we_key`, `we_add_datetime`, `we_enable`) VALUES
+INSERT INTO `web_config` (`wc_id`, `wc_name`, `wc_value`, `wc_key`, `we_add_datetime`, `we_enable`) VALUES
 (1, 'wechat帐号', '122', 'wechat_account', '2018-01-10 00:00:00', '1'),
 (2, 'wechatQR图', '6b891b9fac5160a82e9cd8545858b7a1.png', 'wechat_qr_image', '2018-01-21 00:11:00', '1'),
 (3, 'QQ号', '111111111111', 'qq_account', '2018-01-21 00:11:00', '1'),
 (4, 'QQ号qr图', '6e1aabdf28618a2515d860f515c52de1.png', 'qq_qr_image', '2018-01-21 00:00:00', '1');
-
---
--- 已匯出資料表的索引
---
-
---
--- 資料表索引 `admin`
---
-ALTER TABLE `admin`
-  ADD PRIMARY KEY (`ad_id`),
-  ADD UNIQUE KEY `ad_account` (`ad_account`);
-
---
--- 資料表索引 `admin_menu`
---
-ALTER TABLE `admin_menu`
-  ADD PRIMARY KEY (`am_id`);
-
---
--- 資料表索引 `admin_menu_control`
---
-ALTER TABLE `admin_menu_control`
-  ADD PRIMARY KEY (`amc_id`),
-  ADD UNIQUE KEY `amc_ap_id` (`amc_ad_id`,`amc_am_id`);
-
---
--- 資料表索引 `admin_role`
---
-ALTER TABLE `admin_role`
-  ADD PRIMARY KEY (`ar_id`);
-
---
--- 資料表索引 `announcemet`
---
-ALTER TABLE `announcemet`
-  ADD PRIMARY KEY (`an_id`);
-
---
--- 資料表索引 `api_error_log`
---
-ALTER TABLE `api_error_log`
-  ADD PRIMARY KEY (`ael_id`);
-
---
--- 資料表索引 `bank_info`
---
-ALTER TABLE `bank_info`
-  ADD PRIMARY KEY (`bi_id`),
-  ADD UNIQUE KEY `bi_name` (`bi_name`);
-
---
--- 資料表索引 `big_banner`
---
-ALTER TABLE `big_banner`
-  ADD PRIMARY KEY (`bb_id`);
-
---
--- 資料表索引 `captcha`
---
-ALTER TABLE `captcha`
-  ADD PRIMARY KEY (`captcha_id`),
-  ADD KEY `word` (`word`);
-
---
--- 資料表索引 `registered_link`
---
-ALTER TABLE `registered_link`
-  ADD PRIMARY KEY (`rl_id`);
-
---
--- 資料表索引 `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`u_id`),
-  ADD UNIQUE KEY `u_account` (`u_account`);
-
---
--- 資料表索引 `user_account`
---
-ALTER TABLE `user_account`
-  ADD PRIMARY KEY (`ua_id`);
-
---
--- 資料表索引 `user_account_record`
---
-ALTER TABLE `user_account_record`
-  ADD PRIMARY KEY (`uar_id`);
-
---
--- 資料表索引 `user_account_type`
---
-ALTER TABLE `user_account_type`
-  ADD PRIMARY KEY (`uat_id`);
-
---
--- 資料表索引 `user_bank_info`
---
-ALTER TABLE `user_bank_info`
-  ADD PRIMARY KEY (`ub_id`),
-  ADD UNIQUE KEY `ub_account` (`ub_account`);
-
---
--- 資料表索引 `user_message`
---
-ALTER TABLE `user_message`
-  ADD PRIMARY KEY (`um_id`);
-
---
--- 資料表索引 `web_config`
---
-ALTER TABLE `web_config`
-  ADD PRIMARY KEY (`wc_id`),
-  ADD UNIQUE KEY `we_key` (`we_key`);
-
---
--- 在匯出的資料表使用 AUTO_INCREMENT
---
-
---
--- 使用資料表 AUTO_INCREMENT `admin`
---
-ALTER TABLE `admin`
-  MODIFY `ad_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- 使用資料表 AUTO_INCREMENT `admin_menu`
---
-ALTER TABLE `admin_menu`
-  MODIFY `am_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
-
---
--- 使用資料表 AUTO_INCREMENT `admin_menu_control`
---
-ALTER TABLE `admin_menu_control`
-  MODIFY `amc_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- 使用資料表 AUTO_INCREMENT `admin_role`
---
-ALTER TABLE `admin_role`
-  MODIFY `ar_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- 使用資料表 AUTO_INCREMENT `announcemet`
---
-ALTER TABLE `announcemet`
-  MODIFY `an_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
-
---
--- 使用資料表 AUTO_INCREMENT `api_error_log`
---
-ALTER TABLE `api_error_log`
-  MODIFY `ael_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=724;
-
---
--- 使用資料表 AUTO_INCREMENT `bank_info`
---
-ALTER TABLE `bank_info`
-  MODIFY `bi_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- 使用資料表 AUTO_INCREMENT `big_banner`
---
-ALTER TABLE `big_banner`
-  MODIFY `bb_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- 使用資料表 AUTO_INCREMENT `captcha`
---
-ALTER TABLE `captcha`
-  MODIFY `captcha_id` bigint(13) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- 使用資料表 AUTO_INCREMENT `registered_link`
---
-ALTER TABLE `registered_link`
-  MODIFY `rl_id` int(8) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- 使用資料表 AUTO_INCREMENT `user`
---
-ALTER TABLE `user`
-  MODIFY `u_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
-
---
--- 使用資料表 AUTO_INCREMENT `user_account`
---
-ALTER TABLE `user_account`
-  MODIFY `ua_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
-
---
--- 使用資料表 AUTO_INCREMENT `user_account_record`
---
-ALTER TABLE `user_account_record`
-  MODIFY `uar_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
-
---
--- 使用資料表 AUTO_INCREMENT `user_account_type`
---
-ALTER TABLE `user_account_type`
-  MODIFY `uat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- 使用資料表 AUTO_INCREMENT `user_bank_info`
---
-ALTER TABLE `user_bank_info`
-  MODIFY `ub_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- 使用資料表 AUTO_INCREMENT `user_message`
---
-ALTER TABLE `user_message`
-  MODIFY `um_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
-
---
--- 使用資料表 AUTO_INCREMENT `web_config`
---
-ALTER TABLE `web_config`
-  MODIFY `wc_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
