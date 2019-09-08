@@ -71,18 +71,18 @@
                     <li class="jq-nav-option">
                         <a href="Live-Entertainment.html">真人娱乐</a>
                     </li>
-                    <li class="jq-nav-option">
-                        <a href="Live-Electric.html">电子游戏</a>
-                    </li>
+                    <!-- <li class="jq-nav-option"> -->
+                        <!-- <a href="Live-Electric.html">电子游戏</a> -->
+                    <!-- </li> -->
                     <li class="jq-nav-option">
                         <a href="Live-Discount.html">优惠讯息</a>
                     </li>
                     <li class="jq-nav-option">
                         <a href="Live-Notice.html">平台公告</a>
                     </li>
-                    <li class="jq-nav-option">
-                        <a href="Home-Index.html">手机APP</a>
-                    </li>
+                    <!-- <li class="jq-nav-option"> -->
+                        <!-- <a href="Home-Index.html">手机APP</a> -->
+                    <!-- </li> -->
                 </ul>
             </div>
         </header>
@@ -242,7 +242,7 @@
         <script src="lib/owlcarousel/owl.carousel.min.js"></script>
         <script src="js/main.js"></script>
         <script>
-            Live.Global.intital();
+            <!-- Live.Global.intital(); -->
         </script>
         <script>
             // Privity
@@ -264,6 +264,7 @@
                                             <!-- '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' + -->
                                             <!-- data.body.list[i].productCode + '/' + data.body.list[ -->
                                                 <!-- i].tcgGameCode + '.png" alt="">' + -->
+											'<img src="https://via.placeholder.com/161x203">'+
                                             '<p class="title">' + data.body.list[i].gameName +
                                             '</p>' +
                                             '</a>' +
@@ -288,12 +289,13 @@
                                     for (i = 0; i < _length; i++) {
                                         _each.append(
                                             '<div class="item">' +
-                                            '<img src="/images/big_banner/' + data.body.list[i].bb_image +
-                                            '" alt="">' +
+                                            <!-- '<img src="/images/big_banner/' + data.body.list[i].bb_image + -->
+                                            <!-- '" alt="">' + -->
+											'<img src="https://via.placeholder.com/50x50">'+
                                             '</div>'
                                         )
                                     }
-                                    Live.Global.owl_banner();
+                                    <!-- Live.Global.owl_banner(); -->
                                     break;
                             }
                         }
@@ -301,7 +303,9 @@
                 });
             });
 
-            $(document).on('click', '.ajax-game-link', function () {
+            $(document).on('click', '.ajax-game-link', function (event) {
+				event.preventDefault(); 
+				// console.log('d')
                 var _key = $(this).attr('data-game-code');
                 if (localStorage.session == undefined || localStorage.session == '') {
                     alert('请先登入会员');
@@ -314,7 +318,8 @@
                             if (data.status) {
                                 switch (data.status) {
                                     case 100:
-                                        window.location.href = data.body.game_url;
+										console.log('d')
+                                        window.location.href = data.body.data.pc;
                                         break;
                                 }
                             }

@@ -2500,21 +2500,21 @@ class Api extends CI_Controller {
 			}
 			$ag_username =$this->_user['ag_u_account'];
 			$ag_game_model =$this->_user['u_ag_game_model'];
-			$result_json_str = $this->tcgcommon->getLaunchGameRng($ag_username, $product_type, $ag_game_model, $game_code, $platform);
-			$result_ary = json_decode($result_json_str , true);
-			if($result_ary['status'] !=0 || empty($result_ary))
-			{
-				$array = array(
-					'message' 	=>'无法取得取得游戏入口' ,
-					'type' 		=>'api' ,
-					'status'	=>'999'
-				);
-				$MyException = new MyException();
-				$MyException->setParams($array);
-				throw $MyException;
-			}
+			$response =  $this->gpcommon->getLoginUrl($this->_user);
+			// $result_ary = json_decode($result_json_str , true);
+			// if($result_ary['status'] !=0 || empty($result_ary))
+			// {
+				// $array = array(
+					// 'message' 	=>'无法取得取得游戏入口' ,
+					// 'type' 		=>'api' ,
+					// 'status'	=>'999'
+				// );
+				// $MyException = new MyException();
+				// $MyException->setParams($array);
+				// throw $MyException;
+			// }
 			
-			$output['body']['game_url'] =$result_ary['game_url'];
+			$output['body']['data']= $response;
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();
@@ -2790,7 +2790,7 @@ class Api extends CI_Controller {
 			
             $param = [
                 'username'=>$this->request['account'],
-                'winLimit'=>1000,
+                'winLimit'=>$this->gpcommon->winLimit,
             ];
 			$response = $this->gpcommon->createUser($param);
             

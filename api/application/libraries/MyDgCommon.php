@@ -16,6 +16,7 @@ class MyDgCommon{
         $this->apiKey="d4bcd31b036b42378977cbe9ec81fb66";
         $this->agentName="DGTE01010B";
         $this->password=md5('23SINK3X');
+		$this->winLimit=1000;
     }
 	
     /**
@@ -24,7 +25,73 @@ class MyDgCommon{
      * @param $password 会员密码
      * @return array|SimpleXMLElement
      */
-    public function createUser($param)
+    public function getLoginUrl($user)
+    {
+       $output = array(
+           'code'  =>999,
+           'message'  =>'get game url failure',
+       );
+       $curl = curl_init();
+       $random = rand(10,100);
+       $MD5Key = $this->getMD5Key($random);
+       $request = array(
+            "token"=> $MD5Key,
+            "random"=>$random,
+            "data" =>"A",
+            "member"=>array(
+                "username"=>$user['u_account'],
+                "password"=>$this->password,
+                "currencyName"=>$this->currency ,
+                "winLimit"=>$this->winLimit
+            )
+       );
+	   $url =$this->host."/user/login/".$this->agentName."/ ";
+       $requestJsonStr = json_encode( $request);
+	   // echo  $requestJsonStr;
+	   // exit();
+       curl_setopt_array($curl, array(
+          CURLOPT_URL =>  $url,
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS =>$requestJsonStr,
+          CURLOPT_HTTPHEADER => array(
+            "Content-Type: application/json",
+            "cache-control: no-cache"
+          ),
+        ));
+
+        $response = curl_exec($curl);
+        $response = json_decode($response,true);
+		
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) 
+        {
+            $output['message'].="cURL Error #:" . $err;
+        } elseif( $response['codeId']==0){
+            $output['code']=100;
+            $output['message'] ="get game url  success";
+			
+			$ary = [
+				'pc'=>$response['list'][0].$response['token'],
+				'mobile'=>$response['list'][1].$response['token'],
+			];
+            $output = array_merge($output,$ary);
+            
+        }
+        
+		// var_dump($response);
+		// exit();
+        return $output;
+    }
+	
+	public function createUser($param)
     {
        $output = array(
            'code'  =>999,
