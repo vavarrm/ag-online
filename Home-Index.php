@@ -242,9 +242,12 @@
         <script src="lib/owlcarousel/owl.carousel.min.js"></script>
         <script src="js/main.js"></script>
         <script>
-            <!-- Live.Global.intital(); -->
-        </script>
-        <script>
+		
+			Live.Global.intital();
+            Live.Global.notice_event();
+            Live.Global.owl_banner();
+            Live.Global.datepicker();
+		
             // Privity
             $(window).load(function () {
                 $.ajax({
@@ -305,7 +308,6 @@
 
             $(document).on('click', '.ajax-game-link', function (event) {
 				event.preventDefault(); 
-				// console.log('d')
                 var _key = $(this).attr('data-game-code');
                 if (localStorage.session == undefined || localStorage.session == '') {
                     alert('请先登入会员');
@@ -318,7 +320,6 @@
                             if (data.status) {
                                 switch (data.status) {
                                     case 100:
-										console.log('d')
                                         window.location.href = data.body.data.pc;
                                         break;
                                 }

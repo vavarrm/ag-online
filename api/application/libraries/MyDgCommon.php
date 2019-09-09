@@ -27,7 +27,41 @@ class MyDgCommon{
      */
     public function getLoginUrl($user)
     {
-       $output = array(
+		$output = array(
+			'code'  =>999,
+			'message'  =>'get game url failure',
+		);
+		$response = $this->logApi($user);
+			
+		if ($response['codeId'] == '102')
+		{
+			$ary= [
+				'username'	=>$user['u_account'],
+				'winLimit'	=>$this->winLimit,
+			];
+			$createUserResponse = $this->createUser($ary);
+			if($createUserResponse ['codeId'] =='0')
+			{
+				 $response = $this->logApi($user);
+			}
+			// var_dump($createUserResponse);
+		}
+		// exit();
+		if($response['codeId'] =="0")
+		{
+			$output = array(
+				'code'  =>100,
+				'message'  =>'get game url success',
+				'pc'=>$response['list'][0].$response['token'],
+				'mobile '=>$response['list'][1].$response['token'],
+			);
+		}
+        return $output;
+    }
+	
+	public function logApi($user)
+	{
+		$output = array(
            'code'  =>999,
            'message'  =>'get game url failure',
        );
@@ -47,8 +81,6 @@ class MyDgCommon{
        );
 	   $url =$this->host."/user/login/".$this->agentName."/ ";
        $requestJsonStr = json_encode( $request);
-	   // echo  $requestJsonStr;
-	   // exit();
        curl_setopt_array($curl, array(
           CURLOPT_URL =>  $url,
           CURLOPT_RETURNTRANSFER => true,
@@ -66,30 +98,14 @@ class MyDgCommon{
 
         $response = curl_exec($curl);
         $response = json_decode($response,true);
-		
         $err = curl_error($curl);
-
         curl_close($curl);
-
         if ($err) 
         {
             $output['message'].="cURL Error #:" . $err;
-        } elseif( $response['codeId']==0){
-            $output['code']=100;
-            $output['message'] ="get game url  success";
-			
-			$ary = [
-				'pc'=>$response['list'][0].$response['token'],
-				'mobile'=>$response['list'][1].$response['token'],
-			];
-            $output = array_merge($output,$ary);
-            
         }
-        
-		// var_dump($response);
-		// exit();
-        return $output;
-    }
+		return $response;
+	}
 	
 	public function createUser($param)
     {
