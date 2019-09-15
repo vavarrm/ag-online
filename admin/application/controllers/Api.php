@@ -2989,7 +2989,7 @@ class Api extends CI_Controller {
 		{
 			if(
 				$this->request['ua_id']	=="" ||
-				count($this->request['ua_id'])	==0 ||
+				// count($this->request['ua_id'])	==0 ||
 				$this->request['ua_status']	 ==""
 			)
 			{

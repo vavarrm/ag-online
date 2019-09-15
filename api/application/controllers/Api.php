@@ -1790,6 +1790,7 @@ class Api extends CI_Controller {
 			unset($this->_user['u_passwd']);
 			unset($this->_user['u_money_passwd']);
 			unset($this->_user['u_ag_passwd']);
+			unset($this->_user['u_balance']);
 			$row = $this->account->getBalance($this->_user['u_id']);
 			$_user = $this->user->getUserByID($this->_user['u_id']);
 			if($_user['u_receiving_bank_card_alert'] =='0')
@@ -2434,10 +2435,12 @@ class Api extends CI_Controller {
 		$product_type = (isset($get['product_type']))?$get['product_type']:4;
 		try 
 		{
-			$ag_user_name = $this->_user['ag_u_account'];
-		
-			$result_json_str = $this->tcgcommon->get_balance($ag_user_name ,$product_type);
+			$ary = [
+				'username'	=>$this->_user['ag_u_account']
+			];
+			$result_json_str = $this->gpcommon->get_balance($ary);
 			$result_ary = json_decode($result_json_str , true);
+			var_dump($result_ary );
 			if($result_ary['status'] !=0 || empty($result_ary ))
 			{
 				$array = array(

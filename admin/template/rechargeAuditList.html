@@ -70,14 +70,18 @@
 							<td valign="middle" width="5%" ng-bind="row.u_account"></td>
 							<td valign="middle" width="5%" ng-bind="row.uro_orderid"></td>
 							<td valign="middle" width="10%">
-								<select ng-model="row.ua_status" ng-disabled="row.change_status_disabled =='1'" ng-change="changeStatus(row)">
-									<option value="audit">待审核</option>
-									<option value="noAllowed">拒绝</option>
-									<option value="received">入帐</option>
-								</select>
-								<a  ng-repeat-start="action in data.actions" ng-disabled="row.change_status_disabled =='1'" ng-click="actionClick($event, action, row)" type="button" class="btn btn-xs btn-default" ng-bind="action.title">新增</a>
-								<span ng-repeat-end></span>
-								<input type="text" ng-model="row.ua_change_status_remarks" value="{row.ua_change_status_remarks}" ng-disabled="row.change_select_onchange!='1'" placeholder="请输入处理备注">
+								<div ng-show="row.change_status_disabled =='1'" >{{row.ua_status_show}}</div>
+								<!-- <span ng-show="row.change_status_disabled =='1'">11</span> -->
+								<div ng-show="row.change_status_disabled =='0'">
+									<select ng-model="row.ua_status"  ng-show="row.change_status_disabled =='0'" ng-disabled="row.change_status_disabled =='1'" ng-change="changeStatus(row)">
+										<option value="audit">待审核</option>
+										<option value="noAllowed">拒绝</option>
+										<option value="received">入帐</option>
+									</select>
+									<a  ng-repeat-start="action in data.actions" ng-disabled="row.change_status_disabled =='1'" ng-click="actionClick($event, action, row)" type="button" class="btn btn-xs btn-default" ng-bind="action.title">新增</a>
+									<span ng-repeat-end></span>
+									<input type="text" ng-model="row.ua_change_status_remarks" value="{row.ua_change_status_remarks}" ng-disabled="row.change_select_onchange!='1'" placeholder="请输入处理备注">
+								</div>
 							</td>
 							<td valign="middle" width="5%" ng-bind="row.ad_account"></td>
 							<td valign="middle" width="5%" ng-bind="row.ua_value"></td>

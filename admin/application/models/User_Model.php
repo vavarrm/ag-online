@@ -215,34 +215,12 @@
 			try 
 			{
 				$sql ="
-						SELECT   IFNULL(SUM(Balance),0)  AS balance FROM  (
-							SELECT ua_id , IFNULL(ua_value,0) AS Balance FROM user_account WHERE ua_u_id = ? AND ua_status = 'received'
-							UNION
-								SELECT 
-									ua.ua_id , IFNULL(ua.ua_value,0) AS Balance FROM user_account AS ua  INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
-								WHERE 
-									ua_u_id = ? AND ua_status = 'transfer_in'
-							UNION
-								SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'payment'
-							UNION
-								SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'audit' AND ua_type = 3
-							UNION
-								SELECT 
-									ua.ua_id , IFNULL(ua.ua_value,0)*-1 AS Balance FROM user_account AS ua INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
-								WHERE 
-									ua_u_id = ? AND ua_status = 'transfer_out' 
-							UNION
-								SELECT ua_id , IFNULL(ua_value,0)*-1  AS Balance FROM user_account WHERE  ua_u_id = ? AND ua_status = 'chargeback'
-						) AS t";
+						SELECT FORMAT(u_balance,2)   AS balance FROM user WHERE u_id =?";
 				$bind = array(
 					$u_id,
-					$u_id,
-					$u_id,
-					$u_id,
-					$u_id,
-					$u_id
 				);
 				$query = $this->db->query($sql, $bind);
+				// echo $this->db->last_query();
 				$error = $this->db->error();
 				if($error['message'] !="")
 				{
@@ -504,26 +482,7 @@
 							WHEN '0' THEN '未锁定'
 						END AS u_bank_card_lock_str
 						,
-						(
-							(SELECT  SUM(IFNULL(ua_value,0)) AS Balance FROM user_account WHERE ua_u_id = u.u_id AND ua_status = 'received')+
-							IFNULL((SELECT  SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id = u.u_id AND ua_status = 'payment'),0)+
-							IFNULL((SELECT  SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id = u.u_id AND ua_status = 'chargeback'),0)+
-							IFNULL((SELECT  SUM(IFNULL(ua.ua_value,0)*-1) AS Balance 
-								FROM user_account AS ua 
-								INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
-								WHERE 
-									ua_u_id = u.u_id AND ua_status = 'transfer_out' 
-							),0)+
-							IFNULL((SELECT  SUM(IFNULL(ua.ua_value,0)) AS Balance 
-								FROM user_account AS ua 
-								INNER JOIN user_transfer_account AS uta ON  ua.ua_order_id = uta.uta_reference_no
-								WHERE 
-									ua_u_id = u.u_id AND ua_status = 'transfer_in' 
-							),0)+
-							IFNULL((
-								SELECT SUM(IFNULL(ua_value,0)*-1)  AS Balance FROM user_account WHERE  ua_u_id =  u.u_id AND ua_status = 'audit' AND ua_type = 3
-							),0)
-						) AS u_balance,
+						FORMAT(u.u_balance,2) AS u_balance,
 						CASE u.u_ag_game_model
 							WHEN '1' THEN '正式号'
 							WHEN '0' THEN '测试号' 

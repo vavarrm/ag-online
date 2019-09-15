@@ -27,6 +27,9 @@ class MyDgCommon{
      */
     public function getLoginUrl($user)
     {
+		
+		// var_dump($user);
+		
 		$output = array(
 			'code'  =>999,
 			'message'  =>'get game url failure',
@@ -71,15 +74,14 @@ class MyDgCommon{
        $request = array(
             "token"=> $MD5Key,
             "random"=>$random,
-            "data" =>"A",
+            "lang" =>"cn",
             "member"=>array(
                 "username"=>$user['u_account'],
                 "password"=>$this->password,
-                "currencyName"=>$this->currency ,
-                "winLimit"=>$this->winLimit
             )
        );
 	   $url =$this->host."/user/login/".$this->agentName."/ ";
+	   $url =$this->host."/user/free/".$this->agentName."/ ";
        $requestJsonStr = json_encode( $request);
        curl_setopt_array($curl, array(
           CURLOPT_URL =>  $url,
@@ -162,6 +164,57 @@ class MyDgCommon{
         return $output;
     }
 	
+	public function getBalanceApi($param)
+	{
+		$output = array(
+           'code'  =>999,
+           'message'  =>'get  balance failure',
+       );
+       $curl = curl_init();
+       $random = rand(10,100);
+       $MD5Key = $this->getMD5Key($random);
+       $request = array(
+            "token"=> $MD5Key,
+            "random"=>$random,
+            "member"=>array(
+                "username"=>$param['username']
+            )
+       );
+       $requestJsonStr = json_encode( $request);
+       curl_setopt_array($curl, array(
+          CURLOPT_URL =>  $this->host."/user/getBalance/".$this->agentName."/",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS =>$requestJsonStr,
+          CURLOPT_HTTPHEADER => array(
+            "Content-Type: application/json",
+            "cache-control: no-cache"
+          ),
+        ));
+
+        $response = curl_exec($curl);
+        $response = json_decode($response,true);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) 
+        {
+            $output['message'].="cURL Error #:" . $err;
+        } elseif( $response['codeId']==0){
+            $output['code']=100;
+            $output['message'] ="createUser success";
+            $output = array_merge($output,$response);
+            
+        }
+        
+        return $output;
+	}
+	
 	/**
 	 * 2.2. UPDATE PASSWORD API 更新密码接口
 	 * @param $username 会员名称
@@ -181,7 +234,7 @@ class MyDgCommon{
 	 * @param $product_type   	产品代码
      * @return array|SimpleXMLElement
      */
-    public function get_balance($username,$product_type){
+    public function get_balance($ary){
         $getBalanceParams = array('username' => $username, 'method' => 'gb' , 'product_type' => $product_type);
 		// var_dump($getBalanceParams);
         $result = $this->send_require($getBalanceParams);

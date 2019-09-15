@@ -1,7 +1,6 @@
 var templatePath = "/admin/template/";
 var apiRouter ;
 var agApp = angular.module("agApp", ['ngRoute', 'ngCookies']);
-
 agApp.config(function($routeProvider){
 	$routeProvider.when("/",{
 		templateUrl: templatePath+"index.html"+"?"+ Math.random(),
@@ -568,7 +567,6 @@ var websiteCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 					{
 						$( this ).dialog( "close" );
 						var obj ={};
-						console.log();
 						var promise = apiService.adminApi("/setAccountLimit", $scope.data.input);
 						promise.then
 						(
@@ -2859,7 +2857,6 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 	
 	$scope.actionClick = function($event,action, row)
 	{
-	
 		if( action.func !=null)
 		{
 			$event.preventDefault();
@@ -2872,7 +2869,7 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		
 	}
 	
-	$scope.RechargeAuditChange= function(row, action)
+	$scope.doRechargeAudit= function(row, action)
 	{
 		
 		if(row.ua_status =="audit")
@@ -2891,7 +2888,9 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 		var postobj ={
 			ua_id : row.ua_id,
 			ua_status: row.ua_status,
-			ua_change_status_remarks : row.ua_change_status_remarks
+			ua_change_status_remarks : row.ua_change_status_remarks,
+			u_id:row.ua_u_id,
+			value:row.ua_value
 		};
 		$('input[name=am_id]', parent.document).val(action.id);
 		var obj =

@@ -292,6 +292,7 @@
 							throw  $MyException;
 						}
 						$query->free_result();
+
 						if(
 							$row['today_received_number'] > $accountLimit['u_received_number_limit'] ||
 							$row['today_received_value']  > $accountLimit['u_received_value_limit']
@@ -315,13 +316,34 @@
 				
 				if($affected_rows >0)
 				{
-
-						$sql="INSERT INTO user_account_record(uar_am_id, uar_ua_id, uar_action, uar_add_datetime, uar_change_status)
-								VALUES(?, ?,'change_status',NOW(),?)";
+					$sql="INSERT INTO user_account_record(uar_am_id, uar_ua_id, uar_action, uar_add_datetime, uar_change_status)
+							VALUES(?, ?,'change_status',NOW(),?)";
+					$bind=array(
+						$admin['ad_id'],
+						$ary['ua_id'],
+						$ary['ua_status']
+					);
+					$query = $this->db->query($sql, $bind);
+					$error = $this->db->error();
+					if($error['message'] !="")
+					{
+						$MyException = new MyException();
+						$array = array(
+							'message' 	=>$error['message'] ,
+							'type' 		=>'db' ,
+							'status'	=>'001'
+						);
+						
+						$MyException->setParams($array);
+						throw  $MyException;
+					}
+					
+					if($ary['ua_status'] =="received")
+					{
+						$sql="UPDATE user SET u_balance = u_balance + ? WHERE u_id = ?";
 						$bind=array(
-							$admin['ad_id'],
-							$ary['ua_id'],
-							$ary['ua_status']
+							$ary['value'],
+							$ary['u_id'],
 						);
 						$query = $this->db->query($sql, $bind);
 						$error = $this->db->error();
@@ -337,6 +359,7 @@
 							$MyException->setParams($array);
 							throw  $MyException;
 						}
+					}
 				}
 				
 				$this->db->trans_commit();
@@ -525,14 +548,14 @@
 							WHEN  ua_status = 'noAllowed' THEN '拒绝'
 							WHEN  ua_status = 'audit' THEN '审核中'
 							WHEN  ua_status = 'payment' THEN '已出款'
-							WHEN  ua_status = 'recorded' THEN '已入帐'
+							WHEN  ua_status = 'received' THEN '已入帐'
 						END AS 	ua_status_show,
 						ua.*,
 						ad.*,
 						ub.*,
 						bi.*,
 						uat.*,
-						uro.*,
+						-- uro.*,
 						(
 							SELECT COUNT(*) 
 							FROM  
@@ -567,7 +590,7 @@
 							LEFT JOIN user_bank_info AS ub ON ub.ub_id = ua_ub_id
 							LEFT JOIN bank_info AS bi ON ub.ub_bank_id = bi_id
 							LEFT JOIN user_account_type AS uat ON ua.ua_type = uat.uat_id
-							LEFT JOIN user_recharge_order AS uro ON ua.	ua_uro_id = uro.uro_id
+							-- LEFT JOIN user_recharge_order AS uro ON ua.	ua_uro_id = uro.uro_id
 					";
 			$search_sql = $sql.$where.$order.$limit ;
 			$query = $this->db->query($search_sql, $bind);
