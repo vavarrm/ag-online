@@ -2308,11 +2308,17 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			$ag_user_name = $this->_user['ag_u_account'];
-			$result_json_str = $this->tcgcommon->get_balance($ag_user_name ,$product_type);
-			$result_ary = json_decode($result_json_str , true);
-	
-			if($result_ary['status'] !=0 || empty($result_ary))
+			// $ag_user_name = $this->_user['ag_u_account'];
+			// $result_json_str = $this->tcgcommon->get_balance($ag_user_name ,$product_type);
+			// $result_ary = json_decode($result_json_str , true);
+			$ary = [
+				'username'	=>$this->_user['ag_u_account']
+			];
+			$result_ary = $this->gpcommon->getBalanceApi($ary);
+			
+			// var_dump($result_ary);
+				
+			if($result_ary['code'] !=100 || empty($result_ary))
 			{
 				$array = array(
 					'message' 	=>'无法取得使用者馀额' ,
@@ -2438,10 +2444,8 @@ class Api extends CI_Controller {
 			$ary = [
 				'username'	=>$this->_user['ag_u_account']
 			];
-			$result_json_str = $this->gpcommon->get_balance($ary);
-			$result_ary = json_decode($result_json_str , true);
-			var_dump($result_ary );
-			if($result_ary['status'] !=0 || empty($result_ary ))
+			$result_ary = $this->gpcommon->getBalanceApi($ary);
+			if($result_ary['code'] !=100 || empty($result_ary ))
 			{
 				$array = array(
 					'message' 	=>'无法取得取得第三方用户馀额' ,
@@ -2452,8 +2456,7 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}
-			
-			$output['body'] =$result_ary;
+			$output['body'] =['balance' => $result_ary['member']['balance']];
 			
 		}catch(MyException $e)
 		{

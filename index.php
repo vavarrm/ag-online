@@ -58,7 +58,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <a class="btn btn-bg-orange" href="Member-Deposit.html">
+                        <a class="btn btn-bg-orange" href="Member-Deposit.php">
                             <i class="icon-ic-crown1"></i>
                             <span>充值/会员中心</span>
                         </a>

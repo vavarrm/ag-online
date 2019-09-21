@@ -62,6 +62,55 @@ class MyDgCommon{
         return $output;
     }
 	
+	public function transferAPI($param)
+	{
+		$curl = curl_init();
+
+		$random = rand(10,100);
+		$MD5Key = $this->getMD5Key($random);
+		$request = array(
+			"token"=> $MD5Key,
+			"random"=>$random,
+			"data" =>$param['reference_no'],
+			"member"=>array(
+				"username"=>$param['username'],
+				"amount"=>$param['amount'],
+			)
+		);
+
+		$requestJsonStr = json_encode($request);
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => $this->host."/account/transfer/".$this->agentName,
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => $requestJsonStr,
+		  CURLOPT_HTTPHEADER => array(
+			"Content-Type: application/json",
+			"Postman-Token: f2f1f817-214c-4c62-846d-86802b82fd0f",
+			"cache-control: no-cache"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+		$response = json_decode($response,true);
+		curl_close($curl);
+
+		if ($err) {
+		  // echo "cURL Error #:" . $err;
+		} else {
+			$output['code']=100;
+            $output['message'] ="transfer success";
+            $output = array_merge($output,$response);
+		  return  $output;
+		}
+	}
+	
 	public function logApi($user)
 	{
 		$output = array(
@@ -81,7 +130,7 @@ class MyDgCommon{
             )
        );
 	   $url =$this->host."/user/login/".$this->agentName."/ ";
-	   $url =$this->host."/user/free/".$this->agentName."/ ";
+	   // $url =$this->host."/user/free/".$this->agentName."/ ";
        $requestJsonStr = json_encode( $request);
        curl_setopt_array($curl, array(
           CURLOPT_URL =>  $url,
@@ -100,12 +149,14 @@ class MyDgCommon{
 
         $response = curl_exec($curl);
         $response = json_decode($response,true);
+		// var_dump($response);
         $err = curl_error($curl);
         curl_close($curl);
         if ($err) 
         {
             $output['message'].="cURL Error #:" . $err;
         }
+		// echo "F";
 		return $response;
 	}
 	
@@ -198,6 +249,9 @@ class MyDgCommon{
 
         $response = curl_exec($curl);
         $response = json_decode($response,true);
+		
+		// if()
+		
         $err = curl_error($curl);
 
         curl_close($curl);

@@ -603,49 +603,50 @@
 		
 		public function getTransferreferenceNo($fund_type)
 		{
-			try
-			{
-				$sql ="	SELECT 
-							uta_id 
-						FROM  user_transfer_account 
-						WHERE 
-							DATE_FORMAT(NOW(), '%Y') = DATE_FORMAT(uta_add_datetime, '%Y') AND
-							uta_ag_fund_type =?
-						ORDER BY uta_id DESC LIMIT 1";
-				$bind = array(
-					$fund_type
-				);
-				$query = $this->db->query($sql, $bind);
-				$error = $this->db->error();
-				if($error['message'] !="")
-				{
-					$MyException = new MyException();
-					$array = array(
-						'message' 	=>$error['message'] ,
-						'type' 		=>'db' ,
-						'status'	=>'001'
-					);
+			return time().rand(1000,9999);
+			// try
+			// {
+				// $sql ="	SELECT 
+							// uta_id 
+						// FROM  user_transfer_account 
+						// WHERE 
+							// DATE_FORMAT(NOW(), '%Y') = DATE_FORMAT(uta_add_datetime, '%Y') AND
+							// uta_ag_fund_type =?
+						// ORDER BY uta_id DESC LIMIT 1";
+				// $bind = array(
+					// $fund_type
+				// );
+				// $query = $this->db->query($sql, $bind);
+				// $error = $this->db->error();
+				// if($error['message'] !="")
+				// {
+					// $MyException = new MyException();
+					// $array = array(
+						// 'message' 	=>$error['message'] ,
+						// 'type' 		=>'db' ,
+						// 'status'	=>'001'
+					// );
 					
-					$MyException->setParams($array);
-					throw $MyException;
-				}
-				$row =  $query->row_array();
-				$query->free_result();
+					// $MyException->setParams($array);
+					// throw $MyException;
+				// }
+				// $row =  $query->row_array();
+				// $query->free_result();
 				
-				if(empty($row))
-				{
-					$reference_no = date('Ymd',time()).$fund_type.sprintf('%06d',1);
-				}else
-				{
-					$reference_no = date('Ymd',time()).$fund_type.sprintf('%06d',$row['uta_id']+1);
-				}
+				// if(empty($row))
+				// {
+					// $reference_no = date('Ymd',time()).$fund_type.sprintf('%06d',1);
+				// }else
+				// {
+					// $reference_no = date('Ymd',time()).$fund_type.sprintf('%06d',$row['uta_id']+1);
+				// }
 				
-				return "ldyl".$reference_no;
+				// return "ldyl".$reference_no;
 				
-			}catch(MyException $e)
-			{
-				throw $e;
-			}
+			// }catch(MyException $e)
+			// {
+				// throw $e;
+			// }
 		}
 		
 		
@@ -715,6 +716,9 @@
 				
 				
 				$balance = $this->getBalance($ary['user']['u_id']);
+				// var_dump($ary['amount']);
+				// var_dump($balance['balance']);
+				// var_dump($ary['amount'] > $balance['balance'] );
 				if($ary['fund_type'] ==1 && ($balance['balance'] <=0 || $ary['amount'] > $balance['balance']))
 				{
 					$MyException = new MyException();
@@ -741,20 +745,22 @@
 					throw $MyException;
 				}
 				
-				$this->CI->load->library('MyTcgCommon','tcgcommon');
+				// $this->CI->load->library('MyDgCommon','tcgcommon');
 			
 				
 				$reference_no = $this->getTransferreferenceNo($ary['fund_type']);
 				$ag_username = $ary['user']['ag_u_account'];
-				$result_json = $this->CI->tcgcommon->user_transfer($ag_username , $ary['product_type'], $ary['fund_type'] , $ary['amount'], $reference_no);
-				$result = json_decode($result_json , true);
+				$param = [
+					'username'=>$ary['user']['ag_u_account'],
+					'amount'=>$ary['amount'],
+					'reference_no'=>$reference_no,
+				];
 				
 				
-				sleep(3);
-				$result_json = $this->CI->tcgcommon->check_transfer($ary['product_type'], $reference_no);
-				$result = json_decode($result_json , true);
+				$result = $this->gpcommon->transferAPI($param);
+				// var_dump($result);
 				
-				if(empty($result) || $result['status'] != 0 || $result['transaction_status'] !="SUCCESS")
+				if(empty($result) || $result['code'] != 100)
 				{
 					$MyException = new MyException();
 					$array = array(
@@ -800,13 +806,14 @@
 				}
 				
 				$sql="INSERT INTO  user_transfer_account 
-								(uta_reference_no, uta_add_datetime, uta_remarks,uta_ag_fund_type)
-						VALUES	(?,NOW(),?,?)"	;						
+								(reference_no, add_datetime, action, amount, u_id)
+						VALUES	(?,NOW(),?,?,?)"	;						
 							
 				$bind = array(
 					$reference_no,
-					$result['transaction_status'],
-					$ary['fund_type'],
+					'IN',
+					$ary['amount'],
+					$ary['user']['u_id'],
 				);
 				
 				$query = $this->db->query($sql, $bind);
@@ -824,9 +831,29 @@
 					throw $MyException;
 				}
 				
-				$sql="UPDATE ag_lock SET ag_is_lock ='0' WHERE ag_id =?";
+				$sql="UPDATE ag_lock SET ag_is_lock ='0' WHERE id =?";
 				$bind = array(
 					$ag_id
+				);
+				
+				$query = $this->db->query($sql, $bind);
+				$error = $this->db->error();
+				if($error['message'] !="")
+				{
+					$MyException = new MyException();
+					$array = array(
+						'message' 	=>$error['message'] ,
+						'type' 		=>'db' ,
+						'status'	=>'001'
+					);
+					
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				$sql="UPDATE user SET u_balance =u_balance - ".$ary['amount']." WHERE u_id =?";
+				$bind = array(
+					$ary['user']['u_id']
 				);
 				
 				$query = $this->db->query($sql, $bind);
@@ -850,7 +877,7 @@
 			   $this->db->trans_rollback();
 			   if($ag_id !="")
 			   {
-				   $sql="DELETE  FROM ag_lock WHERE ag_id =?";
+				   $sql="DELETE  FROM ag_lock WHERE id =?";
 				   $bind=array(
 						$ag_id
 				   );
@@ -887,6 +914,7 @@
 				}
 				$row =  $query->row_array();
 				$query->free_result();
+				$row['balance'] = str_replace(',', '', $row['balance']);
 				return $row;
 				
 			}catch(MyException $e)
