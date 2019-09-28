@@ -751,11 +751,13 @@
 				$reference_no = $this->getTransferreferenceNo($ary['fund_type']);
 				$ag_username = $ary['user']['ag_u_account'];
 				$param = [
-					'username'=>$ary['user']['ag_u_account'],
+					'username'=>$ary['user']['u_account'],
 					'amount'=>$ary['amount'],
 					'reference_no'=>$reference_no,
 				];
 				
+				
+				// var_dump($ary['user']);
 				
 				$result = $this->gpcommon->transferAPI($param);
 				// var_dump($result);

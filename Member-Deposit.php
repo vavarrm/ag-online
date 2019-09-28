@@ -20,68 +20,9 @@
                 <a href="Home-Index.html" class="img-container">
                     <img src="img/logo.png" alt="乐鼎国际">
                 </a>
-                <div class="login-information">
-                    <div class="login-before jq-login-before ajax-login-form" style="display: none;">
-                        <div class="row">
-                            <input class="account" type="text" name="account" placeholder="游戏账号">
-                            <i class="icon-ic-user3"></i>
-                        </div>
-                        <div class="row">
-                            <input class="password" type="password" name="passwd" placeholder="游戏密码">
-                            <i class="icon-ic-lock1"></i>
-                        </div>
-                        <input class="btn btn-solid-blue ajax-btn-login" type="button" value="登入">
-                        <a class="btn btn-bg-blue jq-btn-pop-register jq-cancelBubble" href="javascript:void(0)">
-                            <i class="icon-ic-roulette1"></i>
-                            <span>免费开户</span>
-                        </a>
-                    </div>
-                    <div class="login-after jq-login-after" style="display: none;">
-						<div class="btn btn-bg" style="box-shadow :0px 0px 0px 0px" >                            <span class="nam">本地额度</span>							<span class="head-balance">1</span>                        </div>
-                        <div class="login-member-detail jq-login-member-detail jq-cancelBubble">
-                            <span class="member-nam jq-member-nam"></span>
-                            <ul class="member-list jq-member-list jq-cancelBubble">
-                                <li>
-                                    <span class="title">本地额度</span>
-                                    <a class="nam" href="Member-Deposit.html">
-                                        <span>5000000</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <span class="title">站内信</span>
-                                    <a class="nam" href="Member-Message.html">
-                                        <span>10</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <a class="btn btn-bg-orange" href="Member-Deposit.html">
-                            <i class="icon-ic-crown1"></i>
-                            <span>充值/会员中心</span>
-                        </a>
-                        <input class="btn btn-solid-orange ajax-btn-logout" type="button" value="登出">
-                    </div>
-                </div>
+				<?php include('template/login.php');?>
             </div>
-            <div class="nav-container">
-                <ul class="container clear">
-                    <li class="jq-nav-option">
-                        <a href="Live-Entertainment.html">真人娱乐</a>
-                    </li>
-                    <li class="jq-nav-option">
-                        <a href="Live-Electric.html">电子游戏</a>
-                    </li>
-                    <li class="jq-nav-option">
-                        <a href="Live-Discount.html">优惠讯息</a>
-                    </li>
-                    <li class="jq-nav-option">
-                        <a href="Live-Notice.html">平台公告</a>
-                    </li>
-                    <li class="jq-nav-option">
-                        <a href="Home-Index.html">手机APP</a>
-                    </li>
-                </ul>
-            </div>
+			<?php include('template/nav.php');?>
         </header>
         <main>
             <section class="sect-nav">
@@ -99,43 +40,8 @@
             </section>
             <section class="sect-member-detail">
                 <div class="container">
-                    <ul class="member-action-list jq-member-action-list">
-                        <li>会员中心</li>
-                        <li>
-                            <a href="Member-Deposit.html" class="btn btn-solid-blue active">充值</a>
-                        </li>
-                        <li>
-                            <a href="Member-Withdrawal.html" class="btn btn-solid-blue">提款</a>
-                        </li>
-                        <li>
-                            <a href="Member-Transfer.html" class="btn btn-solid-blue">转换金额</a>
-                        </li>
-                        <li>
-                            <a href="Member-DailyRecord.html" class="btn btn-solid-blue">日常纪录</a>
-                        </li>
-                        <li>
-                            <a href="Member-CashRecord.html" class="btn btn-solid-blue">投注纪录</a>
-                        </li>
-                        <li>
-                            <a href="Member-Balance.html" class="btn btn-solid-blue">余额查询</a>
-                        </li>
-                        <li>
-                            <a href="Member-Discount.html" class="btn btn-solid-blue">优惠讯息</a>
-                        </li>
-                        <li style="display:none;">
-                        <li>
-                            <a href="Member-Message.html" class="btn btn-solid-blue">站内讯息</a>
-                        </li>
-                        <li>
-                            <a href="Member-Register.html" class="btn btn-solid-blue">邀请码管理</a>
-                        </li>
-                        <li>
-                            <a href="Member-Password.html" class="btn btn-solid-blue">密码管理</a>
-                        </li>
-                        <li>
-                            <a href="Member-CardManagement.html" class="btn btn-solid-blue">银行卡管理</a>
-                        </li>
-                    </ul>
+					<?php $page="Member-Deposit";?>
+					<?php include('template/memberMenuList.php');?>
                     <div class="member-detail">
                         <form class="container step1" action="">
                             <div class="row">

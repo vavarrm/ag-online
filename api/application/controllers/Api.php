@@ -25,6 +25,7 @@ class Api extends CI_Controller {
 		$this->load->model('PhoneCallBack_Model', 'callback');
 		$this->load->model('Discount_Model', 'discount');
 		$this->load->model('WebConfig_Model', 'webConfig');
+		$this->load->model('Transaction_Model', 'transaction');
 		$this->request = json_decode(trim(file_get_contents('php://input'), 'r'), true);
         $this->load->library('MyDgCommon');
         $gpcommonClass = strtolower('MyDgCommon');
@@ -2101,7 +2102,7 @@ class Api extends CI_Controller {
 			$result_ary['games']= [
 				[
 					'tcgGameCode'=>'a',
-					'gameName'=>'真人百家樂',
+					'gameName'=>'龍虎',
 				],
 				[
 					'tcgGameCode'=>'a',
@@ -2109,7 +2110,7 @@ class Api extends CI_Controller {
 				],
 				[
 					'tcgGameCode'=>'a',
-					'gameName'=>'龍虎',
+					'gameName'=>'真人百家樂',
 				],
 			];
 			if($result_ary['status'] !=0  ||  empty($result_ary['games']) )
@@ -2231,31 +2232,45 @@ class Api extends CI_Controller {
 		$output['body'] =array();
 		$output['title'] ='取得用户投注列表';
 		$output['message'] = '执行成功';
-		$page_size = (isset($get['limit']))?$get['limit']:6;
-		$page = (isset($get['p']))?$get['p']:1;
-		$start_date = (isset($get['start_date']))?$get['start_date']." 00:00:00":date('Y-m-d 00:00:00');
-		$end_date = (isset($get['end_date']))?$get['end_date']." 23:59:59":date('Y-m-d 23:59:59');
+		$page_size = (!empty($get['limit']))?$get['limit']:5;
+		$page = (!empty($get['p']))?$get['p']:1;
+		$start_date = (!empty($get['start_date']))?$get['start_date']." 00:00:00":"";
+		$end_date = (!empty($get['end_date']))?$get['end_date']." 23:59:59":"";
 		try 
 		{
 			
-			$ag_user_name = $this->_user['ag_u_account'];
-			$result_json_str = $this->tcgcommon->get_bet_details_member($ag_user_name, $start_date, $end_date, $page);
-			$result_ary = json_decode($result_json_str , true);
-			if($result_ary['status'] !=0 || empty($result_ary))
+			if($start_date!="" && $end_date!="")
 			{
-				$array = array(
-					'message' 	=>'无法取得用户投注列表' ,
-					'type' 		=>'api' ,
-					'status'	=>'999'
-				);
-				$MyException = new MyException();
-				$MyException->setParams($array);
-				throw $MyException;
+				$search = [
+					"DATE_FORMAT(t.bet_time ,'%Y-%m-%d %H:%i:%s') >= '?'" =>$start_date,
+					"DATE_FORMAT(t.bet_time ,'%Y-%m-%d %H:%i:%s') <= '?'" =>$end_date,
+				];
 			}
-			$output['body']['list'] = $result_ary['details'];
-			$output['body']['page_info']['pages'] = $result_ary['page_info']['totalPage'];
-			$output['body']['page_info']['total'] = $result_ary['page_info']['totalCount'];
-			$output['body']['page_info']['p'] = $result_ary['page_info']['currentPage'];
+			
+			$ag_user_name = $this->_user['ag_u_account'];
+			$ary = [
+				'select' =>[
+					't.t_id',
+					't.bet_time',
+					't.win_Loss',
+					't.t_id',
+					't.bet_points',
+					't.available_bet',
+					't.user_name',
+					'GL.game_name',
+				],
+				'table' =>'dg_transaction AS t',
+				'from'	=>" LEFT JOIN dg_game_list AS GL ON t.table_id = GL.table_id AND t.game_type AND GL.game_type AND t.game_id = GL.game_id",
+				'page'	=>$page,
+				'where' =>$search
+			];
+			$this->transaction->limit=$page_size;
+			$result = $this->transaction->getList($ary);
+	
+			$output['body'] = $result;
+			// $output['body']['page_info']['pages'] = $result_ary['page_info']['totalPage'];
+			// $output['body']['page_info']['total'] = $result_ary['page_info']['totalCount'];
+			$output['body']['page_info']['p'] = $page;
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();
@@ -2312,8 +2327,11 @@ class Api extends CI_Controller {
 			// $result_json_str = $this->tcgcommon->get_balance($ag_user_name ,$product_type);
 			// $result_ary = json_decode($result_json_str , true);
 			$ary = [
-				'username'	=>$this->_user['ag_u_account']
+				'username'	=>$this->_user['u_account']
 			];
+			
+			// var_dump($this->_user);
+			// var_dump(	$ary);
 			$result_ary = $this->gpcommon->getBalanceApi($ary);
 			
 			// var_dump($result_ary);
@@ -2321,7 +2339,7 @@ class Api extends CI_Controller {
 			if($result_ary['code'] !=100 || empty($result_ary))
 			{
 				$array = array(
-					'message' 	=>'无法取得使用者馀额' ,
+					'message' 	=>'无法取得使用者馀额1' ,
 					'type' 		=>'api' ,
 					'status'	=>'999'
 				);
@@ -2441,8 +2459,11 @@ class Api extends CI_Controller {
 		$product_type = (isset($get['product_type']))?$get['product_type']:4;
 		try 
 		{
+			
+			// var_dump($this->_user);
+			
 			$ary = [
-				'username'	=>$this->_user['ag_u_account']
+				'username'	=>$this->_user['u_account']
 			];
 			$result_ary = $this->gpcommon->getBalanceApi($ary);
 			if($result_ary['code'] !=100 || empty($result_ary ))

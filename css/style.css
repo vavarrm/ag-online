@@ -2715,4 +2715,27 @@ body .pop-window .pop-bankcard .form-group .form-action .btn {
   width: 100%;
   margin-bottom: 10px;
 }
+
+ul.pagination {
+	display: inline-block;
+	padding: 0;
+	margin: 0;
+}
+
+ul.pagination li {display: inline;}
+
+ul.pagination li a {
+	color: black;
+	float: left;
+	padding: 8px 16px;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+ul.pagination li a.active {
+	color: red;
+	float: left;
+	padding: 8px 16px;
+	text-decoration: none;
+}
 /*# sourceMappingURL=style.css.map */

@@ -17,74 +17,12 @@
     <div id="wrapper">
         <header>
             <div class="container clear">
-                <a href="Home-Index.html" class="img-container">
+                <a href="index.php" class="img-container">
                     <img src="img/logo.png" alt="乐鼎国际">
                 </a>
-                <div class="login-information">
-                    <div class="login-before jq-login-before ajax-login-form" style="display: none;">
-                        <div class="row">
-                            <input class="account" type="text" name="account" placeholder="游戏账号">
-                            <i class="icon-ic-user3"></i>
-                        </div>
-                        <div class="row">
-                            <input class="password" type="password" name="passwd" placeholder="游戏密码">
-                            <i class="icon-ic-lock1"></i>
-                        </div>
-                        <input class="btn btn-solid-blue ajax-btn-login" type="button" value="登入">
-                        <a class="btn btn-bg-blue jq-btn-pop-register jq-cancelBubble" href="javascript:void(0)">
-                            <i class="icon-ic-roulette1"></i>
-                            <span>免费开户</span>
-                        </a>
-                    </div>
-                    <div class="login-after jq-login-after" style="display: none;">
-						<div class="btn btn-bg" style="box-shadow :0px 0px 0px 0px" >
-                            <span class="nam">本地额度</span>
-							<span class="head-balance">1</span>
-                        </div>
-                        <div class="login-member-detail jq-login-member-detail jq-cancelBubble">
-                            <span class="member-nam jq-member-nam"></span>
-                            <ul class="member-list jq-member-list jq-cancelBubble">
-                                <li>
-                                    <span class="title">本地额度</span>
-                                    <a class="nam" href="Member-Deposit.html">
-                                        <span>5000000</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <span class="title">站内信</span>
-                                    <a class="nam" href="Member-Message.html">
-                                        <span>10</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <a class="btn btn-bg-orange" href="Member-Deposit.php">
-                            <i class="icon-ic-crown1"></i>
-                            <span>充值/会员中心</span>
-                        </a>
-                        <input class="btn btn-solid-orange ajax-btn-logout" type="button" value="登出">
-                    </div>
-                </div>
+				<?php include('template/login.php');?>
             </div>
-            <div class="nav-container">
-                <ul class="container clear">
-                    <li class="jq-nav-option">
-                        <a href="Live-Entertainment.html">真人娱乐</a>
-                    </li>
-                    <!-- <li class="jq-nav-option"> -->
-                        <!-- <a href="Live-Electric.html">电子游戏</a> -->
-                    <!-- </li> -->
-                    <li class="jq-nav-option">
-                        <a href="Live-Discount.html">优惠讯息</a>
-                    </li>
-                    <li class="jq-nav-option">
-                        <a href="Live-Notice.html">平台公告</a>
-                    </li>
-                    <!-- <li class="jq-nav-option"> -->
-                        <!-- <a href="Home-Index.html">手机APP</a> -->
-                    <!-- </li> -->
-                </ul>
-            </div>
+			
         </header>
         <main>
             <section class="owl-carousel owl-theme owl-banner jq-owl-banner"></section>
@@ -267,7 +205,7 @@
                                             <!-- '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' + -->
                                             <!-- data.body.list[i].productCode + '/' + data.body.list[ -->
                                                 <!-- i].tcgGameCode + '.png" alt="">' + -->
-											'<img src="https://via.placeholder.com/161x203">'+
+											'<img src="img/gamelist'+(i+1)+'.jpg">'+
                                             '<p class="title">' + data.body.list[i].gameName +
                                             '</p>' +
                                             '</a>' +
@@ -294,7 +232,7 @@
                                             '<div class="item">' +
                                             <!-- '<img src="/images/big_banner/' + data.body.list[i].bb_image + -->
                                             <!-- '" alt="">' + -->
-											'<img src="https://via.placeholder.com/50x50">'+
+											'<img width="100%" src="https://via.placeholder.com/1510x300">'+
                                             '</div>'
                                         )
                                     }

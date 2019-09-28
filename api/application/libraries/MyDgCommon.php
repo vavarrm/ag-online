@@ -19,6 +19,48 @@ class MyDgCommon{
 		$this->winLimit=1000;
     }
 	
+	public function getTransaction()
+	{
+		$curl = curl_init();
+
+		$random = rand(10,100);
+		$MD5Key = $this->getMD5Key($random);
+		$request = array(
+			"token"=> $MD5Key,
+			"random"=>$random,
+		);
+
+		$requestJsonStr = json_encode($request);
+
+		curl_setopt_array($curl, array(
+		  CURLOPT_URL => "http://api.dg99web.com/game/getReport/DGTE01010B",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "POST",
+		  CURLOPT_POSTFIELDS => $requestJsonStr,
+		  CURLOPT_HTTPHEADER => array(
+			"Content-Type: application/json",
+			"Postman-Token: 695c50be-a6d6-4160-9322-6ecc79bf77bd",
+			"cache-control: no-cache"
+		  ),
+		));
+
+		$response = curl_exec($curl);
+		$err = curl_error($curl);
+
+		curl_close($curl);
+
+		if ($err) {
+		  // echo "cURL Error #:" . $err;
+		} else {
+		  // echo $response;
+		  return json_decode($response,true);
+		}
+	}
+	
     /**
      * 2.1. CREATE/REGISTER PLAYER API 创建/确认玩家接口
      * @param $username 会员名称
@@ -64,6 +106,7 @@ class MyDgCommon{
 	
 	public function transferAPI($param)
 	{
+		// var_dump($param);
 		$curl = curl_init();
 
 		$random = rand(10,100);
@@ -99,6 +142,7 @@ class MyDgCommon{
 		$response = curl_exec($curl);
 		$err = curl_error($curl);
 		$response = json_decode($response,true);
+		// var_dump($response );
 		curl_close($curl);
 
 		if ($err) {
@@ -217,6 +261,8 @@ class MyDgCommon{
 	
 	public function getBalanceApi($param)
 	{
+		// var_dump($param);
+		
 		$output = array(
            'code'  =>999,
            'message'  =>'get  balance failure',
@@ -249,7 +295,7 @@ class MyDgCommon{
 
         $response = curl_exec($curl);
         $response = json_decode($response,true);
-		
+		// var_dump( $response );
 		// if()
 		
         $err = curl_error($curl);
