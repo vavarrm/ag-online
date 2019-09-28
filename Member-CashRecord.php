@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="lib/owlcarousel/assets/owl.theme.default.min.css">
     <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.min.css">
 	<script src="/js/iphone.browser.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/jquery-easy-loading@1.3.0/dist/jquery.loading.min.css" rel="stylesheet" />
     <!--iphone+ 736(560)-->
     <!--iphone 667(555)-->
     <!--iphone5 568(460)-->
@@ -67,6 +68,7 @@
                                         <div class="tr">
                                             <div class="th">日期</div>
                                             <div class="th">游戏编号</div>
+											<div class="th">玩家帐号</div>
                                             <div class="th">游戏类别</div>
                                             <div class="th">下注金额</div>                                            <div class="th">有效投注</div>                                            <div class="th">输赢</div>
                                         </div>
@@ -85,6 +87,7 @@
         <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 		<script src="lib/jquery-ui/jquery-ui.min.js"></script>		<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/i18n/jquery.ui.datepicker-zh-CN.min.js"></script>
 		<script src="/js/main.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/jquery-easy-loading@1.3.0/dist/jquery.loading.min.js"></script>
 		<script>
             Live.Global.intital();
             Live.Global.member();
@@ -93,7 +96,8 @@
         </script>
         <script>
             // Privity
-            function cash_change(_start_type, _end_type,p) {				if ( typeof p ==="undefined")				{					p = 1;				}
+            function cash_change(_start_type, _end_type,p) {
+				$( ".member-table" ).loading();				if ( typeof p ==="undefined")				{					p = 1;				}
                 $("[data-daily-table]").find('.tbody').find('.tr').remove();
                 if (_start_type == undefined || _end_type == undefined) {
                     $.ajax({
@@ -110,8 +114,9 @@
                                                 '<div class="tr">' +
                                                     '<div class="td" data-title="日期">' + data.body.list[i].bet_time + '</div>' +
                                                     '<div class="td" data-title="游戏编号">' + data.body.list[i].t_id + '</div>' +
-                                                    '<div class="td" data-title="游戏类别">' + data.body.list[i].game_type + '</div>' +
-                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].bet_points + '</div>' +                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].available_bet + '</div>' +                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].win_Loss + '</div>' +
+                                                    '<div class="td" data-title="玩家帐号">' + data.body.list[i].user_name + '</div>' +
+                                                    '<div class="td" data-title="游戏类别">' + data.body.list[i].game_name + '</div>' +
+                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].bet_points + '</div>' +                                                    '<div class="td" data-title="有效投注">' + data.body.list[i].available_bet + '</div>' +                                                    '<div class="td" data-title="输赢">' + data.body.list[i].win_Loss + '</div>' +
                                                 '</div>'
                                             )
                                         }										_paginationEach.find('li').remove();										$(".pagination li").empty();																				for(i=1;i<=_totalPage;i++)										{											if(i == _p)											{												var active="active";											}else											{												var active="";											}											_paginationEach.append(												"<li><a  href='javascript:cash_change("+_start_type+","+_end_type+","+i+")'; class='"+active+"'>"+i+"</a></li>"											);										}
@@ -121,13 +126,18 @@
                         }
                     });
                 } else {
+					_start_type = $('.jq-date-group-container').find('[name=from]').val();
+					_end_type = $('.jq-date-group-container').find('[name=to]').val();
                     $.ajax({
                         url: "/api/Api/getThirdBetByUser?sess=" + localStorage.session +
                             "&start_date=" + _start_type + "&end_date=" + _end_type+"&p="+p,
                         type: "GET",
                         success: function (data) {
                             var _each = $("[data-daily-table=1]").find('.tbody');
+							var _paginationEach = $(".pagination");
                             var _length = data.body.list.length;
+							var _totalPage = data.body.page_info.totalPage;
+                            var _p = data.body.page_info.p;
                             if (data.status) {
                                 switch (data.status) {
                                     case 100:
@@ -136,20 +146,37 @@
                                                 '<div class="tr">' +
                                                     '<div class="td" data-title="日期">' + data.body.list[i].bet_time + '</div>' +
                                                     '<div class="td" data-title="游戏编号">' + data.body.list[i].t_id + '</div>' +
-                                                    '<div class="td" data-title="游戏类别">' + data.body.list[i].game_type + '</div>' +
-                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].bet_points + '</div>' +                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].available_bet + '</div>' +                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].win_Loss + '</div>' +
+                                                    '<div class="td" data-title="玩家帐号">' + data.body.list[i].user_name + '</div>' +
+                                                    '<div class="td" data-title="游戏类别">' + data.body.list[i].game_name + '</div>' +
+                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].bet_points + '</div>' +                                                    '<div class="td" data-title="有效投注">' + data.body.list[i].available_bet + '</div>' +                                                    '<div class="td" data-title="输赢">' + data.body.list[i].win_Loss + '</div>' +
                                                 '</div>'
                                             )
                                         }
-                                        break;
+			
+										$(".pagination li").empty();										
+										for(i=1;i<=_totalPage;i++)
+										{
+											if(i == _p)
+											{
+												var active="active";
+											}else
+											{
+												var active="";
+											}
+											_paginationEach.append(
+												"<li><a  href='javascript:cash_change("+_start_type+","+_end_type+","+i+")'; class='"+active+"'>"+i+"</a></li>"
+											);
+										}
+									break;
                                 }
                             }
                         }
                     });
                 }
+				$( ".member-table" ).loading("stop");
             }
             $(window).load(function () {
-                cash_change();				$( "#from" ).datepicker({					"dateFormat":"yy-mm-dd",					"onClose":function(){						if($( "#from" ).val()>$( "#to" ).val() && $( "#to" ).val() !="")						{							alert('起始时间不能大于结束时间');							$(this).val('');						}					}				}); 				$( "#to" ).datepicker({					"dateFormat":"yy-mm-dd",					"onClose":function(){						if($( "#from" ).val()>$( "#to" ).val())						{							alert('起始时间不能大于结束时间');							$(this).val('');						}					}				}); 
+                cash_change();				$( "#from" ).datepicker({					"dateFormat":"yy-mm-dd",					"onClose":function(){						if($( "#from" ).val()>$( "#to" ).val() && $( "#to" ).val() !="")						{							alert('起始时间不能大于结束时间');							$(this).val('');						}					}				}).datepicker('setDate', 'today'); 				$( "#to" ).datepicker({					"dateFormat":"yy-mm-dd",					"onClose":function(){						if($( "#from" ).val()>$( "#to" ).val())						{							alert('起始时间不能大于结束时间');							$(this).val('');						}					}				}).datepicker('setDate', 'today'); 
             });
             $('.ajax-btn-cash-time').click(function () {
                 var _start = $('.jq-date-group-container').find('[name=from]').val();

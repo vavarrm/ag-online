@@ -121,5 +121,20 @@
 			return $output;
 		}
 		
+		public function getMarkList()
+		{
+			$sql = "SELECT GROUP_CONCAT(t_id) AS t_id_list FROM dg_transaction WHERE return_mark=0  ORDER BY t_id ASC LIMIT 25";
+			$query = $this->db->query($sql);
+			$row =   $query->row_array();
+			return $row['t_id_list'];
+		}
+		
+		public function updateMark($t_id)
+		{
+			$sql ="UPDATE dg_transaction SET return_mark=1 WHERE t_id IN(%s)";
+			$sql =sprintf($sql,$t_id);
+			$query = $this->db->query($sql);
+			return mysqli_affected_rows($this->db->conn_id);
+		}
 	}
 ?>

@@ -2234,8 +2234,8 @@ class Api extends CI_Controller {
 		$output['message'] = '执行成功';
 		$page_size = (!empty($get['limit']))?$get['limit']:5;
 		$page = (!empty($get['p']))?$get['p']:1;
-		$start_date = (!empty($get['start_date']))?$get['start_date']." 00:00:00":"";
-		$end_date = (!empty($get['end_date']))?$get['end_date']." 23:59:59":"";
+		$start_date = (!empty($get['start_date']))?$get['start_date']." 00:00:00":date('Y-m-d')." 00:00:00";
+		$end_date = (!empty($get['end_date']))?$get['end_date']." 23:59:59":date('Y-m-d')." 23:59:59";
 		try 
 		{
 			
@@ -2244,6 +2244,7 @@ class Api extends CI_Controller {
 				$search = [
 					"DATE_FORMAT(t.bet_time ,'%Y-%m-%d %H:%i:%s') >= '?'" =>$start_date,
 					"DATE_FORMAT(t.bet_time ,'%Y-%m-%d %H:%i:%s') <= '?'" =>$end_date,
+					" t.user_name= '?'" =>$this->_user['u_account'],
 				];
 			}
 			
@@ -2252,10 +2253,10 @@ class Api extends CI_Controller {
 				'select' =>[
 					't.t_id',
 					't.bet_time',
-					't.win_Loss',
+					'FORMAT(t.win_Loss-t.bet_points,2) win_Loss',
 					't.t_id',
-					't.bet_points',
-					't.available_bet',
+					'FORMAT(t.bet_points,2) bet_points',
+					'FORMAT(t.available_bet,2) available_bet',
 					't.user_name',
 					'GL.game_name',
 				],
