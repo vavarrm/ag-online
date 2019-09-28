@@ -3,3 +3,4 @@
 /*.htaccess
 /Mobile/*.htaccess
 /upload/batchRecharge
+/api/application/config/database.php
