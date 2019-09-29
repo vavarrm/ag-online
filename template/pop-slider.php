@@ -7,6 +7,7 @@
             </li>
         </ul>
         <div class="pop-window jq-pop-window">
+			<?php include('template/register.php');?>
             <div class="pop-true-false jq-pop-true-false jq-cancelBubble absolute-center-xs">
                 <p class="title jq-title"></p>
                 <p class="detail jq-detail"></p>

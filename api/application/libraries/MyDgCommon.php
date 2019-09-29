@@ -92,7 +92,7 @@ class MyDgCommon{
 				'code'  =>100,
 				'message'  =>'get game url success',
 				'pc'=>$response['list'][0].$response['token'],
-				'mobile '=>$response['list'][1].$response['token'],
+				'mobile'=>$response['list'][1].$response['token'],
 			);
 		}
         return $output;

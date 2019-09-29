@@ -10,10 +10,7 @@ class Api extends CI_Controller {
 	
 	public function __construct() 
 	{
-		parent::__construct();	
-		// $this->gpCommon = $this->load->library('MyDgCommon');
-		// var_dump($this->gpCommon);
-		
+		parent::__construct();			
 		$get = $this->input->get();
 		$this->product_type =4;
 		$this->load->model('User_Model', 'user');
@@ -26,6 +23,7 @@ class Api extends CI_Controller {
 		$this->load->model('Discount_Model', 'discount');
 		$this->load->model('WebConfig_Model', 'webConfig');
 		$this->load->model('Transaction_Model', 'transaction');
+		$this->load->model('Transfer_Model', 'transfer');
 		$this->request = json_decode(trim(file_get_contents('php://input'), 'r'), true);
         $this->load->library('MyDgCommon');
         $gpcommonClass = strtolower('MyDgCommon');
@@ -1817,6 +1815,60 @@ class Api extends CI_Controller {
 		$this->response($output);
 	}
 	
+	public function transferReport()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='取得转帐记录';
+		$output['message'] = '成功';
+		try 
+		{
+			$u_account = $this->_user['u_account'];
+			$page = (isset($this->request['p']))?$this->request['p']:1;
+			$start_date = (isset($this->request['start_date']))?$this->request['start_date']:'';
+			$end_date = (isset($this->request['end_date']))?$this->request['end_date']:'';
+			
+			if($start_date!="" && $end_date!="")
+			{
+				$search = [
+					"DATE_FORMAT(t.add_datetime ,'%Y-%m-%d') >= '?'" =>$start_date,
+					"DATE_FORMAT(t.add_datetime ,'%Y-%m-%d') <= '?'" =>$end_date,
+					" t.u_account= '?'" =>$this->_user['u_account'],
+				];
+			}
+			
+			$ary = [
+				'select' =>[
+					'T.id',
+					'T.add_datetime',
+					'T.u_account',
+					"FORMAT(T.amount,2) AS amount",
+					"FORMAT(T.u_balance,2) AS u_balance",
+					"FORMAT(T.third_balance,2) AS third_balance",
+					"IF(T.action='IN','转入','转出') AS action ",
+					'T.reference_no',
+				],
+				'table' =>'user_transfer_account AS T',
+				// 'from'	=>" LEFT JOIN dg_game_list AS GL ON t.table_id = GL.table_id AND t.game_type AND GL.game_type AND t.game_id = GL.game_id",
+				'page'	=>$page,
+				'where' =>$search
+			];
+			$this->transfer->limit=$this->request['limit'];
+			$result = $this->transfer->getList($ary);
+			$output['body']['data'] = $result;
+			$output['body']['data'] ['page_info']['p'] = $page;
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$this->myLog->error_log($parames);
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+		}
+		$this->response($output);
+	}
+	
 	
 	public function  checkMoneyPasswd()
 	{
@@ -1896,7 +1948,7 @@ class Api extends CI_Controller {
 			$encrypt_user_data = $this->session->userdata('encrypt_user_data');
 			$urlRsaRandomKey = urlencode($rsaRandomKey) ;
 			$this->user->addLoginLog($row['u_id']);
-			if(!preg_match('/'.'^[a-z0-9]{4,14}$'.'/', $row['ag_u_account']))
+			if(!preg_match('/'.'^[a-z0-9]{4,14}$'.'/', $row['u_account']))
 			{
 				$array = array(
 					'message' 	=>'ag帐号长度为4~14位、由小写英文及数字组合' ,
@@ -1922,7 +1974,7 @@ class Api extends CI_Controller {
 			
 			if($row['u_ag_is_reg'] ==0)
 			{
-				$result_json = $this->tcgcommon->create_user($row['ag_u_account'],$row['u_ag_passwd']);
+				$result_json = $this->tcgcommon->create_user($row['u_account'],$row['u_ag_passwd']);
 				$json = json_decode($result_json, true);
 				// var_dump($json);
 				if($json['status'] !=0 || empty($result_json))
@@ -2253,7 +2305,8 @@ class Api extends CI_Controller {
 				'select' =>[
 					't.t_id',
 					't.bet_time',
-					'FORMAT(t.win_Loss-t.bet_points,2) win_Loss',
+					'FORMAT(
+						t.win_Loss-t.bet_points,2) win_Loss',
 					't.t_id',
 					'FORMAT(t.bet_points,2) bet_points',
 					'FORMAT(t.available_bet,2) available_bet',
@@ -2324,18 +2377,10 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			// $ag_user_name = $this->_user['ag_u_account'];
-			// $result_json_str = $this->tcgcommon->get_balance($ag_user_name ,$product_type);
-			// $result_ary = json_decode($result_json_str , true);
 			$ary = [
 				'username'	=>$this->_user['u_account']
 			];
-			
-			// var_dump($this->_user);
-			// var_dump(	$ary);
 			$result_ary = $this->gpcommon->getBalanceApi($ary);
-			
-			// var_dump($result_ary);
 				
 			if($result_ary['code'] !=100 || empty($result_ary))
 			{
@@ -2357,7 +2402,7 @@ class Api extends CI_Controller {
 				'product_type'	=>$product_type,
 			);
 			
-			$this->account->transfer($ary);
+			$output["body"]["data"] =$this->account->transfer($ary);
 			
 		}catch(MyException $e)
 		{
@@ -2385,57 +2430,16 @@ class Api extends CI_Controller {
 		
 		
 		try 
-		{
-			
-			if($amount <=0)
-			{
-				$array = array(
-					'message' 	=>'额度不能小于0' ,
-					'type' 		=>'api' ,
-					'status'	=>'999'
-				);
-				$MyException = new MyException();
-				$MyException->setParams($array);
-				throw $MyException;
-			}
-			
-			if( $this->_user['u_ag_game_model'] ==0)
-			{
-				$array = array(
-					'message' 	=>'此帐号为测试帐号无法使用转帐功能' ,
-					'type' 		=>'api' ,
-					'status'	=>'999'
-				);
-				$MyException = new MyException();
-				$MyException->setParams($array);
-				throw $MyException;
-			}
-			
-			$ag_user_name = $this->_user['ag_u_account'];
-			$result_json_str = $this->tcgcommon->get_balance($ag_user_name ,$product_type);
-			$result_ary = json_decode($result_json_str , true);
-	
-			if($result_ary['status'] !=0 || empty($result_ary))
-			{
-				$array = array(
-					'message' 	=>'无法取得使用者馀额' ,
-					'type' 		=>'api' ,
-					'status'	=>'999'
-				);
-				$MyException = new MyException();
-				$MyException->setParams($array);
-				throw $MyException;
-			}
-			
+		{	
 			$ary = array(
 				'user' =>$this->_user,
-				'fund_type' =>2,
-				'amount'  =>$amount,
+				'fund_type' =>1,
+				'amount'  =>$amount*-1,
 				'product_type'	=>$product_type,
-				'ag_balance'	=>$result_ary['balance'],
 			);
 			
-			$this->account->transfer($ary);
+			$transfer = $this->account->transfer($ary);
+			$output['body']['data'] =$transfer ;
 			
 		}catch(MyException $e)
 		{
@@ -2460,9 +2464,6 @@ class Api extends CI_Controller {
 		$product_type = (isset($get['product_type']))?$get['product_type']:4;
 		try 
 		{
-			
-			// var_dump($this->_user);
-			
 			$ary = [
 				'username'	=>$this->_user['u_account']
 			];
@@ -2526,8 +2527,6 @@ class Api extends CI_Controller {
 				$MyException->setParams($array);
 				throw $MyException;
 			}
-			$ag_username =$this->_user['ag_u_account'];
-			$ag_game_model =$this->_user['u_ag_game_model'];
 			$response =  $this->gpcommon->getLoginUrl($this->_user);
 			// $result_ary = json_decode($result_json_str , true);
 			// if($result_ary['status'] !=0 || empty($result_ary))
@@ -2541,7 +2540,7 @@ class Api extends CI_Controller {
 				// $MyException->setParams($array);
 				// throw $MyException;
 			// }
-			
+			// var_dump($response);
 			$output['body']['data']= $response;
 		}catch(MyException $e)
 		{

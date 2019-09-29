@@ -1,19 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>乐鼎国际</title>
-    <link rel="stylesheet" href="css/style.min.css">
-    <link rel="stylesheet" href="font/style.css">
-    <link rel="stylesheet" href="lib/owlcarousel/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="lib/owlcarousel/assets/owl.theme.default.min.css">
-    <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.min.css">
-	<script src="/js/iphone.browser.js"></script>
-	<link href="https://cdn.jsdelivr.net/npm/jquery-easy-loading@1.3.0/dist/jquery.loading.min.css" rel="stylesheet" />
-    <!--iphone+ 736(560)-->
-    <!--iphone 667(555)-->
-    <!--iphone5 568(460)-->
+	<?php include('template/head.php');?>
 </head>
 <body>
     <div id="wrapper">
@@ -73,7 +61,7 @@
                                             <div class="th">下注金额</div>                                            <div class="th">有效投注</div>                                            <div class="th">输赢</div>
                                         </div>
                                     </div>
-                                    <div class="tbody"></div>									<div>										<ul class="pagination">										</ul									</div>
+                                    <div class="tbody"></div>									<div>										<ul class="pagination">										</ul>									</div>
                                 </div>
                             </div>
                         </div>
@@ -82,18 +70,7 @@
             </section>
         </main>
 		<?php include('template/footer.php');?>		<?php include('template/pop-slider.php');?>
-        <script src="js/jquery.min.js"></script>
-        <script src="js/script.js"></script>
-        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-		<script src="lib/jquery-ui/jquery-ui.min.js"></script>		<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/i18n/jquery.ui.datepicker-zh-CN.min.js"></script>
-		<script src="/js/main.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/jquery-easy-loading@1.3.0/dist/jquery.loading.min.js"></script>
-		<script>
-            Live.Global.intital();
-            Live.Global.member();
-            Live.Global.owl_banner();
-            Live.Global.datepicker();
-        </script>
+		<?php include('template/script.php');?>
         <script>
             // Privity
             function cash_change(_start_type, _end_type,p) {

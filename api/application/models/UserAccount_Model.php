@@ -9,6 +9,7 @@
 			$this->load->database();
 			$this->CI =& get_instance();
 			$this->db->query("SET time_zone='+8:00'");
+			$this->CI->load->model('Transfer_Model', 'transfer');
 		}
 		
 		
@@ -604,57 +605,57 @@
 		public function getTransferreferenceNo($fund_type)
 		{
 			return time().rand(1000,9999);
-			// try
-			// {
-				// $sql ="	SELECT 
-							// uta_id 
-						// FROM  user_transfer_account 
-						// WHERE 
-							// DATE_FORMAT(NOW(), '%Y') = DATE_FORMAT(uta_add_datetime, '%Y') AND
-							// uta_ag_fund_type =?
-						// ORDER BY uta_id DESC LIMIT 1";
-				// $bind = array(
-					// $fund_type
-				// );
-				// $query = $this->db->query($sql, $bind);
-				// $error = $this->db->error();
-				// if($error['message'] !="")
-				// {
-					// $MyException = new MyException();
-					// $array = array(
-						// 'message' 	=>$error['message'] ,
-						// 'type' 		=>'db' ,
-						// 'status'	=>'001'
-					// );
-					
-					// $MyException->setParams($array);
-					// throw $MyException;
-				// }
-				// $row =  $query->row_array();
-				// $query->free_result();
-				
-				// if(empty($row))
-				// {
-					// $reference_no = date('Ymd',time()).$fund_type.sprintf('%06d',1);
-				// }else
-				// {
-					// $reference_no = date('Ymd',time()).$fund_type.sprintf('%06d',$row['uta_id']+1);
-				// }
-				
-				// return "ldyl".$reference_no;
-				
-			// }catch(MyException $e)
-			// {
-				// throw $e;
-			// }
 		}
-		
-		
+			
 		
 		public function transfer($ary)
 		{
 			try
 			{
+				
+				if( abs($ary['amount']) ==0)
+				{
+					$array = array(
+						'message' 	=>'额度不能小于0' ,
+						'type' 		=>'api' ,
+						'status'	=>'999'
+					);
+					$MyException = new MyException();
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+				
+				if( $ary['user']['u_ag_game_model'] ==0)
+				{
+					$array = array(
+						'message' 	=>'此帐号为测试帐号无法使用转帐功能' ,
+						'type' 		=>'api' ,
+						'status'	=>'999'
+					);
+					$MyException = new MyException();
+					$MyException->setParams($array);
+					throw $MyException;
+				}
+		
+				$_ary = [
+					'username'	=>$ary['user']['u_account']
+				];
+				$result_ary = $this->gpcommon->getBalanceApi($_ary);
+				
+				
+				if($result_ary['code'] !=100 || empty($result_ary))
+				{
+					$array = array(
+						'message' 	=>'无法取得使用者馀额' ,
+						'type' 		=>'api' ,
+						'status'	=>'999'
+					);
+					$MyException = new MyException();
+					$MyException->setParams($array);
+					throw $MyException;
+				}	
+				
+				/*捡查转帐交易是否锁定*/
 				$sql = "SELECT COUNT(*) AS total FROM ag_lock WHERE ag_u_id =? AND ag_is_lock='1'";
 				$bind = array(
 					$ary['user']['u_id']
@@ -689,6 +690,7 @@
 					throw $MyException;
 				}
 				
+				/*锁定转帐交易*/
 				$sql="	INSERT INTO ag_lock (ag_u_id, ag_add_datetime)
 						VALUES(?, NOW())";
 				$bind = array(
@@ -711,19 +713,15 @@
 				}
 				
 				$ag_id =  $this->db->insert_id();
-				
-				$this->db->trans_begin();
-				
-				
+	
+				/*交易开始*/
+				$this->db->trans_begin();			
 				$balance = $this->getBalance($ary['user']['u_id']);
-				// var_dump($ary['amount']);
-				// var_dump($balance['balance']);
-				// var_dump($ary['amount'] > $balance['balance'] );
 				if($ary['fund_type'] ==1 && ($balance['balance'] <=0 || $ary['amount'] > $balance['balance']))
 				{
 					$MyException = new MyException();
 					$array = array(
-						'message' 	=>'平台馀额不足' ,
+						'message' 	=>'用户馀额不足' ,
 						'type' 		=>'db' ,
 						'status'	=>'999'
 					);
@@ -732,7 +730,7 @@
 					throw $MyException;
 				}
 				
-				if($ary['fund_type'] ==2 && $ary['ag_balance'] <$ary['amount'] )
+				if($ary['fund_type'] ==2 && $result_ary['member']['balance'] <$ary['amount'] )
 				{
 					$MyException = new MyException();
 					$array = array(
@@ -745,23 +743,15 @@
 					throw $MyException;
 				}
 				
-				// $this->CI->load->library('MyDgCommon','tcgcommon');
-			
-				
-				$reference_no = $this->getTransferreferenceNo($ary['fund_type']);
-				$ag_username = $ary['user']['ag_u_account'];
+				$reference_no = $this->CI->transfer->getTransferreferenceNo();
 				$param = [
 					'username'=>$ary['user']['u_account'],
 					'amount'=>$ary['amount'],
 					'reference_no'=>$reference_no,
 				];
 				
-				
-				// var_dump($ary['user']);
-				
 				$result = $this->gpcommon->transferAPI($param);
 				// var_dump($result);
-				
 				if(empty($result) || $result['code'] != 100)
 				{
 					$MyException = new MyException();
@@ -774,64 +764,7 @@
 					$MyException->setParams($array);
 					throw $MyException;
 				}
-				$user_account_insert_ary = array(
-					1 =>array('type'=>4,'status'=>'transfer_out'),
-					2 =>array('type'=>5,'status'=>'transfer_in'),
-				);
-				$sql ="	INSERT INTO  user_account
-							(ua_value, ua_type , ua_add_datetime ,ua_u_id, ua_status ,ua_from_third,ua_upd_date,ua_order_id, ua_remarks)
-						VALUES(?,?,NOW(),?,?,?,NOW(),?,?)";
-						
-				$bind = array(
-					$ary['amount'],
-					$user_account_insert_ary[$ary['fund_type']]['type'],
-					$ary['user']['u_id'],
-					$user_account_insert_ary[$ary['fund_type']]['status'],
-					'AG',
-					$reference_no,
-					$result['transaction_status']
-				);
 				
-				$query = $this->db->query($sql, $bind);
-				$error = $this->db->error();
-				if($error['message'] !="")
-				{
-					$MyException = new MyException();
-					$array = array(
-						'message' 	=>$error['message'] ,
-						'type' 		=>'db' ,
-						'status'	=>'001'
-					);
-					
-					$MyException->setParams($array);
-					throw $MyException;
-				}
-				
-				$sql="INSERT INTO  user_transfer_account 
-								(reference_no, add_datetime, action, amount, u_id)
-						VALUES	(?,NOW(),?,?,?)"	;						
-							
-				$bind = array(
-					$reference_no,
-					'IN',
-					$ary['amount'],
-					$ary['user']['u_id'],
-				);
-				
-				$query = $this->db->query($sql, $bind);
-				$error = $this->db->error();
-				if($error['message'] !="")
-				{
-					$MyException = new MyException();
-					$array = array(
-						'message' 	=>$error['message'] ,
-						'type' 		=>'db' ,
-						'status'	=>'001'
-					);
-					
-					$MyException->setParams($array);
-					throw $MyException;
-				}
 				
 				$sql="UPDATE ag_lock SET ag_is_lock ='0' WHERE id =?";
 				$bind = array(
@@ -872,8 +805,19 @@
 					$MyException->setParams($array);
 					throw $MyException;
 				}
+				$balance = $this->getBalance($ary['user']['u_id']);
 				
+				$ary['reference_no'] = $reference_no;
+				$ary['u_balance'] = $balance['balance'];
+				$ary['third_balance'] = $result['member']['balance'];
+				$this->CI->transfer->insert($ary);
+				
+				$output = [
+					'userBalance' =>$balance['balance'],
+					'thirdBalance' =>$result['member']['balance'],
+				];
 				$this->db->trans_commit();
+				return $output;
 			}catch(MyException $e)
 			{
 			   $this->db->trans_rollback();
