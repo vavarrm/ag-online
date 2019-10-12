@@ -11,7 +11,7 @@ class MyPayTing
 	const KEY ="8VuXoV5nxVu2Dx60";
 	const IV ="YL0NtO15";
 	
-	const NOTIFYURL="http://boyin360.me/notifyurl?provide=ting";
+	const NOTIFYURL="http://boyin360.me/api/notifyurl?provide=ting";
 	
 	public $whitelist ;
 	
