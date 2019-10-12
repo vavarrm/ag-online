@@ -7,6 +7,7 @@
 			parent::__construct();
 			$this->load->database();
 			$this->db->query("SET time_zone='+8:00'");
+			$this->db->query("SET sql_mode = ''");
 		}
 		
 		public function  getCategory()
