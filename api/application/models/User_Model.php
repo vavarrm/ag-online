@@ -320,7 +320,17 @@
 		
 		public function getRegisteredLinkByID($rl_id)
 		{
-			$sql="SELECT * FROM registered_link WHERE rl_id = ?";
+			$sql="
+				SELECT 
+					RL.u_id, 
+					U.tree,
+					U.real_user
+				FROM 
+					registered_link AS RL	
+				INNER JOIN user AS U ON U.u_id = RL.u_id
+				WHERE 
+					RL.rl_id = ?
+					AND U.agent=1";
 			$bind = array(
 				$rl_id
 			);
@@ -430,10 +440,12 @@
 				throw $e;
 				return false;
 			}
+			$rl_id =  date('s').rand(1000,9999);
 			
-			$sql="INSERT INTO registered_link (u_id) VALUES(?)";
+			$sql="INSERT INTO registered_link (u_id, rl_id) VALUES(?,?)";
 			$bind = array(
-				$u_id
+				$u_id,
+				$rl_id
 			);
 			$query = $this->db->query($sql, $bind);
 			$error = $this->db->error();
@@ -450,7 +462,7 @@
 				throw $MyException;
 			}
 			$insert_id = $this->db->insert_id();
-			$output['rl_id'] = sprintf('%08d',$insert_id) ;
+			$output['rl_id'] = $rl_id;
 			$output['affected_rows'] = $this->db->affected_rows() ;
 			return $output;
 		}
@@ -1156,14 +1168,69 @@
 		
 		public function insert($ary)
 		{
-			$sql="	INSERT INTO user(u_superior_id	,u_name,u_account,u_passwd,u_add_datetime,u_ag_game_model)
-					VALUES(?,?,?,?,NOW(),?)";
+			// var_dump($ary);
+			
+			if($ary['real_user'] != 1)
+			{
+				$ary['real_user'] = 0;
+			}
+			
+			if($ary['tree'] =="")
+			{
+				$ary['isRoot'] = 1;
+			}else
+			{
+				$ary['isRoot'] =0;
+			}
+			
+			$sql="	INSERT INTO user(
+						u_name,
+						u_account,
+						u_passwd,
+						u_add_datetime,
+						real_user,
+						is_root)
+					VALUES(?,?,?,NOW(),?,?)";
 			$bind = array(
-				$ary['superior_id'],
 				$ary['u_name'],
 				$ary['u_account'],
 				$ary['u_passwd'],
-				$ary['u_ag_game_model'],
+				$ary['real_user'],
+				$ary['isRoot'],
+			);
+			$query = $this->db->query($sql, $bind);
+			$error = $this->db->error();
+			if($error['message'] !="")
+			{
+				$MyException = new MyException();
+				$array = array(
+					'message' 	=>$error['message'] ,
+					'type' 		=>'db' ,
+					'status'	=>'001'
+				);
+				
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$insert_id = $this->db->insert_id();
+			if($ary['tree'] == "")
+			{
+				$tree="0,".$insert_id.",0";
+			}else
+			{
+				$tree = str_replace(",0",",".$insert_id.",0",$ary['tree']);
+			}
+			$this->updateTree($insert_id,$tree);
+		}
+		
+		public function updateTree($u_id, $tree){
+			$sql="	UPDATE  user
+					SET tree=?
+					WHERE u_id=?";
+			$bind = array(
+				$tree,
+				$u_id,
 			);
 			$query = $this->db->query($sql, $bind);
 			$error = $this->db->error();

@@ -37,7 +37,6 @@ class Main extends CI_Controller {
 		);
 
 		$cap = create_captcha($vals);
-		echo $cap['image'];
 		$data['cap'] = create_captcha($vals);
 		// $this->load->view('captcha_view', $data);
 	}

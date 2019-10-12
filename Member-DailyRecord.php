@@ -111,8 +111,9 @@
 		<?php include('template/footer.php');?>        <?php include('template/pop-slider.php');?>		<?php include('template/script.php');?>
         <script>
             // Privity
-            var daily_key = '4';
-            function daily_change(_type, _start_type, _end_type, p=1) {								var url ;				$("a[data-daily-option='"+_type+"']").addClass('active');				if(_type == '4')				{					url ="/api/Api/transferReport?sess=" + localStorage.session ;				}else				{					url = "/api/Api/report?sess=" + localStorage.session ;				}
+            var daily_key = '1';
+            function daily_change(_type, _start_type, _end_type, p=1) {				$('.member-table').hide();
+				$(".member-table[data-daily-table='"+daily_key+"']").show();				var url ;				$("a[data-daily-option='"+_type+"']").addClass('active');				if(_type == '4')				{					url ="/api/Api/transferReport?sess=" + localStorage.session ;				}else				{					url = "/api/Api/payReport?sess=" + localStorage.session ;				}
                 $("[data-daily-table]").find('.tbody').find('.tr').remove();
                 $.ajax({
                     url: url,
@@ -125,14 +126,14 @@
                     success: function (data) {
                         if (_type == '1') {
                             var _each = $("[data-daily-table=1]").find('.tbody');
-                            var _length = data.body.list.length;
+                            var _length = data.body.data.list.length;
                             if (data.status) {
                                 switch (data.status) {
                                     case 100:
                                         for (i = 0; i < _length; i++) {
                                             _each.append(
-                                            '<div class="tr">' +'<div class="td" data-title="充值时间">' + data.body.list[i].ua_add_datetime + '</div>' +											'<div class="td" data-title="充值类型">' + data.body.list[i].ua_type_1 + '</div>' +											'<div class="td" data-title="订单号">' + data.body.list[ i].uro_orderid + '</div>' +
-                                            '<div class="td" data-title="充值金额">' + data.body.list[i].ua_value + '</div>' +											'<div class="td" data-title="状态">' + data.body.list[i].ua_status_str +'</div>'+											'</div>'
+                                            '<div class="tr">' +'<div class="td" data-title="充值时间">' + data.body.data.list[i].create_at + '</div>' +											'<div class="td" data-title="充值方法">' + data.body.data.list[i].name + '</div>' +											'<div class="td" data-title="订单号">' + data.body.data.list[ i].order_number + '</div>' +
+                                            '<div class="td" data-title="充值金额">' + data.body.data.list[i].amount + '</div>' +											'<div class="td" data-title="状态">' + data.body.data.list[i].status +'</div>'+											'</div>'
                                             )
                                         }
                                         break;
@@ -187,12 +188,15 @@
                                 }
                             }
                         } else if (_type == '4') {
+							// console.log('d');
                             var _each = $("[data-daily-table=4]").find('.tbody');
                             var _length = data.body.data.list.length;
+							// console.log(data);
                             if (data.status) {
                                 switch (data.status) {
                                     case 100:
                                         for (i = 0; i < _length; i++) {
+											// console.log(i);
                                             _each.append(
                                                 '<div class="tr">' +
                                                 '<div class="td" data-title="申请时间">' + data.body.data.list[i].add_datetime+'</div>' +
@@ -204,7 +208,9 @@
                                         break;
                                 }
                             }
-                        }						var _totalPage=data.body.data.page_info.totalPage;						var _p =data.body.data.page_info.p;						var _paginationEach = $(".page"+_type);						_paginationEach.find('li').empty();						var _start = $('.jq-date-group-container').find('[name=from]').val();						var _end = $('.jq-date-group-container').find('[name=to]').val();						for(i=1;i<=_totalPage;i++)						{							if(i == _p)							{								var active="active";							}else							{								var active="";							}							_paginationEach.append(								"<li><a  href='javascript:daily_change("+_type+","+_start_type+","+_end_type+","+i+")'; class='"+active+"'>"+i+"</a></li>"							);						}
+                        }						var _totalPage=data.body.data.page_info.totalPage;						var _p =data.body.data.page_info.p;						var _paginationEach = $(".page"+_type);
+						// console.log(data);						_paginationEach.find('li').empty();						var _start = $('.jq-date-group-container').find('[name=from]').val();						var _end = $('.jq-date-group-container').find('[name=to]').val();						for(i=1;i<=_totalPage;i++)						{
+							// console.log(i);							if(i == _p)							{								var active="active";							}else							{								var active="";							}							_paginationEach.append(								"<li><a  href='javascript:daily_change("+_type+","+_start_type+","+_end_type+","+i+")'; class='"+active+"'>"+i+"</a></li>"							);						}
                     }
                 });
             }
@@ -218,7 +224,8 @@
             $('.ajax-btn-daily-time').click(function () {
                 var _start = $('.jq-date-group-container').find('[name=from]').val();
                 var _end = $('.jq-date-group-container').find('[name=to]').val();				if(_start>_end&& _end !="")				{					alert('起始时间不能大于结束时间');					$(this).val('');				}				var _daily_key = $('.jq-member-option.active').data('daily-option');
-                daily_change(daily_key, _start, _end);
+                console.log(_daily_key);
+				daily_change(daily_key, _start, _end);
             });
         </script>
     </div>

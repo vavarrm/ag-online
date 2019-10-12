@@ -31,6 +31,7 @@
             Live.Global.notice_event();
             Live.Global.owl_banner();
             Live.Global.datepicker();
+            Live.Global.enter();
 		
             // Privity
             $(window).load(function () {
@@ -94,7 +95,7 @@
 				event.preventDefault(); 
                 var _key = $(this).attr('data-game-code');
                 if (localStorage.session == undefined || localStorage.session == '') {
-                    alert('请先登入会员');
+                    layer.alert('请登入会员', {icon: 2});
                 } else {
                     $.ajax({
                         url: "/api/Api/getGameUrl?sess=" + localStorage.session + "&game_code=" + _key +
@@ -106,6 +107,8 @@
                                     case 100:
                                         window.location.href = data.body.data.pc;
                                         break;
+									default :
+										layer.alert(data.message, {icon: 2});
                                 }
                             }
                         }

@@ -24,8 +24,10 @@ class Api extends CI_Controller {
 		$this->load->model('WebConfig_Model', 'webConfig');
 		$this->load->model('Transaction_Model', 'transaction');
 		$this->load->model('Transfer_Model', 'transfer');
+		$this->load->model('Pay_Model', 'thirdpay');
 		$this->request = json_decode(trim(file_get_contents('php://input'), 'r'), true);
         $this->load->library('MyDgCommon');
+        $this->load->library('MyPay');
         $gpcommonClass = strtolower('MyDgCommon');
         $this->gpcommon = $this->$gpcommonClass;
 		
@@ -2020,7 +2022,7 @@ class Api extends CI_Controller {
 				$this->request['passwd']	=="" 
 			){
 				$array = array(
-					'message' 	=>'reponse 必传参数为空' ,
+					'message' 	=>'请输入帐号密码' ,
 					'type' 		=>'api' ,
 					'status'	=>'002'
 				);
@@ -2702,7 +2704,7 @@ class Api extends CI_Controller {
 		
 		try 
 		{
-            // var_dump($this->request);
+			$registeredLink =$this->user->getRegisteredLinkByID($rl_id);
 			if(
 				$this->request['name']	==""|| 
 				$this->request['account']	==""|| 
@@ -2800,46 +2802,37 @@ class Api extends CI_Controller {
 				throw $MyException;
 			}
 			
-			if($registeredLink['u_id']!="")
-			{
-				$superiorUser = $this->user->getSuperiorUser($registeredLink['u_id']);
-			}else
-			{
-			
-				$superiorUser =	$this->user->getUesrByAccount('ldylsoft');
-			}
             
-            
-            if($superiorUser['u_ag_game_model'] ==null)
+            if($registeredLink['u_ag_game_model'] ==null)
             {
-                $superiorUser['u_ag_game_model'] = 1;
+                $registeredLink['u_ag_game_model'] = 1;
             }
 			
-            $param = [
-                'username'=>$this->request['account'],
-                'winLimit'=>$this->gpcommon->winLimit,
-            ];
-			$response = $this->gpcommon->createUser($param);
+            // $param = [
+                // 'username'=>$this->request['account'],
+                // 'winLimit'=>$this->gpcommon->winLimit,
+            // ];
+			// $response = $this->gpcommon->createUser($param);
             
-            if($response['code'] !=100)
-            {
-                $array = array(
-					'message' 	=>'註冊游戲方失敗' ,
-					'type' 		=>'api' ,
-					'status'	=>'999'
-				);
-				$MyException = new MyException();
-				$MyException->setParams($array);
-				throw $MyException;
-            }
+            // if($response['code'] !=100)
+            // {
+                // $array = array(
+					// 'message' 	=>'註冊游戲方失敗' ,
+					// 'type' 		=>'api' ,
+					// 'status'	=>'999'
+				// );
+				// $MyException = new MyException();
+				// $MyException->setParams($array);
+				// throw $MyException;
+            // }
             
            
             $ary =array(
-				'superior_id'		=>intval($superiorUser['u_id']),
 				'u_name'			=>$this->request['name'],
 				'u_account'			=>$this->request['account'],
 				'u_passwd'			=>md5($this->request['passwd']),
-				'u_ag_game_model'	=>$superiorUser['u_ag_game_model']
+				'real_user'			=>$registeredLink['real_user'],
+				'tree'				=>$registeredLink['tree'],
 			);
 			
 			$this->user->insert($ary);
@@ -2853,6 +2846,128 @@ class Api extends CI_Controller {
 			$this->myLog->error_log($parames);
 			$output['message'] = $parames['message']; 
 			$output['status'] = $parames['status']; 
+		}
+		
+		$this->response($output);
+	}
+	
+	public function getPayCategory()
+	{
+		$get= $this->input->get();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='取得充值渠道';
+		$output['message'] = '成功';
+		try 
+		{
+			$category = $this->thirdpay->getCategory();
+			$method = $this->thirdpay->getCodeKeyBycategoryCode();
+			$output['body']['data']['category'] = $category;
+			$output['body']['data']['method'] = $method;
+	
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function payRedirection()
+	{
+		$post= $this->input->post();
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='充值跳转页';
+		$output['message'] = '成功';
+		try 
+		{
+			$provide_code = $this->request['provide_code'];
+			$method = $this->request['method'];
+			$category_code = $this->request['category_code'];
+			$amount = $this->request['amount'];
+			$type = $this->request['type'];
+			$code = $this->request['code'];
+			
+			if($provide_code  =="" ||$method =="" || intval($amount) <=0) 
+			{
+				$array = array(
+					'message' 	=>'充值无回应' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			
+			$ary = [
+				'userAccount'=>$this->_user['u_account'] ,
+				'u_id'=>$this->_user['u_id'] ,
+				'method'=>$method,
+				'provideCode'=>$provide_code,
+				'categoryCode'=>$category_code,
+				'amount'=>$amount,
+				'type'=>$type,
+				'code'=>$code,
+				'code'=>$code,
+			];
+			$output['body']['pay'] =$this->mypay->payRedirection($provide_code,$ary);
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function payReport()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='充值紀錄';
+		$output['message'] = '成功';
+		$get= $this->input->get();
+		$limit = (isset($this->request['limit']))?$this->request['limit']:5;
+		$p= (isset($this->request['p']))?$this->request['p']:1;
+		$start_date = (isset($this->request['start_date']))?$this->request['start_date']:'';
+		$end_date = (isset($this->request['end_date']))?$this->request['end_date']:'';
+		try 
+		{
+			$ary=[
+				'where' =>[
+					'PR.user_account'=>[
+						'value' =>$this->_user['u_account'],
+						'operator' =>'=',
+					]
+				],
+				'p'=>$p,
+				'limit' =>$limit,
+				'order' =>[
+					'PR.id' =>'DESC'
+				]
+			];
+			$output['body']['data'] = $this->thirdpay->getList($ary);
+			
+		}
+		catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
 		}
 		
 		$this->response($output);
