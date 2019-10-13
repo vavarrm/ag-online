@@ -62,7 +62,8 @@
 				'game_type',
 				'bet_time',
 				'cal_time',
-				'win_Loss',
+				'win_loss',
+				'payout',
 				'bet_points',
 				'available_bet',
 				'user_name',
@@ -77,6 +78,10 @@
 			{
 				foreach($data as $row)
 				{
+					$winOrLoss = mysqli_real_escape_string($this->db->conn_id,$row['winOrLoss']);
+					$betPoints = mysqli_real_escape_string($this->db->conn_id,$row['betPoints']);
+					$payout = $winOrLoss;
+					$winOrLoss = $winOrLoss -  $betPoints ;
 					$temp =[
 						"'".mysqli_real_escape_string($this->db->conn_id,$row['id'])."'",
 						"'".mysqli_real_escape_string($this->db->conn_id,$row['tableId'])."'",
@@ -85,8 +90,9 @@
 						"'".mysqli_real_escape_string($this->db->conn_id,$row['gameType'])."'",
 						"'".mysqli_real_escape_string($this->db->conn_id,$row['betTime'])."'",
 						"'".mysqli_real_escape_string($this->db->conn_id,$row['calTime'])."'",
-						"'".mysqli_real_escape_string($this->db->conn_id,$row['winOrLoss'])."'",
-						"'".mysqli_real_escape_string($this->db->conn_id,$row['betPoints'])."'",
+						"'".$winOrLoss."'",
+						"'".$payout."'",
+						"'".$betPoints."'",
 						"'".mysqli_real_escape_string($this->db->conn_id,$row['availableBet'])."'",
 						"'".mysqli_real_escape_string($this->db->conn_id,$row['userName'])."'",
 						"'".mysqli_real_escape_string($this->db->conn_id,$row['result'])."'",
