@@ -88,7 +88,12 @@ class MyPayTing
 			$strAry[]=$key."=".$val;
 		}
 		$strAry[]="key=".self::APIKEY;
-		return md5(join('&',$strAry));
+		echo join('&',$strAry);
+		$str = md5(join('&',$strAry));
+		echo 
+		echo "<be>";
+		echo $str ;
+		return $str ;
 	}
 	
 	

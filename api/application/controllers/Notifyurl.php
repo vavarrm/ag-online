@@ -69,13 +69,13 @@ class Notifyurl extends CI_Controller {
 	{
 		$directoryName = FCPATH."application".DIRECTORY_SEPARATOR."logs".DIRECTORY_SEPARATOR."notifyurl";
 		if(!is_dir($directoryName)){
-			mkdir($directoryName, 0755, true);
+			mkdir($directoryName, 0775, true);
 		}
 		$provide = ucfirst($_GET['provide']);
 		$fileName = date('Y-m-d')."_".$provide.".log";
 		$ary[$provide] = $request;
 		$log = fopen($directoryName.DIRECTORY_SEPARATOR.$fileName , "a+");
-		chmod($directoryName.DIRECTORY_SEPARATOR.$fileName,'0755'); 
+		chmod($directoryName.DIRECTORY_SEPARATOR.$fileName,'0775'); 
 		fwrite($log, json_encode($ary)."\n"); 
 		fclose($myfile);
 	}
