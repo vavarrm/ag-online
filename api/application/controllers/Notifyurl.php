@@ -46,6 +46,8 @@ class Notifyurl extends CI_Controller {
 		
 		$sign = $this->pay->getSign($signAry);
 		
+		$this->saveNotifyurlLog($sign);
+		
 		if($sign ==$this->request['sign'])
 		{
 			if($this->request['status'] !="verified")

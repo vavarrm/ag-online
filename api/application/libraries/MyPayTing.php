@@ -17,13 +17,13 @@ class MyPayTing
 	
 	public function __construct() 
 	{
-		$this->whitelist = [
-			"52.196.133.147",
-			"13.115.67.208",
-			"52.197.107.110",
-			"209.58.188.208",
-			"127.0.0.1"
-		];
+		// $this->whitelist = [
+			// "52.196.133.147",
+			// "13.115.67.208",
+			// "52.197.107.110",
+			// "209.58.188.208",
+			// "127.0.0.1"
+		// ];
 
 		$this->CI =& get_instance();
 		$this->CI->load->model('Pay_Model', 'thirdpay');
@@ -88,11 +88,10 @@ class MyPayTing
 			$strAry[]=$key."=".$val;
 		}
 		$strAry[]="key=".self::APIKEY;
-		echo join('&',$strAry);
+		// echo join('&',$strAry);
 		$str = md5(join('&',$strAry));
-		echo 
-		echo "<be>";
-		echo $str ;
+		// echo "<be>";
+		// echo $str ;
 		return $str ;
 	}
 	
