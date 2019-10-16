@@ -54,10 +54,7 @@
                                 <div class="member-table" data-daily-table='1'>
                                     <div class="thead">
                                         <div class="tr">
-                                            <div class="th">日期</div>
-                                            <div class="th">游戏编号</div>
 											<div class="th">玩家帐号</div>
-                                            <div class="th">游戏类别</div>
                                             <div class="th">下注金额</div>                                            <div class="th">有效投注</div>                                            <div class="th">输赢</div>
                                         </div>
                                     </div>
@@ -73,6 +70,12 @@
 		<?php include('template/script.php');?>
         <script>
             // Privity
+			
+			function search()
+			{
+
+			}
+			
             function cash_change(_start_type, _end_type,p) {
 				$( ".member-table" ).loading();				if ( typeof p ==="undefined")				{					p = 1;				}
                 $("[data-daily-table]").find('.tbody').find('.tr').remove();
@@ -89,11 +92,8 @@
                                         for (i = 0; i < _length; i++) {
                                             _each.append(
                                                 '<div class="tr">' +
-                                                    '<div class="td" data-title="日期">' + data.body.list[i].bet_time + '</div>' +
-                                                    '<div class="td" data-title="游戏编号">' + data.body.list[i].t_id + '</div>' +
-                                                    '<div class="td" data-title="玩家帐号">' + data.body.list[i].user_name + '</div>' +
-                                                    '<div class="td" data-title="游戏类别">' + data.body.list[i].game_name + '</div>' +
-                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].bet_points + '</div>' +                                                    '<div class="td" data-title="有效投注">' + data.body.list[i].available_bet + '</div>' +                                                    '<div class="td" data-title="输赢">' + data.body.list[i].win_Loss + '</div>' +
+                                                    '<div class="td" data-title="玩家帐号">' + data.body.list[i].u_account + '</div>' +
+                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].bet_points + '</div>' +                                                    '<div class="td" data-title="有效投注">' + data.body.list[i].available_bet + '</div>' +                                                    '<div class="td" data-title="输赢">' + data.body.list[i].win_loss + '</div>' +
                                                 '</div>'
                                             )
                                         }										_paginationEach.find('li').remove();										$(".pagination li").empty();																				for(i=1;i<=_totalPage;i++)										{											if(i == _p)											{												var active="active";											}else											{												var active="";											}											_paginationEach.append(												"<li><a  href='javascript:cash_change("+_start_type+","+_end_type+","+i+")'; class='"+active+"'>"+i+"</a></li>"											);										}
@@ -121,10 +121,7 @@
                                         for (i = 0; i < _length; i++) {
                                             _each.append(
                                                 '<div class="tr">' +
-                                                    '<div class="td" data-title="日期">' + data.body.list[i].bet_time + '</div>' +
-                                                    '<div class="td" data-title="游戏编号">' + data.body.list[i].t_id + '</div>' +
                                                     '<div class="td" data-title="玩家帐号">' + data.body.list[i].user_name + '</div>' +
-                                                    '<div class="td" data-title="游戏类别">' + data.body.list[i].game_name + '</div>' +
                                                     '<div class="td" data-title="下注金额">' + data.body.list[i].bet_points + '</div>' +                                                    '<div class="td" data-title="有效投注">' + data.body.list[i].available_bet + '</div>' +                                                    '<div class="td" data-title="输赢">' + data.body.list[i].win_Loss + '</div>' +
                                                 '</div>'
                                             )

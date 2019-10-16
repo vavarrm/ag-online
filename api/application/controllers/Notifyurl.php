@@ -75,7 +75,7 @@ class Notifyurl extends CI_Controller {
 		$fileName = date('Y-m-d')."_".$provide.".log";
 		$ary[$provide] = $request;
 		$log = fopen($directoryName.DIRECTORY_SEPARATOR.$fileName , "a+");
-		chmod($directoryName.DIRECTORY_SEPARATOR.$fileName 0755); 
+		chmod($directoryName.DIRECTORY_SEPARATOR.$fileName,'0755'); 
 		fwrite($log, json_encode($ary)."\n"); 
 		fclose($myfile);
 	}

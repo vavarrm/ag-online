@@ -2286,8 +2286,9 @@ class Api extends CI_Controller {
 		$output['body'] =array();
 		$output['title'] ='取得用户投注列表';
 		$output['message'] = '执行成功';
-		$page_size = (!empty($get['limit']))?$get['limit']:5;
+		$page_size = (!empty($get['limit']))?$get['limit']:10;
 		$page = (!empty($get['p']))?$get['p']:1;
+		$tree = (!empty($get['tree']))?$get['tree']: $this->_user['tree'];
 		$start_date = (!empty($get['start_date']))?$get['start_date']." 00:00:00":date('Y-m-d')." 00:00:00";
 		$end_date = (!empty($get['end_date']))?$get['end_date']." 23:59:59":date('Y-m-d')." 23:59:59";
 		try 
@@ -2301,24 +2302,16 @@ class Api extends CI_Controller {
 					" t.user_name= '?'" =>$this->_user['u_account'],
 				];
 			}
-			
-			$ag_user_name = $this->_user['ag_u_account'];
+			// echo $tree;
+			$treeAry = explode(',',$tree);
+			// echo count($treeAry);
+			$level  = (count($treeAry)<2)?3:(count($treeAry));
+			// echo $level ;
 			$ary = [
-				'select' =>[
-					't.t_id',
-					't.bet_time',
-					'FORMAT(
-						t.win_Loss-t.bet_points,2) win_Loss',
-					't.t_id',
-					'FORMAT(t.bet_points,2) bet_points',
-					'FORMAT(t.available_bet,2) available_bet',
-					't.user_name',
-					'GL.game_name',
-				],
-				'table' =>'dg_transaction AS t',
-				'from'	=>" LEFT JOIN dg_game_list AS GL ON t.table_id = GL.table_id AND t.game_type AND GL.game_type AND t.game_id = GL.game_id",
+				'rootUAccount' =>$this->_user['root_u_account'],
+				'level' =>$level,
 				'page'	=>$page,
-				'where' =>$search
+				'tree'	=>$tree
 			];
 			$this->transaction->limit=$page_size;
 			$result = $this->transaction->getList($ary);
@@ -2327,6 +2320,7 @@ class Api extends CI_Controller {
 			// $output['body']['page_info']['pages'] = $result_ary['page_info']['totalPage'];
 			// $output['body']['page_info']['total'] = $result_ary['page_info']['totalCount'];
 			$output['body']['page_info']['p'] = $page;
+			$output['body']['tree'] = $tree;
 		}catch(MyException $e)
 		{
 			$parames = $e->getParams();
@@ -2704,7 +2698,6 @@ class Api extends CI_Controller {
 		
 		try 
 		{
-			$registeredLink =$this->user->getRegisteredLinkByID($rl_id);
 			if(
 				$this->request['name']	==""|| 
 				$this->request['account']	==""|| 
@@ -2827,12 +2820,15 @@ class Api extends CI_Controller {
             // }
             
            
+		   
             $ary =array(
 				'u_name'			=>$this->request['name'],
 				'u_account'			=>$this->request['account'],
 				'u_passwd'			=>md5($this->request['passwd']),
 				'real_user'			=>$registeredLink['real_user'],
 				'tree'				=>$registeredLink['tree'],
+				'rootAccount'		=>$registeredLink['rootAccount'],
+				'level'				=>$registeredLink['level'],
 			);
 			
 			$this->user->insert($ary);

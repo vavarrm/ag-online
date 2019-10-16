@@ -350,6 +350,13 @@
 				throw $MyException;
 			}
 			$row =  $query->row_array();
+			
+
+			$tree = $row['tree'];
+			$tree = explode(",",$tree);
+			$row['level'] = count($tree)-2;
+			$root = $this->getUserByID($tree[1]);
+			$row['rootAccount'] = $root['u_account'];
 			$query->free_result();
 			return $row;
 		}
@@ -1183,20 +1190,28 @@
 				$ary['isRoot'] =0;
 			}
 			
+			if($ary['rootAccount'] =="")
+			{
+				$ary['rootAccount'] = $ary['u_account'];
+			}
+			
 			$sql="	INSERT INTO user(
 						u_name,
 						u_account,
 						u_passwd,
 						u_add_datetime,
 						real_user,
-						is_root)
-					VALUES(?,?,?,NOW(),?,?)";
+						is_root,
+						root_u_account
+						)
+					VALUES(?,?,?,NOW(),?,?,?)";
 			$bind = array(
 				$ary['u_name'],
 				$ary['u_account'],
 				$ary['u_passwd'],
 				$ary['real_user'],
 				$ary['isRoot'],
+				$ary['rootAccount'],
 			);
 			$query = $this->db->query($sql, $bind);
 			$error = $this->db->error();

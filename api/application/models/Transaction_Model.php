@@ -11,39 +11,84 @@
 		
 		public function getList($ary)
 		{
-			$sql ="";
-			if(isset($ary['select']))
-			{
-				$select =" SELECT ".join(',',$ary['select'])." ";
-			}else
-			{
-				$select =" SELECT * ";
-			}
-			$nowpage = ($ary['page'] - 1)*$this->limit; 
-			if($nowpage <0)
-			{
-				$nowpage  = 0;
-			}
-			$limit = "LIMIT ".$nowpage." , ".$this->limit;
-			
-			$where_str="";
-			if(!empty($ary['where']))
-			{
-				foreach($ary['where'] as $key=> $value)
-				{
-					$where[] = str_replace("?", mysqli_real_escape_string($this->db->conn_id ,$value),$key);
-				}
-				// var_dump($where);
-				$where_str = " WHERE ". join(" AND ", $where);
-				
-			}
-			
-			$sql =$select." FROM ".$ary['table'].$ary['from'].$where_str ." ORDER BY t_id DESC ".$limit;
+			$sql ="
+			SELECT
+				T.u_id,
+				T.u_account,
+				SUM(T.bet_points) AS bet_points,
+				SUM(T.available_bet) AS available_bet,
+				SUM(T.win_loss)	AS win_loss,
+				SUM(T.bet_count) AS bet_count ,
+				count(1) AS child,
+				-- T.groupindex,
+				T.tree,
+				DATE_FORMAT(T.bet_time,'%Y-%m-%d') AS bet_time,
+				DATE_FORMAT(T.cal_time,'%Y-%m-%d') AS cal_time
+			FROM
+				(
+				SELECT
+					U.u_id,
+					U.u_account,
+					U.tree,
+					IFNULL(TR.bet_points,0) AS bet_points,
+					IFNULL(TR.available_bet,0) AS available_bet,
+					IFNULL(TR.win_loss,0) AS win_loss,
+					count(1) AS bet_count,
+					SUBSTRING_INDEX(U.tree,',',".$ary['level'].") AS groupindex,
+					U.root_u_account,
+					TR.bet_time,
+					TR.cal_time
+				FROM
+					`user` AS U
+					INNER   JOIN `dg_transaction` AS TR ON TR.user_name = U.u_account
+					WHERE
+					  U.root_u_account =?
+					  AND U.tree LIKE ?
+					  -- AND  U.tree !='0,1,2,0'
+					GROUP BY U.u_id
+				) T 
+			    GROUP BY T.groupindex
+				ORDER BY T.u_id
+			";
 			// echo $sql;
-			$query = $this->db->query($sql);
+			// $sql ="";
+			// if(isset($ary['select']))
+			// {
+				// $select =" SELECT ".join(',',$ary['select'])." ";
+			// }else
+			// {
+				// $select =" SELECT * ";
+			// }
+			// $nowpage = ($ary['page'] - 1)*$this->limit; 
+			// if($nowpage <0)
+			//	{
+				// $nowpage  = 0;
+			// }
+			// $limit = "LIMIT ".$nowpage." , ".$this->limit;
+			
+			// $where_str="";
+			// if(!empty($ary['where']))
+			// {
+				// foreach($ary['where'] as $key=> $value)
+				// {
+					// $where[] = str_replace("?", mysqli_real_escape_string($this->db->conn_id ,$value),$key);
+				// }
+				// $where_str = " WHERE ". join(" AND ", $where);
+				
+			// }
+			
+			// $sql =$select." FROM ".$ary['table'].$ary['from'].$where_str ." ORDER BY t_id DESC ".$limit;
+			$tree = substr($ary['tree'], 1, -1);
+			$tree ="%".$tree."%" ;
+			// echo $groupindex;
+			$bind = [
+				$ary['rootUAccount'],
+				$tree
+			];
+			$query = $this->db->query($sql,$bind);
 			$data['list'] = $query->result_array();
-			$totalSql ="SELECT COUNT(1) AS total FROM ".$ary['table'].$where_str ;
-			$query = $this->db->query($totalSql);
+			$totalSql ="SELECT COUNT(1) AS total FROM (".$sql.") AS T" ;
+			$query = $this->db->query($totalSql,$bind);
 			$count = $query->row_array();
 			$data['page_info'] =[
 				'totalCount' =>$count['total'],
