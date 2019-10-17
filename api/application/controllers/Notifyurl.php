@@ -42,6 +42,7 @@ class Notifyurl extends CI_Controller {
 			'paid'=>$this->request['paid'],
 			'extend'=>$this->request['extend'],
 			'paytype'=>$this->request['paytype'],
+			'orig_amount'=>$this->request['orig_amount'],
 		];
 		
 		$sign = $this->pay->getSign($signAry);
