@@ -43,9 +43,12 @@ class Notifyurl extends CI_Controller {
 			'extend'=>$this->request['extend'],
 			'paytype'=>$this->request['paytype'],
 			'orig_amount'=>$this->request['orig_amount'],
+			'is_mobile'=>$this->request['is_mobile'],
+			'is_wap'=>$this->request['is_wap'],
 		];
 		
 		$sign = $this->pay->getSign($signAry);
+		// echo $sign ;
 		
 		$this->saveNotifyurlLog($sign);
 		
