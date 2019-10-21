@@ -77,9 +77,9 @@
                                     for (i = 0; i < _length; i++) {
                                         _each.append(
                                             '<div class="item">' +
-                                            <!-- '<img src="/images/big_banner/' + data.body.list[i].bb_image + -->
-                                            <!-- '" alt="">' + -->
-											'<img width="100%" src="https://via.placeholder.com/1510x300">'+
+                                            '<img width="100%" src="/images/big_banner/' + data.body.list[i].bb_image + 
+                                             '" alt="">' +
+											// '<img width="100%" src="https://via.placeholder.com/1510x300">'+
                                             '</div>'
                                         )
                                     }
