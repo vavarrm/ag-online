@@ -23,5 +23,5 @@ var browser={
 if(browser.versions.mobile||browser.versions.android||browser.versions.ios){
 	
 }else{
-	// location.href="/";
+	location.href="/";
 }

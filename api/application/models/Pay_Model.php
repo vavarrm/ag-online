@@ -359,7 +359,8 @@
 				$amount,
 				$account
 			];
-			$query = $this->db->query($sql, $bind);
+			// echo $sql;
+			// $query = $this->db->query($sql, $bind);
 			if($error['message'] !="")
 			{
 				$this->db->trans_rollback();
