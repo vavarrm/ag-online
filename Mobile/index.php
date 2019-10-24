@@ -48,8 +48,9 @@
                                         '<div class="col-xs-12">' +
                                         '<a href="javascript:void(0)" class="ajax-game-link" data-game-code="' +
                                             data.body.list[i].tcgGameCode + '">' +
-                                        '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' +
-                                            data.body.list[i].productCode + '/' + data.body.list[i].tcgGameCode + '.png" alt="">' +
+											'<img class="img" src="img/gamelist'+(i+1)+'.jpg">'+
+                                        // '<img class="img" src="http://images.uxgaming.com/TCG_GAME_ICONS/' +
+                                            // data.body.list[i].productCode + '/' + data.body.list[i].tcgGameCode + '.png" alt="">' +
                                         '<p class="title">' + data.body.list[i].gameName +'</p>' +
                                         '</a>' +
                                         '</div>'
