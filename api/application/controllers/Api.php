@@ -2289,6 +2289,7 @@ class Api extends CI_Controller {
 		$page_size = (!empty($get['limit']))?$get['limit']:10;
 		$page = (!empty($get['p']))?$get['p']:1;
 		$tree = (!empty($get['tree']))?$get['tree']: $this->_user['tree'];
+		// echo $tree ;
 		$start_date = (!empty($get['start_date']))?$get['start_date']." 00:00:00":date('Y-m-d')." 00:00:00";
 		$end_date = (!empty($get['end_date']))?$get['end_date']." 23:59:59":date('Y-m-d')." 23:59:59";
 		try 

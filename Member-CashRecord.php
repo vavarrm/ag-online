@@ -56,6 +56,7 @@
                                         <div class="tr">
 											<div class="th">玩家帐号</div>
                                             <div class="th">下注金额</div>                                            <div class="th">有效投注</div>                                            <div class="th">输赢</div>
+                                            <div class="th"></div>
                                         </div>
                                     </div>
                                     <div class="tbody"></div>									<div>										<ul class="pagination">										</ul>									</div>
@@ -71,91 +72,83 @@
         <script>
             // Privity
 			
-			function search()
+			function drawTable(data,_each,_totalPage,_p)
 			{
-
+					var _start_type = $('.jq-date-group-container').find('[name=from]').val();
+					var _end_type = $('.jq-date-group-container').find('[name=to]').val();
+					let _length = data.length;
+					var _paginationEach = $(".pagination");
+					for (i = 0; i < _length; i++) 
+					{
+						var href ;
+						var action ='';
+						if(data[i].child >1)
+						{
+							action ='<a href="javascript:cash_change(1,'+"'"+data[i].tree+"'"+')">查看下级</a>';
+						}
+						_each.append(
+							'<div class="tr">' +
+								'<div class="td" data-title="玩家帐号">' + data[i].u_account + '</div>' +
+								'<div class="td" data-title="下注金额">' + data[i].bet_points + '</div>' +
+								'<div class="td" data-title="有效投注">' + data[i].available_bet + '</div>' +
+								'<div class="td" data-title="输赢">' + data[i].win_loss + '</div>' +
+								'<div class="td" data-title="动作">' + action+ '</div>' +
+							'</div>'
+						)
+					}
+					_paginationEach.find('li').remove();
+					$(".pagination li").empty();										
+					for(i=1;i<=_totalPage;i++)
+					{
+						if(i == _p)
+						{
+							var active="active";
+						}else
+						{
+							var active="";
+						}
+						_paginationEach.append(
+							"<li><a  href='javascript:cash_change("+i+")'; class='"+active+"'>"+i+"</a></li>"
+						);
+					}
 			}
 			
-            function cash_change(_start_type, _end_type,p) {
+
+			
+            function cash_change(p,tree='') 
+			{
 				$( ".member-table" ).loading();				if ( typeof p ==="undefined")				{					p = 1;				}
                 $("[data-daily-table]").find('.tbody').find('.tr').remove();
-                if (_start_type == undefined || _end_type == undefined) {
-                    $.ajax({
-                        url: "/api/Api/getThirdBetByUser?sess=" + localStorage.session+"&p="+p,
-                        type: "GET",
-                        success: function (data) {
-                            var _each = $("[data-daily-table=1]").find('.tbody');                            var _paginationEach = $(".pagination");
-                            var _length = data.body.list.length;                            var _totalPage = data.body.page_info.totalPage;                            var _p = data.body.page_info.p;
-                            if (data.status) {
-                                switch (data.status) {
-                                    case 100:
-                                        for (i = 0; i < _length; i++) {
-                                            _each.append(
-                                                '<div class="tr">' +
-                                                    '<div class="td" data-title="玩家帐号">' + data.body.list[i].u_account + '</div>' +
-                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].bet_points + '</div>' +                                                    '<div class="td" data-title="有效投注">' + data.body.list[i].available_bet + '</div>' +                                                    '<div class="td" data-title="输赢">' + data.body.list[i].win_loss + '</div>' +
-                                                '</div>'
-                                            )
-                                        }										_paginationEach.find('li').remove();										$(".pagination li").empty();																				for(i=1;i<=_totalPage;i++)										{											if(i == _p)											{												var active="active";											}else											{												var active="";											}											_paginationEach.append(												"<li><a  href='javascript:cash_change("+_start_type+","+_end_type+","+i+")'; class='"+active+"'>"+i+"</a></li>"											);										}
-									break;
-                                }
-                            }
-                        }
-                    });
-                } else {
-					_start_type = $('.jq-date-group-container').find('[name=from]').val();
-					_end_type = $('.jq-date-group-container').find('[name=to]').val();
-                    $.ajax({
-                        url: "/api/Api/getThirdBetByUser?sess=" + localStorage.session +
-                            "&start_date=" + _start_type + "&end_date=" + _end_type+"&p="+p,
-                        type: "GET",
-                        success: function (data) {
-                            var _each = $("[data-daily-table=1]").find('.tbody');
-							var _paginationEach = $(".pagination");
-                            var _length = data.body.list.length;
-							var _totalPage = data.body.page_info.totalPage;
-                            var _p = data.body.page_info.p;
-                            if (data.status) {
-                                switch (data.status) {
-                                    case 100:
-                                        for (i = 0; i < _length; i++) {
-                                            _each.append(
-                                                '<div class="tr">' +
-                                                    '<div class="td" data-title="玩家帐号">' + data.body.list[i].user_name + '</div>' +
-                                                    '<div class="td" data-title="下注金额">' + data.body.list[i].bet_points + '</div>' +                                                    '<div class="td" data-title="有效投注">' + data.body.list[i].available_bet + '</div>' +                                                    '<div class="td" data-title="输赢">' + data.body.list[i].win_Loss + '</div>' +
-                                                '</div>'
-                                            )
-                                        }
-			
-										$(".pagination li").empty();										
-										for(i=1;i<=_totalPage;i++)
-										{
-											if(i == _p)
-											{
-												var active="active";
-											}else
-											{
-												var active="";
-											}
-											_paginationEach.append(
-												"<li><a  href='javascript:cash_change("+_start_type+","+_end_type+","+i+")'; class='"+active+"'>"+i+"</a></li>"
-											);
-										}
-									break;
-                                }
-                            }
-                        }
-                    });
-                }
+				var _start_type = $('.jq-date-group-container').find('[name=from]').val();
+				var	_end_type = $('.jq-date-group-container').find('[name=to]').val();
+				$.ajax({
+					url: "/api/Api/getThirdBetByUser?sess=" + localStorage.session +
+						"&start_date=" + _start_type + "&end_date=" + _end_type+"&p="+p+"&tree="+tree,
+					type: "GET",
+					success: function (data) {
+						var _each = $("[data-daily-table=1]").find('.tbody');
+						var _paginationEach = $(".pagination");
+						var _length = data.body.list.length;
+						var _totalPage = data.body.page_info.totalPage;
+						var _p = data.body.page_info.p;
+						if (data.status) {
+							switch (data.status) {
+								case 100:
+									drawTable(data.body.list,_each,_totalPage,_p)
+								break;
+							}
+						}
+					}
+				});
 				$( ".member-table" ).loading("stop");
             }
             $(window).load(function () {
-                cash_change();				$( "#from" ).datepicker({					"dateFormat":"yy-mm-dd",					"onClose":function(){						if($( "#from" ).val()>$( "#to" ).val() && $( "#to" ).val() !="")						{							alert('起始时间不能大于结束时间');							$(this).val('');						}					}				}).datepicker('setDate', 'today'); 				$( "#to" ).datepicker({					"dateFormat":"yy-mm-dd",					"onClose":function(){						if($( "#from" ).val()>$( "#to" ).val())						{							alert('起始时间不能大于结束时间');							$(this).val('');						}					}				}).datepicker('setDate', 'today'); 
+                cash_change(1);				$( "#from" ).datepicker({					"dateFormat":"yy-mm-dd",					"onClose":function(){						if($( "#from" ).val()>$( "#to" ).val() && $( "#to" ).val() !="")						{							alert('起始时间不能大于结束时间');							$(this).val('');						}					}				}).datepicker('setDate', 'today'); 				$( "#to" ).datepicker({					"dateFormat":"yy-mm-dd",					"onClose":function(){						if($( "#from" ).val()>$( "#to" ).val())						{							alert('起始时间不能大于结束时间');							$(this).val('');						}					}				}).datepicker('setDate', 'today'); 
             });
             $('.ajax-btn-cash-time').click(function () {
                 var _start = $('.jq-date-group-container').find('[name=from]').val();
                 var _end = $('.jq-date-group-container').find('[name=to]').val();				if(_start>_end&& _end !="")				{					alert('起始时间不能大于结束时间');					$(this).val('');				}
-                cash_change(_start, _end,1);
+                cash_change(1);
             });
         </script>
     </div>
