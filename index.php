@@ -103,7 +103,7 @@
 						  if (data.status) {
                                 switch (data.status) {
                                     case 100:
-										// window.open(data.body.data.pc, '_blank');
+										window.open(data.body.data.pc, '_blank');
                                         // window.location.href = data.body.data.pc;
                                         break;
 									default :
