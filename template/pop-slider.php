@@ -1,4 +1,4 @@
-        <ul class="pop-slider">
+        <ul class="pop-slider" style="display:none;">
             <li>
                 <a href="javascript:void(0)" class="pop-btn-service jq-pop-btn-service">
                     <img class="img" src="img/service.png" alt="">

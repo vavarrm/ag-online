@@ -50,7 +50,7 @@
 			    GROUP BY T.groupindex
 				ORDER BY T.u_id
 			";
-			// echo $sql;
+			echo $sql;
 			// $sql ="";
 			// if(isset($ary['select']))
 			// {
@@ -85,6 +85,7 @@
 				$ary['rootUAccount'],
 				$tree
 			];
+			var_dump($bind);
 			$query = $this->db->query($sql,$bind);
 			$data['list'] = $query->result_array();
 			$totalSql ="SELECT COUNT(1) AS total FROM (".$sql.") AS T" ;

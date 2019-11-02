@@ -16,6 +16,7 @@
 	<li>
 		<a href="Member-CashRecord.php" class="btn btn-solid-blue <?php if($page=="Member-CashRecord") echo "active" ?> ">投注纪录</a>
 	</li>
+	<!--
 	<li>
 		<a href="Member-Balance.php" class="btn btn-solid-blue <?php if($page=="Member-Balance") echo "active" ?>">余额查询</a>
 	</li>
@@ -25,6 +26,7 @@
 	<li>
 		<a href="Member-Message.php" class="btn btn-solid-blue <?php if($page=="Member-Message") echo "active" ?>">站内讯息</a>
 	</li>
+	-->
 	<li>
 		<a href="Member-Register.php" class="btn btn-solid-blue <?php if($page=="Member-Register") echo "active" ?>">邀请码管理</a>
 	</li>
