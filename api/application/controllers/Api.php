@@ -2303,8 +2303,8 @@ class Api extends CI_Controller {
 			$level  = (count($treeAry)<2)?3:(count($treeAry));
 			$ary = [
 				'where'=>[
-					"DATE_FORMAT(t.bet_time ,'%Y-%m-%d') >= '?'" =>$start_date,
-					" DATE_FORMAT(t.bet_time ,'%Y-%m-%d') <= '?'" =>$end_date
+					"DATE_FORMAT(T.bet_time ,'%Y-%m-%d') >= '?'" =>$start_date,
+					" DATE_FORMAT(T.bet_time ,'%Y-%m-%d') <= '?'" =>$end_date
 				],
 				'rootUAccount' =>$this->_user['root_u_account'],
 				'level' =>$level,
