@@ -3364,4 +3364,57 @@ class Api extends CI_Controller {
 		header('Content-Type: application/json');
 		echo json_encode($output , true);
 	}
+	
+	
+	public function doWithdrawalAudit()
+	{
+		$output['status'] = 100;
+		$output['body'] =array(
+			'affected_rows' => 0
+		);
+		$output['title'] ='审核充值';
+		$output['message'] = '成功';
+	
+		try 
+		{
+			if(
+				$this->request['ua_id']	=="" ||
+				// count($this->request['ua_id'])	==0 ||
+				$this->request['ua_status']	 ==""
+			)
+			{
+				$array = array(
+					'message' 	=>'reponse 必传参数为空' ,
+					'type' 		=>'api' ,
+					'status'	=>'002'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}	
+			$affected_rows  = $this->rechargenit->changeStatus($this->request, $this->admin_data);
+			if($affected_rows  ==0)
+			{
+				$array = array(
+					'message' 	=>'无资料更新' ,
+					'type' 		=>'api' ,
+					'status'	=>'999'
+				);
+				$MyException = new MyException();
+				$MyException->setParams($array);
+				throw $MyException;
+			}
+			$output['body']['affected_rows'] =$affected_rows;
+		}catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
 }

@@ -1056,7 +1056,7 @@
 				}
 				
 				$withdrawal= $this->getWithdrawal($ary['u_id']);
-				$accountLimit =$this->getAccountLimit();
+				// $accountLimit =$this->getAccountLimit();
 				
 				// if( $withdrawal['today_audit_number']  >= $accountLimit['withdrawal_time_max']['wc_value'])
 				// {
@@ -1084,25 +1084,41 @@
 					// throw $MyException;
 				// }
 				
-				if( $withdrawal['today_payment_value']  >= $accountLimit['withdrawal_value_max']['wc_value'])
-				{
-					$MyException = new MyException();
-					$array = array(
-						'message' 	=>'每日提款额度上限为'.$accountLimit['withdrawal_value_max']['wc_value'] ,
-						'type' 		=>'system' ,
-						'status'	=>'999'
-					);
+				// if( $withdrawal['today_payment_value']  >= $accountLimit['withdrawal_value_max']['wc_value'])
+				// {
+					// $MyException = new MyException();
+					// $array = array(
+						// 'message' 	=>'每日提款额度上限为'.$accountLimit['withdrawal_value_max']['wc_value'] ,
+						// 'type' 		=>'system' ,
+						// 'status'	=>'999'
+					// );
 					
-					$MyException->setParams($array);
-					throw $MyException;
-				}
+					// $MyException->setParams($array);
+					// throw $MyException;
+				// }
 				
-				$sql ="INSERT INTO user_account(ua_value, ua_type, ua_add_datetime,ua_u_id, ua_ub_id)
-					   VALUE(?,3,NOW(),?,?)";
+				
+				$sql  ="UPDATE user SET u_balance = u_balance - ? , u_balance_lock =  u_balance_lock +? WHERE u_id = ?";
 				$bind = array(
 					$ary['quota'],
-					$ary['u_id'],
-					$ary['ub_id']
+					$ary['quota'],
+					$ary['u_id']
+				);
+				$query = $this->db->query($sql, $bind);
+				
+				$sql = "SELECT u_balance, u_account FROM user WHERE u_id =?";
+				$bind = array(
+					$ary['u_id']
+				);
+				$query = $this->db->query($sql, $bind);
+				$row = $query->row_array();
+				
+				$sql ="INSERT INTO withdrawal (u_account, amount, create_at,status, balance)
+					   VALUE(?,?,NOW(),'processing',?)";
+				$bind = array(
+					$row['u_account'],
+					$ary['quota'],
+					$row['u_balance']
 				);
 				$query = $this->db->query($sql, $bind);
 				$affected_rows =  $this->db->affected_rows();

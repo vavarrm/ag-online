@@ -2857,6 +2857,9 @@ var accountCtrl = function($scope, $http, apiService, $cookies, $routeParams, $r
 	
 	$scope.actionClick = function($event,action, row)
 	{
+		// alert('f');
+		console.log(action);
+		console.log(typeof $scope[action.func]);
 		if( action.func !=null)
 		{
 			$event.preventDefault();

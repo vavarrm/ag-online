@@ -166,10 +166,12 @@
 							AND PR.category_code = PM.category_code
 							";
 			$search_sql = $sql.$where.$order.$limit ;
+			// echo $search_sql;
 			$query = $this->db->query($search_sql, $bind);
 			$rows = $query->result_array();
 			
 			$total_sql = sprintf("SELECT COUNT(*) AS total FROM(%s) AS t",$sql.$where) ;
+			// echo $total_sql;
 			$query = $this->db->query($total_sql, $bind);
 			$row = $query->row_array();
 			

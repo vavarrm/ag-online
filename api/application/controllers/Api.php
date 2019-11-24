@@ -25,6 +25,7 @@ class Api extends CI_Controller {
 		$this->load->model('Transaction_Model', 'transaction');
 		$this->load->model('Transfer_Model', 'transfer');
 		$this->load->model('Pay_Model', 'thirdpay');
+		$this->load->model('Withdrawal_Model', 'withdrawal');
 		$this->request = json_decode(trim(file_get_contents('php://input'), 'r'), true);
         $this->load->library('MyDgCommon');
         $this->load->library('MyPay');
@@ -2287,40 +2288,42 @@ class Api extends CI_Controller {
 		$output['title'] ='取得用户投注列表';
 		$output['message'] = '执行成功';
 		$page_size = (!empty($get['limit']))?$get['limit']:10;
-		$page = (!empty($get['p']))?$get['p']:1;
+		$p = (!empty($get['p']))?$get['p']:1;
 		$tree = (!empty($get['tree']))?$get['tree']: $this->_user['tree'];
 		// echo $tree ;
-		$start_date = (!empty($get['start_date']))?$get['start_date']." 00:00:00":date('Y-m-d')." 00:00:00";
-		$end_date = (!empty($get['end_date']))?$get['end_date']." 23:59:59":date('Y-m-d')." 23:59:59";
+		$start_date = (!empty($get['start_date']))?$get['start_date']:date('Y-m-d');
+		$end_date = (!empty($get['account']))?$get['end_date']:date('Y-m-d');
+		$account = (!empty($get['end_date']))?$get['account']:'';
 		try 
 		{
 			
-			if($start_date!="" && $end_date!="")
-			{
-				$search = [
-					"DATE_FORMAT(t.bet_time ,'%Y-%m-%d %H:%i:%s') >= '?'" =>$start_date,
-					"DATE_FORMAT(t.bet_time ,'%Y-%m-%d %H:%i:%s') <= '?'" =>$end_date,
-					" t.user_name= '?'" =>$this->_user['u_account'],
-				];
-			}
+			
 			// echo $tree;
 			$treeAry = explode(',',$tree);
-			// echo count($treeAry);
 			$level  = (count($treeAry)<2)?3:(count($treeAry));
-			// echo $level ;
 			$ary = [
+				'where'=>[
+					"DATE_FORMAT(t.bet_time ,'%Y-%m-%d') >= '?'" =>$start_date,
+					" DATE_FORMAT(t.bet_time ,'%Y-%m-%d') <= '?'" =>$end_date
+				],
 				'rootUAccount' =>$this->_user['root_u_account'],
 				'level' =>$level,
-				'page'	=>$page,
-				'tree'	=>$tree
+				'tree'	=>$tree,
+				'p'	=>$p,
 			];
+			
+			if($account!="")
+			{
+				$ary['where']["T.u_account = '?'"] = $account;
+			}
+			
 			$this->transaction->limit=$page_size;
 			$result = $this->transaction->getList($ary);
 	
 			$output['body'] = $result;
 			// $output['body']['page_info']['pages'] = $result_ary['page_info']['totalPage'];
 			// $output['body']['page_info']['total'] = $result_ary['page_info']['totalCount'];
-			$output['body']['page_info']['p'] = $page;
+			$output['body']['page_info']['p'] = $p;
 			$output['body']['tree'] = $tree;
 		}catch(MyException $e)
 		{
@@ -2946,7 +2949,15 @@ class Api extends CI_Controller {
 					'PR.user_account'=>[
 						'value' =>$this->_user['u_account'],
 						'operator' =>'=',
-					]
+					],
+					'DATE_FORMAT(PR.create_at,"%Y-%m-%d")'=>[
+						'value' =>$start_date,
+						'operator' =>'>=',
+					],
+					'DATE_FORMAT(PR.create_at,"%Y-%m-%d") '=>[
+						'value' =>$end_date,
+						'operator' =>'<=',
+					],
 				],
 				'p'=>$p,
 				'limit' =>$limit,
@@ -2955,6 +2966,56 @@ class Api extends CI_Controller {
 				]
 			];
 			$output['body']['data'] = $this->thirdpay->getList($ary);
+			
+		}
+		catch(MyException $e)
+		{
+			$parames = $e->getParams();
+			$parames['class'] = __CLASS__;
+			$parames['function'] = __function__;
+			$output['message'] = $parames['message']; 
+			$output['status'] = $parames['status']; 
+			$this->myLog->error_log($parames);
+		}
+		
+		$this->response($output);
+	}
+	
+	public function withdrawalReport()
+	{
+		$output['status'] = 100;
+		$output['body'] =array();
+		$output['title'] ='提款紀錄';
+		$output['message'] = '成功';
+		$get= $this->input->get();
+		$limit = (isset($this->request['limit']))?$this->request['limit']:5;
+		$p= (isset($this->request['p']))?$this->request['p']:1;
+		$start_date = (isset($this->request['start_date']))?$this->request['start_date']:'';
+		$end_date = (isset($this->request['end_date']))?$this->request['end_date']:'';
+		try 
+		{
+			$ary=[
+				'where' =>[
+					'T.u_account'=>[
+						'value' =>$this->_user['u_account'],
+						'operator' =>'=',
+					],
+					'DATE_FORMAT(T.create_at,"%Y-%m-%d")'=>[
+						'value' =>$start_date,
+						'operator' =>'>=',
+					],
+					'DATE_FORMAT(T.create_at,"%Y-%m-%d") '=>[
+						'value' =>$end_date,
+						'operator' =>'<=',
+					],
+				],
+				'p'=>$p,
+				'limit' =>$limit,
+				'order' =>[
+					'T.id' =>'DESC'
+				]
+			];
+			$output['body']['data'] = $this->withdrawal->getList($ary);
 			
 		}
 		catch(MyException $e)

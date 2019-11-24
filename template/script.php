@@ -6,6 +6,7 @@
 <script src="/js/main.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-easy-loading@1.3.0/dist/jquery.loading.min.js"></script>
 <script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+<script src="lib/address.js"></script>
 <script>
 	Live.Global.intital();
 	Live.Global.member();

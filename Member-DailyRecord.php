@@ -72,7 +72,8 @@
                                         <div class="tr">
                                             <div class="th">提款日期</div>
                                             <div class="th">提款金额</div>
-                                            <div class="th">操作</div>
+                                            <div class="th">提款状态</div>
+                                            <div class="th">馀额</div>
                                             <!-- <div class="th">提款状态</div> -->
                                             <!-- <div class="th">操作</div> -->
                                         </div>
@@ -113,15 +114,20 @@
             // Privity
             var daily_key = '1';
             function daily_change(_type, _start_type, _end_type, p=1) {				$('.member-table').hide();
-				$(".member-table[data-daily-table='"+daily_key+"']").show();				var url ;				$("a[data-daily-option='"+_type+"']").addClass('active');				if(_type == '4')				{					url ="/api/Api/transferReport?sess=" + localStorage.session ;				}else				{					url = "/api/Api/payReport?sess=" + localStorage.session ;				}
+				$(".member-table[data-daily-table='"+daily_key+"']").show();				var url ;				$("a[data-daily-option='"+_type+"']").addClass('active');				if(_type == '4')				{					url ="/api/Api/transferReport?sess=" + localStorage.session ;				}
+				else if(_type == '2')
+				{
+					url ="/api/Api/withdrawalReport?sess=" + localStorage.session ;
+				}
+				else{					url = "/api/Api/payReport?sess=" + localStorage.session ;				}
                 $("[data-daily-table]").find('.tbody').find('.tr').remove();
                 $.ajax({
                     url: url,
                     type: "POST",
                     data: JSON.stringify({
                         type: _type,
-                        start_date: _start_type,
-                        end_date: _end_type,						limit :'10',						p:p
+                        start_date: $('#from').val(),
+                        end_date: $('#to').val(),						limit :'10',						p:p
                     }),
                     success: function (data) {
                         if (_type == '1') {
@@ -141,31 +147,26 @@
                             }
                         } else if (_type == '2') {
                             var _each = $("[data-daily-table=2]").find('.tbody');
-                            var _length = data.body.list.length;
+                            var _length = data.body.data.list.length;
                             if (data.status) {
                                 switch (data.status) {
                                     case 100:
                                         for (i = 0; i < _length; i++) {
                                             _each.append(
                                                 '<div class="tr">' +
-                                                '<div class="td" data-title="提款日期">' + data.body.list[i]
-                                                .ua_add_datetime + '</div>' +
-                                                '<div class="td" data-title="提款金额">' + data.body.list[i]
-                                                .ua_value + '</div>' +
-                                                '<div class="td" data-title="状态">' + data.body.list[i].ua_status_str +
+                                                '<div class="td" data-title="提款日期">' + data.body.data.list[i].create_at + '</div>' +
+                                                '<div class="td" data-title="提款金额">' + data.body.data.list[i].amount + '</div>' +
+                                                '<div class="td" data-title="状态">' + data.body.data.list[i].status_name +'</div>'+
+                                                '<div class="td" data-title="馀额">' + data.body.data.list[i].balance +'</div>'+
                                                 '</div>'
-                                                // '<div class="td" data-title="提款状态">' + 'none' +
-                                                // '</div>' +
-                                                // '<div class="td" data-title="操作">' + 'none' + '</div>' +
-                                                // '</div>'
                                             )
                                         }
                                         break;
                                 }
-                            }
+                            }
                         } else if (_type == '3') {
                             var _each = $("[data-daily-table=3]").find('.tbody');
-                            var _length = data.body.list.length;
+                            var _length = data.body.data.list.length;
                             if (data.status) {
                                 switch (data.status) {
                                     case 100:
@@ -217,14 +218,14 @@
             $(window).load(function () {				daily_change(daily_key);				$("[data-daily-table="+daily_key+"]").show();								$( "#from" ).datepicker({					"dateFormat":"yy-mm-dd",					"onClose":function(){						if($( "#from" ).val()>$( "#to" ).val() && $( "#to" ).val() !="")						{							alert('起始时间不能大于结束时间');							$(this).val('');						}					}				}).datepicker('setDate', 'today'); 				$( "#to" ).datepicker({					"dateFormat":"yy-mm-dd",					"onClose":function(){						if($( "#from" ).val()>$( "#to" ).val())						{							alert('起始时间不能大于结束时间');							$(this).val('');						}					}				}).datepicker('setDate', 'today');			
             });
             $('[data-daily-option]').click(function () {
-                $('.jq-date-group-container').find('[name=from]').val('');
-                $('.jq-date-group-container').find('[name=to]').val('');
+                // $('.jq-date-group-container').find('[name=from]').val('');
+                // $('.jq-date-group-container').find('[name=to]').val('');
                 daily_change(daily_key);
             });
             $('.ajax-btn-daily-time').click(function () {
                 var _start = $('.jq-date-group-container').find('[name=from]').val();
                 var _end = $('.jq-date-group-container').find('[name=to]').val();				if(_start>_end&& _end !="")				{					alert('起始时间不能大于结束时间');					$(this).val('');				}				var _daily_key = $('.jq-member-option.active').data('daily-option');
-                console.log(_daily_key);
+                // console.log(_daily_key);
 				daily_change(daily_key, _start, _end);
             });
         </script>

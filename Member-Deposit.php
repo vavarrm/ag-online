@@ -26,7 +26,7 @@
                     <div class="row">
                         <p>充值</p>
                     </div>
-                </div
+                </div>
             </section>
             <section class="sect-member-detail">
                 <div class="container">
@@ -192,6 +192,7 @@
         </main>
 		<?php include('template/footer.php');?>
 		<?php include('template/pop-slider.php');?>
+	</div>
 		<?php include('template/script.php');?>
         <script>
 				var method ;

@@ -1,7 +1,7 @@
 <?php
 	class Transaction_Model extends CI_Model 
 	{
-		public $page = 1;
+		public $p = 1;
 		public $limit = 5;
 		function __construct()
 		{
@@ -15,15 +15,13 @@
 			SELECT
 				T.u_id,
 				T.u_account,
-				SUM(T.bet_points) AS bet_points,
-				SUM(T.available_bet) AS available_bet,
-				SUM(T.win_loss)	AS win_loss,
-				SUM(T.bet_count) AS bet_count ,
-				count(1) AS child,
-				-- T.groupindex,
+				T.bet_points,
+				T.available_bet,
+				T.win_loss,
+				T.groupindex,
 				T.tree,
-				DATE_FORMAT(T.bet_time,'%Y-%m-%d') AS bet_time,
-				DATE_FORMAT(T.cal_time,'%Y-%m-%d') AS cal_time
+				bet_time,
+				cal_time
 			FROM
 				(
 				SELECT
@@ -33,7 +31,7 @@
 					IFNULL(TR.bet_points,0) AS bet_points,
 					IFNULL(TR.available_bet,0) AS available_bet,
 					IFNULL(TR.win_loss,0) AS win_loss,
-					count(1) AS bet_count,
+					-- count(1) AS bet_count,
 					SUBSTRING_INDEX(U.tree,',',".$ary['level'].") AS groupindex,
 					U.root_u_account,
 					TR.bet_time,
@@ -43,52 +41,50 @@
 					INNER   JOIN `dg_transaction` AS TR ON TR.user_name = U.u_account
 					WHERE
 					  U.root_u_account =?
-					  AND U.tree LIKE ?
+					  -- AND U.tree LIKE ?
 					  -- AND  U.tree !='0,1,2,0'
-					GROUP BY U.u_id
+					-- GROUP BY U.u_id
 				) T 
-			    GROUP BY T.groupindex
-				ORDER BY T.u_id
+			    -- GROUP BY T.groupindex
+				-- ORDER BY T.u_id
 			";
-			echo $sql;
-			// $sql ="";
-			// if(isset($ary['select']))
-			// {
-				// $select =" SELECT ".join(',',$ary['select'])." ";
-			// }else
-			// {
-				// $select =" SELECT * ";
-			// }
-			// $nowpage = ($ary['page'] - 1)*$this->limit; 
-			// if($nowpage <0)
-			//	{
-				// $nowpage  = 0;
-			// }
-			// $limit = "LIMIT ".$nowpage." , ".$this->limit;
+			$limit = sprintf(" LIMIT %d, %d",abs($ary['p']-1)*$this->limit,$this->limit);
+			if(is_array($ary['order']))
+			{
+				$order =" ORDER BY ";
+				foreach($ary['order'] AS $key =>$value)
+				{
+					$order.=sprintf( '%s %s', $key, $value);
+				}
+			}
 			
-			// $where_str="";
-			// if(!empty($ary['where']))
-			// {
-				// foreach($ary['where'] as $key=> $value)
-				// {
-					// $where[] = str_replace("?", mysqli_real_escape_string($this->db->conn_id ,$value),$key);
-				// }
-				// $where_str = " WHERE ". join(" AND ", $where);
-				
-			// }
-			
-			// $sql =$select." FROM ".$ary['table'].$ary['from'].$where_str ." ORDER BY t_id DESC ".$limit;
+			$where_str=" WHERE 1=1 ";
 			$tree = substr($ary['tree'], 1, -1);
 			$tree ="%".$tree."%" ;
-			// echo $groupindex;
 			$bind = [
 				$ary['rootUAccount'],
 				$tree
 			];
-			var_dump($bind);
-			$query = $this->db->query($sql,$bind);
+			if(!empty($ary['where']))
+			{
+				foreach($ary['where'] as $key=> $value)
+				{
+					$where[] = str_replace("?", mysqli_real_escape_string($this->db->conn_id ,$value),$key);
+				}
+				$where_str = " WHERE ". join(" AND ", $where);
+				
+			}
+			
+			// $group = "GROUP BY T.groupindex";
+			$search_sql = $sql.$where_str.$group.$limit ;
+			// echo $search_sql;
+			// var_dump($bind);
+			// $search_sql = $sql.$where.$order.$limit ;
+			// $sql =$select." FROM ".$ary['table'].$ary['from'].$where_str ." ORDER BY t_id DESC ".$limit;
+
+			$query = $this->db->query($search_sql,$bind);
 			$data['list'] = $query->result_array();
-			$totalSql ="SELECT COUNT(1) AS total FROM (".$sql.") AS T" ;
+			$totalSql ="SELECT COUNT(1) AS total FROM (".$search_sql.") AS T" ;
 			$query = $this->db->query($totalSql,$bind);
 			$count = $query->row_array();
 			$data['page_info'] =[

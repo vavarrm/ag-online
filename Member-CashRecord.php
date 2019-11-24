@@ -44,16 +44,25 @@
                                             <input type="text" id="from" name="from" placeholder="起始时间">
                                             <label for="to">至</label>
                                             <input type="text" id="to" name="to" placeholder="结束时间">
-                                            <a class="btn btn-bg-blue ajax-btn-cash-time" href="javascript:void(0)">
+                                        </div>
+                                    </div>
+									<div class="date-group-container jq-date-group-container clear">
+										<p class="title">玩家帐号</p>
+                                        <div class="inner">
+											<input type="text" name="account" id="account" placeholder="玩家帐号">
+										
+										
+										<a class="btn btn-bg-blue ajax-btn-cash-time" href="javascript:void(0)">
                                                 <i class="icon-ic-search"></i>
                                                 <span>搜寻</span>
                                             </a>
-                                        </div>
-                                    </div>
+										</div>
+									</div>
                                 </div>
                                 <div class="member-table" data-daily-table='1'>
                                     <div class="thead">
                                         <div class="tr">
+											<div class="th">投注时间</div>
 											<div class="th">玩家帐号</div>
                                             <div class="th">下注金额</div>                                            <div class="th">有效投注</div>                                            <div class="th">输赢</div>
                                             <div class="th"></div>
@@ -76,18 +85,28 @@
 			{
 					var _start_type = $('.jq-date-group-container').find('[name=from]').val();
 					var _end_type = $('.jq-date-group-container').find('[name=to]').val();
+					var _account = $('.jq-date-group-container').find('[name=account]').val();
 					let _length = data.length;
 					var _paginationEach = $(".pagination");
 					for (i = 0; i < _length; i++) 
 					{
 						var href ;
 						var action ='';
+						var _tree = data[i].tree;
+						_tree = _tree.split(",");
+						// console.log(_tree.length);
 						if(data[i].child >1)
 						{
-							action ='<a href="javascript:cash_change(1,'+"'"+data[i].tree+"'"+')">查看下级</a>';
+							
+							// action ='<a href="javascript:cash_change(1,'+"'"+data[i].tree+"'"+','+"'"+data[i].u_account+"'"+')">明细</a> &nbsp &nbsp';
+							
+						}else if(_tree.length>3)
+						{
+							// action ='<a href="javascript:cash_change(1,'+"'"+last_tree+"'"+')">返回上级</a> &nbsp &nbsp';
 						}
 						_each.append(
 							'<div class="tr">' +
+								'<div class="td" data-title="投注时间">' + data[i].bet_time + '</div>' +
 								'<div class="td" data-title="玩家帐号">' + data[i].u_account + '</div>' +
 								'<div class="td" data-title="下注金额">' + data[i].bet_points + '</div>' +
 								'<div class="td" data-title="有效投注">' + data[i].available_bet + '</div>' +
@@ -114,21 +133,25 @@
 			}
 			
 
-			
+			var last_tree='';
+			var level = 0;
             function cash_change(p,tree='') 
 			{
+				level++;
 				$( ".member-table" ).loading();				if ( typeof p ==="undefined")				{					p = 1;				}
                 $("[data-daily-table]").find('.tbody').find('.tr').remove();
 				var _start_type = $('.jq-date-group-container').find('[name=from]').val();
 				var	_end_type = $('.jq-date-group-container').find('[name=to]').val();
+				var _account = $('.jq-date-group-container').find('[name=account]').val();
 				$.ajax({
 					url: "/api/Api/getThirdBetByUser?sess=" + localStorage.session +
-						"&start_date=" + _start_type + "&end_date=" + _end_type+"&p="+p+"&tree="+tree,
+						"&start_date=" + _start_type + "&end_date=" + _end_type+"&p="+p+"&tree="+tree+"&account="+_account,
 					type: "GET",
 					success: function (data) {
 						var _each = $("[data-daily-table=1]").find('.tbody');
 						var _paginationEach = $(".pagination");
 						var _length = data.body.list.length;
+						var last_tree = data.body.list.tree;
 						var _totalPage = data.body.page_info.totalPage;
 						var _p = data.body.page_info.p;
 						if (data.status) {
