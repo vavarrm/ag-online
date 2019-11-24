@@ -1834,9 +1834,9 @@ class Api extends CI_Controller {
 			if($start_date!="" && $end_date!="")
 			{
 				$search = [
-					"DATE_FORMAT(t.add_datetime ,'%Y-%m-%d') >= '?'" =>$start_date,
-					"DATE_FORMAT(t.add_datetime ,'%Y-%m-%d') <= '?'" =>$end_date,
-					" t.u_account= '?'" =>$this->_user['u_account'],
+					"DATE_FORMAT(T.add_datetime ,'%Y-%m-%d') >= '?'" =>$start_date,
+					"DATE_FORMAT(T.add_datetime ,'%Y-%m-%d') <= '?'" =>$end_date,
+					" T.u_account= '?'" =>$this->_user['u_account'],
 				];
 			}
 			
