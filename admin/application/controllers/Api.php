@@ -3366,7 +3366,7 @@ class Api extends CI_Controller {
 	}
 	
 	
-	public function doWithdrawalAudit()
+	public function doWithdrawalAudit2()
 	{
 		$output['status'] = 100;
 		$output['body'] =array(
