@@ -26,9 +26,9 @@
 				$this->CI->load->library('upload',$config);
 				if(!$this->CI->upload->do_upload('batchCsv'))
 				{
-					echo "D";
+					// echo "D";
 					$ary = $this->upload->display_errors();
-					var_dump($ary);
+					// var_dump($ary);
 					$array = array(
 						'message' 	=>'上传失败',
 						'type' 		=>'api' ,
@@ -128,6 +128,8 @@
 
 		public function changeStatus($ary = array(), $admin)
 		{
+			// var_dump($ary);
+			
 			try {
 				$this->db->trans_start();
 				$sql = "UPDATE user_account SET ua_status = ? , ua_change_status_remarks =?,  ua_upd_date = DATE_FORMAT(NOW(),'%Y-%m-%d') , ua_aduit_ad_id =?  WHERE ua_id =?";
@@ -359,6 +361,55 @@
 							$MyException->setParams($array);
 							throw  $MyException;
 						}
+						
+						
+						$sql = "SELECT u_account FROM user WHERE u_id =?";
+						$bind=array(
+							$ary['u_id'],
+						);
+						$query = $this->db->query($sql, $bind);
+						$row = $query->row_array();
+						
+						
+						$sql="	INSERT INTO pay_recharge
+						(
+							order_number
+							,provide_code
+							,method_code
+							,amount
+							,user_account
+							,create_at
+							,category_code
+							,settle_at
+							,arrival_amount
+							,status
+						)
+							VALUES(?,?,?,?,?,NOW(),?,NOW(),?,'settle')   
+						";
+						$bind = [
+							date('Ymdhis').rand(1000,9999),
+							'SYSTEM',
+							'SYSTEM',
+							$ary['value'],
+							$row['u_account'],
+							'SYSTEM',
+							$ary['value'],
+						];
+						$query = $this->db->query($sql, $bind);
+						$error = $this->db->error();
+						if($error['message'] !="")
+						{
+							$MyException = new MyException();
+							$array = array(
+								'message' 	=>$error['message'] ,
+								'type' 		=>'db' ,
+								'status'	=>'001'
+							);
+							
+							$MyException->setParams($array);
+							throw $MyException;
+						}
+						
 					}
 				}
 				

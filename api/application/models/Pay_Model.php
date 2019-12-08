@@ -16,6 +16,7 @@
 					category_name,
 					category_code
 					FROM  pay_method 
+					WHERE  open = 1
 					GROUP BY category_code 
 				";
 			$query = $this->db->query($sql);
@@ -149,7 +150,7 @@
 							WHEN PR.status ='pending'  THEN '待处理'
 							WHEN PR.status ='timeout'  THEN '超时'
 							WHEN PR.status ='cancel'  THEN '取消'
-							WHEN PR.status ='done'  THEN '完成'
+							WHEN PR.status ='settle'  THEN '完成'
 							ELSE ''	
 						END AS status
 						,PR.user_account
